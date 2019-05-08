@@ -1,2 +1,2 @@
 # TGBot
-Telegram bot in python
+Telegram Bot in Python
