@@ -1,11 +1,11 @@
 from dataio import getchatid, getmsg, sendmsg
-from mdcmd import dealcmd
+from mdcmd import mdcmd
 
 
-def dealtext(data):
+def mdtext(data):
     content = getmsg(data)
     if content.startswith('/'):
-        resp = dealcmd(data)
+        resp = mdcmd(data)
         return resp
     else:
         resp = repeatmsg(data)

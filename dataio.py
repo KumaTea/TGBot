@@ -22,12 +22,19 @@ def getmsg(data):
     return msgtxt
 
 
-def sendmsg(chatid, msg):
+def sendmsg(chatid, msg, replyto=False):
     # should be json which includes at least `chat_id` and `text`
-    answer = {
-        "chat_id": chatid,
-        "text": msg,
-    }
+    if replyto:
+        answer = {
+            "chat_id": chatid,
+            "text": msg,
+            "reply_to_message_id": replyto,
+        }
+    else:
+        answer = {
+            "chat_id": chatid,
+            "text": msg,
+        }
     msgurl = botapi + 'sendMessage'
     orresp = requests.post(msgurl, json=answer)
     resp = orresp.json()
@@ -44,16 +51,6 @@ def sendsticker(chatid, fileid):
     orresp = requests.post(msgurl, json=answer)
     resp = orresp.json()
     return resp
-
-
-def ifexists(obj, typ, empty='None'):
-    try:
-        obj
-    except typ:
-        result = empty
-    else:
-        result = obj
-    return result
 
 
 def getmsgid(data):
