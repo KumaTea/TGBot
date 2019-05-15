@@ -1,8 +1,8 @@
 from dataio import getchatid, getmsg, sendmsg, getmsgid
-import json
+from mdemergency import mddebug
 
 
-def mdcmdgrp(data):
+def mdgrpcmd(data):
     chatid = getchatid(data)
     command = getmsg(data)
     msgid = getmsgid(data)
@@ -18,8 +18,7 @@ def mdcmdgrp(data):
             return resp
 
     elif command.startswith('/debug'):
-        debugmsg = json.dumps(data)
-        resp = sendmsg(345060487, debugmsg)
+        resp = mddebug(data)
         return resp
 
     else:
