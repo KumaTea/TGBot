@@ -1,8 +1,10 @@
 from dataio import getchatid, getmsg, sendmsg
-import json
+from mdemergency import mddebug, mdexit
+import botinfo
+from starting import getadminid
 
 
-def mdcmdpriv(data):
+def mdprivcmd(data):
     chatid = getchatid(data)
     command = getmsg(data)
 
@@ -12,8 +14,7 @@ def mdcmdpriv(data):
         return resp
 
     elif command.startswith('/help'):
-        helpmsg = '/start: wake me up\n/help: display this message\n/fw: forward messages to @kumatea\n' \
-                  '/rp: repeat messages\n\nI am in my 1.0.3.0 version.'
+        helpmsg = '{}\n\nI\'am in my {} ({}) version.'.format(botinfo.cmds, botinfo.version, botinfo.location)
         resp = sendmsg(chatid, helpmsg)
         return resp
 
@@ -28,7 +29,8 @@ def mdcmdpriv(data):
             resp = sendmsg(chatid, errmsg)
             return resp
         else:
-            sendmsg(345060487, fwmsg)
+            adminid = getadminid()
+            sendmsg(adminid, fwmsg)
             resp = sendmsg(chatid, okmsg)
             return resp
 
@@ -43,12 +45,13 @@ def mdcmdpriv(data):
             return resp
 
     elif command.startswith('/debug'):
-        debugmsg = json.dumps(data)
-        resp = sendmsg(345060487, debugmsg)
+        resp = mddebug(data)
         return resp
 
     elif command.startswith('/stop') or command.startswith('/terminate'):
-        if chatid == 345060487:
+        adminid = getadminid()
+        if chatid == adminid:
+            mdexit()
             return 'Exiting'
         else:
             if chatid < 0:

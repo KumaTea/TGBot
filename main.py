@@ -1,22 +1,22 @@
-from bottle import run, post, request as bottlereq
-from pyproxy import setproxy
-from dataio import setapi
+from flask import Flask, request as flaskreq
 from msgtype import msgtype
 from starting import starting
 from logcsv import logcsv
 
-setproxy()
-setapi()
+
+starting()
+
+app = Flask(__name__)
 
 
-@post('/')
+@app.route('/', methods=['POST'])
 def main():
-    data = bottlereq.json
+    data = flaskreq.json
     # print(data)
     resp = msgtype(data)
     logcsv(data, resp)
+    return '', 200
 
 
-starting()
 if __name__ == '__main__':
-    run(host='localhost', port=10568, debug=True)
+    app.run(host='localhost', port=10568, debug=False)
