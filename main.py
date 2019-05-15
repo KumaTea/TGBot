@@ -1,7 +1,7 @@
 from bottle import run, post, request as bottlereq
 from pyproxy import setproxy
 from dataio import setapi
-from msgtype import dealtype
+from msgtype import msgtype
 from starting import starting
 from logcsv import logcsv
 
@@ -13,7 +13,7 @@ setapi()
 def main():
     data = bottlereq.json
     # print(data)
-    resp = dealtype(data)
+    resp = msgtype(data)
     logcsv(data, resp)
 
 

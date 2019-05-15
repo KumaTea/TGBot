@@ -1,13 +1,13 @@
 from mdgroup import newmem
-from mdtext import dealtext
-from mdphoto import dealphoto
-from mdvideo import dealvideo
-from mdsticker import dealsticker
-from mddoc import dealdoc
-from mduktp import dealuktp
+from mdtext import mdtext
+from mdphoto import mdphoto
+from mdvideo import mdvideo
+from mdsticker import mdsticker
+from mddoc import mddoc
+from mduktp import mduktp
 
 
-def dealtype(data):
+def msgtype(data):
     try:
         data['message']['new_chat_member']
     except KeyError:
@@ -21,7 +21,7 @@ def dealtype(data):
     except KeyError:
         pass
     else:
-        resp = dealtext(data)
+        resp = mdtext(data)
         return resp
 
     try:
@@ -29,7 +29,7 @@ def dealtype(data):
     except KeyError:
         pass
     else:
-        resp = dealsticker(data)
+        resp = mdsticker(data)
         return resp
 
     try:
@@ -37,7 +37,7 @@ def dealtype(data):
     except KeyError:
         pass
     else:
-        resp = dealphoto(data)
+        resp = mdphoto(data)
         return resp
 
     try:
@@ -45,7 +45,7 @@ def dealtype(data):
     except KeyError:
         pass
     else:
-        resp = dealvideo(data)
+        resp = mdvideo(data)
         return resp
 
     try:
@@ -53,7 +53,7 @@ def dealtype(data):
     except KeyError:
         pass
     else:
-        resp = dealdoc(data)
+        resp = mddoc(data)
         return resp
 
     try:
@@ -77,5 +77,5 @@ def dealtype(data):
     else:
         return 'Channel post'
 
-    resp = dealuktp(data)
+    resp = mduktp(data)
     return resp
