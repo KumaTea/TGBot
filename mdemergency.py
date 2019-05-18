@@ -12,10 +12,12 @@ def mddebug(data):
     debugmsg = json.dumps(data)
     sendmsg(adminid, debugmsg)
     sendfile(adminid, 'log/log.csv', False, 'upload')
+    """
     if os.name == 'nt':
         scrst = scrshot.grab()
         scrst.save('log/screenshot.png')
         sendphoto(adminid, 'log/screenshot.png', False, 'upload')
+    """
     return 'DEBUG FINISHED'
 
 
