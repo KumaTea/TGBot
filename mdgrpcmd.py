@@ -1,5 +1,6 @@
 from dataio import getchatid, getmsg, sendmsg, getmsgid
 from mdemergency import mddebug
+from mdfunc import randomjoke
 
 
 def mdgrpcmd(data):
@@ -16,6 +17,11 @@ def mdgrpcmd(data):
         else:
             resp = sendmsg(chatid, rptext, msgid)
             return resp
+
+    elif command.startswith('/joke') or command.startswith('/soviet'):
+        joke = randomjoke()
+        resp = sendmsg(chatid, joke, msgid)
+        return resp
 
     elif command.startswith('/debug'):
         resp = mddebug(data)

@@ -2,6 +2,7 @@ from dataio import getchatid, getmsg, sendmsg
 from mdemergency import mddebug, mdexit
 import botinfo
 from starting import getadminid
+from mdfunc import randomjoke
 
 
 def mdprivcmd(data):
@@ -44,6 +45,11 @@ def mdprivcmd(data):
             resp = sendmsg(chatid, rptext)
             return resp
 
+    elif command.startswith('/joke') or command.startswith('/soviet'):
+        joke = randomjoke()
+        resp = sendmsg(chatid, joke)
+        return resp
+
     elif command.startswith('/debug'):
         resp = mddebug(data)
         return resp
@@ -60,6 +66,7 @@ def mdprivcmd(data):
                 denytext = 'You are not administrator and can\'t terminate me yet. However, you may use /fw to report problems and bugs to administrators.'
                 resp = sendmsg(chatid, denytext)
                 return resp
+
     else:
         ukmsg = 'I can\'t understand your command. You may check the /help list.'
         resp = sendmsg(chatid, ukmsg)
