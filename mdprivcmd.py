@@ -19,7 +19,7 @@ def mdprivcmd(data):
         resp = sendmsg(chatid, helpmsg)
         return resp
 
-    elif command.startswith('/fw') or command.startswith('/forward'):
+    elif command.startswith(('/fw', '/forward')):
         cont = command.find(' ')
         lstnm = data['message']['from'].get('last_name', '')
         usrnm = data['message']['from'].get('username', 'No username')
@@ -35,7 +35,7 @@ def mdprivcmd(data):
             resp = sendmsg(chatid, okmsg)
             return resp
 
-    elif command.startswith('/rp') or command.startswith('/repeat'):
+    elif command.startswith(('/rp', '/repeat')):
         cont = command.find(' ')
         rptext = command[cont:]
         if cont == -1:
@@ -45,13 +45,22 @@ def mdprivcmd(data):
             resp = sendmsg(chatid, rptext)
             return resp
 
-    elif command.startswith('/joke') or command.startswith('/soviet'):
+    elif command.startswith(('/joke', '/soviet')):
         joke = randomjoke()
         resp = sendmsg(chatid, joke)
         return resp
 
+    elif command.startswith('/del'):
+        helpmsg = 'This command is not available in private chats. Try it in groups!'
+        resp = sendmsg(chatid, helpmsg)
+        return resp
+
     elif command.startswith('/debug'):
-        resp = mddebug(data)
+        cont = command.find(' ')
+        if cont == -1:
+            resp = mddebug(data)
+        else:
+            resp = mddebug(data, True)
         return resp
 
     elif command.startswith('/stop') or command.startswith('/terminate'):
