@@ -15,7 +15,7 @@ def mdprivcmd(data):
         return resp
 
     elif command.startswith('/help'):
-        helpmsg = '{}\n\nI\'am in my {} ({}) version.'.format(botinfo.cmds, botinfo.version, botinfo.location)
+        helpmsg = '{}\n\nI\'am in my {} ({}) version.'.format(botinfo.cmds, botinfo.version, botinfo.channel)
         resp = sendmsg(chatid, helpmsg)
         return resp
 

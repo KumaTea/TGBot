@@ -4,15 +4,18 @@ from datetime import datetime
 
 def logcsv(request, response):
     with open('log/log.csv', 'a') as log:
-        if request.get('message') is not None:
-            usrnm = request['message']['from'].get('username')
-        elif request.get('channel_post') is not None:
-            usrnm = request['channel_post']['chat'].get('username')
-        elif request.get('edited_channel_post') is not None:
-            usrnm = request['edited_channel_post']['chat'].get('username')
+        if 'message' in request:
+            usrnm = request['message']['from'].get('username', 'NoUsername')
+            # using get('username') instead of ['username']
+            # to avoid errors when no username
+        elif 'channel_post' in request:
+            usrnm = request['channel_post']['chat'].get('username', 'NoUsername')
+        elif 'edited_channel_post' in request:
+            usrnm = request['edited_channel_post']['chat'].get('username', 'NoUsername')
 
         if type(response) == dict:
             resp = json.dumps(response).replace(',', '.')
+            # csv
         elif type(response) == str:
             resp = response
         else:
