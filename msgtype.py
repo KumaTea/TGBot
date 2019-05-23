@@ -26,6 +26,8 @@ def msgtype(data):
             elif 'document' in data['message']:
                 resp = grpfile(data)
                 return resp
+            elif 'edited_message' in data:
+                return 'ignore edited message.'
         elif 'channel_post' or 'edited_channel_post' in data:
             return 'Channel post'
         elif 'left_chat_member' in data:
@@ -34,24 +36,27 @@ def msgtype(data):
         return 'Unknown group reply'
 
     else:
-        if 'text' in data['message']:
-            resp = privtext(data)
-            return resp
-        elif 'sticker' in data['message']:
-            resp = privsticker(data)
-            return resp
-        elif 'photo' in data['message']:
-            resp = privphoto(data)
-            return resp
-        elif 'video' in data['message']:
-            resp = privvideo(data)
-            return resp
-        elif 'document' in data['message']:
-            resp = privfile(data)
-            return resp
-        elif 'sticker' in data['message']:
-            resp = privsticker(data)
-            return resp
+        if 'message' in data:
+            if 'text' in data['message']:
+                resp = privtext(data)
+                return resp
+            elif 'sticker' in data['message']:
+                resp = privsticker(data)
+                return resp
+            elif 'photo' in data['message']:
+                resp = privphoto(data)
+                return resp
+            elif 'video' in data['message']:
+                resp = privvideo(data)
+                return resp
+            elif 'document' in data['message']:
+                resp = privfile(data)
+                return resp
+            elif 'sticker' in data['message']:
+                resp = privsticker(data)
+                return resp
+        elif 'edited_message' in data:
+            return 'ignore edited message.'
 
         resp = mduktp(data)
         return resp
