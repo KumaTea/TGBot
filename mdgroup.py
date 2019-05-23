@@ -1,13 +1,19 @@
 from dataio import getchatid, getmsgid, getfileid, getmsg, sendmsg, sendsticker, sendfile, sendphoto, sendvideo
 from mdgrpcmd import mdgrpcmd
+from botdb import grpwelcome
 
 
 def grpnewmem(data):
     if not data['message']['new_chat_member']['is_bot']:
         groupid = getchatid(data)
-        sendmsg(groupid, '欢迎新大佬！')
-        resp = sendsticker(groupid, 'CAADBQADgAADMwMcCJWbCk051Y0BAg')
+        if grpwelcome.get(groupid) is not None:
+            if grpwelcome[groupid].get('message') is not None:
+                resp = sendmsg(groupid, grpwelcome[groupid]['message'])
+            if grpwelcome[groupid].get('sticker') is not None:
+                resp = sendsticker(groupid, grpwelcome[groupid]['sticker'])
         return resp
+    else:
+        return 'Passed in unfamiliar group'
 
 
 def grptext(data):

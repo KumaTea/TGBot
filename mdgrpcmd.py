@@ -1,6 +1,7 @@
-from dataio import getchatid, getmsg, sendmsg, getmsgid
+from dataio import getchatid, getmsg, sendmsg, getmsgid, editmsg
 from mdemergency import mddebug
 from mdfunc import randomjoke
+from threading import Timer
 
 
 def mdgrpcmd(data):
@@ -21,6 +22,9 @@ def mdgrpcmd(data):
     elif command.startswith('/joke') or command.startswith('/soviet'):
         joke = randomjoke()
         resp = sendmsg(chatid, joke, msgid)
+        jokeid = getmsgid(resp)
+        deljoke = Timer(3600, editmsg, [chatid, jokeid, '笑话过期了！请使用 /joke 再来一条。'])
+        deljoke.start()
         return resp
 
     elif command.startswith('/debug'):

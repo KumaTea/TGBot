@@ -7,106 +7,50 @@ from mduktp import mduktp
 def msgtype(data):
     chatid = getchatid(data)
     if chatid < 0:
-        try:
-            data['message']['new_chat_member']
-        except KeyError:
-            pass
-        else:
-            resp = grpnewmem(data)
-            return resp
-        try:
-            data['channel_post']
-        except KeyError:
-            pass
-        else:
+        if 'message' in data:
+            if 'new_chat_member' in data['message']:
+                resp = grpnewmem(data)
+                return resp
+            elif 'text' in data['message']:
+                resp = grptext(data)
+                return resp
+            elif 'sticker' in data['message']:
+                resp = grpsticker(data)
+                return resp
+            elif 'photo' in data['message']:
+                resp = grpphoto(data)
+                return resp
+            elif 'video' in data['message']:
+                resp = grpvideo(data)
+                return resp
+            elif 'document' in data['message']:
+                resp = grpfile(data)
+                return resp
+        elif 'channel_post' or 'edited_channel_post' in data:
             return 'Channel post'
-        try:
-            data['edited_channel_post']
-        except KeyError:
-            pass
-        else:
-            return 'Channel post'
-
-        try:
-            data['message']['text']
-        except KeyError:
-            pass
-        else:
-            resp = grptext(data)
-            return resp
-        try:
-            data['message']['sticker']
-        except KeyError:
-            pass
-        else:
-            resp = grpsticker(data)
-            return resp
-        try:
-            data['message']['photo']
-        except KeyError:
-            pass
-        else:
-            resp = grpphoto(data)
-            return resp
-        try:
-            data['message']['video']
-        except KeyError:
-            pass
-        else:
-            resp = grpvideo(data)
-            return resp
-        try:
-            data['message']['document']
-        except KeyError:
-            pass
-        else:
-            resp = grpfile(data)
-            return resp
-
-        try:
-            data['message']['left_chat_member']
-        except KeyError:
-            pass
-        else:
+        elif 'left_chat_member' in data:
             return 'Left group'
 
         return 'Unknown group reply'
 
     else:
-        try:
-            data['message']['text']
-        except KeyError:
-            pass
-        else:
+        if 'text' in data['message']:
             resp = privtext(data)
             return resp
-        try:
-            data['message']['sticker']
-        except KeyError:
-            pass
-        else:
+        elif 'sticker' in data['message']:
             resp = privsticker(data)
             return resp
-        try:
-            data['message']['photo']
-        except KeyError:
-            pass
-        else:
+        elif 'photo' in data['message']:
             resp = privphoto(data)
             return resp
-        try:
-            data['message']['video']
-        except KeyError:
-            pass
-        else:
+        elif 'video' in data['message']:
             resp = privvideo(data)
             return resp
-        try:
-            data['message']['document']
-        except KeyError:
-            pass
-        else:
+        elif 'document' in data['message']:
             resp = privfile(data)
+            return resp
+        elif 'sticker' in data['message']:
+            resp = privsticker(data)
             return resp
 
         resp = mduktp(data)
