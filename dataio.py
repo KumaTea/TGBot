@@ -62,9 +62,7 @@ def getreply(data, info='msgid'):
 
 
 def getmsgtype(data, prefix='message'):
-    if 'text' in data[prefix]:
-        return 'text'
-    elif 'photo' in data[prefix]:
+    if 'photo' in data[prefix]:
         return 'photo'
     elif 'video' in data[prefix]:
         return 'video'
@@ -72,6 +70,8 @@ def getmsgtype(data, prefix='message'):
         return 'sticker'
     elif 'document' in data[prefix]:
         return 'document'
+    elif 'text' in data[prefix]:
+        return 'text'
     else:
         return 'Unknown Type'
 
@@ -206,7 +206,7 @@ def sendphoto(chatid, photo, replyto=False, upload=False):
     else:
         answer = {
             "chat_id": chatid,
-            "document": photo,
+            "photo": photo,
         }
         if replyto:
             answer['reply_to_message_id'] = replyto
@@ -231,7 +231,7 @@ def sendvideo(chatid, video, replyto=False, upload=False):
     else:
         answer = {
             "chat_id": chatid,
-            "document": video,
+            "video": video,
         }
         if replyto:
             answer['reply_to_message_id'] = replyto
