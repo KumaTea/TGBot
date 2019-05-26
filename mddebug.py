@@ -10,9 +10,9 @@ from starting import getadminid
 def mddebug(data, log=False):
     adminid = getadminid()
     debugmsg = json.dumps(data)
-    sendmsg(adminid, debugmsg)
+    sendmsg(adminid[0], debugmsg)
     if log:
-        sendfile(adminid, 'log/log.csv', False, 'upload')
+        sendfile(adminid[0], 'log/log.csv', False, 'upload')
     """
     if os.name == 'nt':
         scrst = scrshot.grab()
@@ -22,6 +22,7 @@ def mddebug(data, log=False):
     return 'DEBUG FINISHED'
 
 
+"""
 def serveroff():
     func = flaskreq.environ.get('werkzeug.server.shutdown')
     if func is None:
@@ -32,3 +33,4 @@ def serveroff():
 def mdexit():
     tm = Timer(5, serveroff)
     tm.start()
+"""

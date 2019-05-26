@@ -16,26 +16,26 @@ def privtext(data):
 def privsticker(data):
     chatid = getchatid(data)
     sticker = getfileid(data)
-    resp = sendsticker(chatid, sticker)
+    resp = sendmsg(chatid, sticker)
     return resp
 
 
 def privphoto(data):
     chatid = getchatid(data)
     photo = getfileid(data)
-    resp = sendphoto(chatid, photo)
+    resp = sendmsg(chatid, photo)
     return resp
 
 
 def privvideo(data):
     chatid = getchatid(data)
     video = getfileid(data)
-    resp = sendvideo(chatid, video)
+    resp = sendmsg(chatid, video)
     return resp
 
 
 def privfile(data):
     chatid = getchatid(data)
     file = getfileid(data)
-    resp = sendfile(chatid, file)
+    resp = sendmsg(chatid, file)
     return resp

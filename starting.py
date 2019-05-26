@@ -35,9 +35,9 @@ def getadminid():
     adminex = os.path.isfile('adminid.txt')
     if adminex:
         with open('adminid.txt', 'r') as admid:
-            adminid = int(admid.read())
+            adminid = list(map(int, admid.readlines()))
     else:
-        adminid = 100000000  # not set!
+        adminid = [100000000]  # not set!
     return adminid
 
 

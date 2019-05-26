@@ -1,5 +1,5 @@
 from dataio import getchatid, getmsg, sendmsg, getmsgid, editmsg, getreply, delmsg, getusrinfo, getgrpadmin, sendfile, sendvideo, sendphoto,sendsticker
-from mdemergency import mddebug
+from mddebug import mddebug
 from mdfunc import randomjoke
 from threading import Timer
 from botinfo import selfid
@@ -60,7 +60,7 @@ def mdgrpcmd(data):
                 usrid = getusrinfo(data)
                 grpadmin = getgrpadmin(chatid)
                 botadmin = getadminid()
-                if usrid in grpadmin or usrid == botadmin:
+                if usrid in grpadmin or usrid in botadmin:
                     resp = delmsg(chatid, replyid)
                     delinfo = sendmsg(chatid, 'Message deleted. This info will disappear in one minute.', msgid)
                     delinfoid = getmsgid(delinfo)
