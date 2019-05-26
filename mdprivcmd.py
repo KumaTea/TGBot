@@ -1,5 +1,5 @@
 from dataio import getchatid, getmsg, sendmsg
-from mdemergency import mddebug, mdexit
+from mddebug import mddebug
 import botinfo
 from starting import getadminid
 from mdfunc import randomjoke
@@ -31,7 +31,7 @@ def mdprivcmd(data):
             return resp
         else:
             adminid = getadminid()
-            sendmsg(adminid, fwmsg)
+            sendmsg(adminid[0], fwmsg)
             resp = sendmsg(chatid, okmsg)
             return resp
 
@@ -63,7 +63,13 @@ def mdprivcmd(data):
             resp = mddebug(data, True)
         return resp
 
-    elif command.startswith('/stop') or command.startswith('/terminate'):
+    else:
+        ukmsg = 'I can\'t understand your command. You may check the /help list.'
+        resp = sendmsg(chatid, ukmsg)
+        return resp
+
+    """
+        elif command.startswith('/stop') or command.startswith('/terminate'):
         adminid = getadminid()
         if chatid == adminid:
             mdexit()
@@ -75,8 +81,4 @@ def mdprivcmd(data):
                 denytext = 'You are not administrator and can\'t terminate me yet. However, you may use /fw to report problems and bugs to administrators.'
                 resp = sendmsg(chatid, denytext)
                 return resp
-
-    else:
-        ukmsg = 'I can\'t understand your command. You may check the /help list.'
-        resp = sendmsg(chatid, ukmsg)
-        return resp
+    """

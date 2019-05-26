@@ -1,5 +1,6 @@
 import requests
 from starting import getapi
+# from botdb import langlist, langdict
 
 botapi = getapi()
 
@@ -97,14 +98,14 @@ def getusrinfo(data, info='id'):
     """info: id, first, last, username, language, bot"""
     if info == 'id':
         usrinfo = data['message']['from']['id']
-    elif info == 'first':
+    elif 'first' in info:
         usrinfo = data['message']['from']['first_name']
-    elif info == 'last':
+    elif 'last' in info:
         usrinfo = data['message']['from'].get('last_name', 'No last name')
     elif info == 'username':
         usrinfo = data['message']['from'].get('username', 'No username')
-    elif info == 'language':
-        usrinfo = data['message']['from']['language_code']
+    elif 'lang' in info:
+        usrinfo = data['message']['from'].get('language_code', 'zh-Hans')
     elif info == 'bot':
         usrinfo = data['message']['from']['is_bot']
     else:
@@ -266,3 +267,29 @@ def delmsg(chatid, msgid):
     orresp = requests.post(msgurl, json=answer)
     resp = orresp.json()
     return resp
+
+# LOCALIZATION
+
+
+"""
+def codetolang(langcode):
+    for lang in langlist:
+        if lang in langcode:  # if 'Hans' in 'zh-Hans'
+            code = langdict[lang]
+            return code
+    return 'Hans'
+
+
+def localization(multilang, langcode):
+    # localization(dict=multilang, langcode)
+    if type(multilang) == dict:
+        code = codetolang(langcode)
+        localize = multilang.get(code, 'Hans')
+        return localize
+    elif type(multilang) == str:
+        return multilang
+    else:
+        # Dangerous
+        # raise TypeError
+        return 'TypeError'
+"""
