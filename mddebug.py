@@ -2,8 +2,8 @@
 import json
 from dataio import sendmsg, sendfile  # , sendphoto
 # import pyscreenshot as scrshot
-from flask import request as flaskreq
-from threading import Timer
+# from flask import request as flaskreq
+# from threading import Timer
 from starting import getadminid
 
 

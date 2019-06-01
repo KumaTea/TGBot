@@ -1,4 +1,4 @@
-from dataio import getchatid, getmsgid, getfileid, getmsg, sendmsg, sendsticker, sendfile, sendphoto, sendvideo
+from dataio import getchatid, getmsgid, getfileid, getmsg, sendmsg  # sendsticker, sendfile, sendphoto, sendvideo
 from mdprivcmd import mdprivcmd
 
 
@@ -39,3 +39,11 @@ def privfile(data):
     file = getfileid(data)
     resp = sendmsg(chatid, file)
     return resp
+
+
+def privgif(data):
+    chatid = getchatid(data)
+    file = getfileid(data)
+    resp = sendmsg(chatid, file)
+    return resp
+
