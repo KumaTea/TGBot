@@ -22,6 +22,8 @@ def msgtype(data):
                 resp = grpfile(data)
             elif 'edited_message' in data:
                 resp = 'ignore edited message.'
+            else:
+                resp = 'Unknown message.'
             return resp
         elif 'channel_post' or 'edited_channel_post' in data:
             return 'Channel post'
@@ -44,6 +46,8 @@ def msgtype(data):
                 resp = privfile(data)
             elif 'sticker' in data['message']:
                 resp = privsticker(data)
+            else:
+                resp = 'Unknown message.'
             return resp
         elif 'edited_message' in data:
             return 'ignore edited message.'
