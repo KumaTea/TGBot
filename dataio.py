@@ -242,6 +242,31 @@ def sendvideo(chatid, video, replyto=False, upload=False):
         return resp
 
 
+def sendgif(chatid, gif, replyto=False, upload=False):
+    """sendgif(chatid, video, replyto=False, upload=False)"""
+    if upload:
+        with open(gif, 'rb') as fl:
+            sending = {'animation': fl}
+            if replyto:
+                newurl = botapi + 'sendAnimation?chat_id=' + str(chatid) + '&' + str(replyto)
+            else:
+                newurl = botapi + 'sendAnimation?chat_id=' + str(chatid)
+            orresp = requests.post(newurl, files=sending)
+            resp = orresp.json()
+            return resp
+    else:
+        answer = {
+            "chat_id": chatid,
+            "animation": gif,
+        }
+        if replyto:
+            answer['reply_to_message_id'] = replyto
+        msgurl = botapi + 'sendAnimation'
+        orresp = requests.post(msgurl, json=answer)
+        resp = orresp.json()
+        return resp
+
+
 # MESSAGE OPERATION
 
 

@@ -1,6 +1,6 @@
 from dataio import getchatid
-from mdgroup import grpnewmem, grptext, grpfile, grpphoto, grpsticker, grpvideo
-from mdpriv import privtext, privfile, privphoto, privsticker, privvideo
+from mdgroup import grpnewmem, grptext, grpfile, grpphoto, grpsticker, grpvideo, grpgif
+from mdpriv import privtext, privfile, privphoto, privsticker, privvideo, privgif
 from mduktp import mduktp
 
 
@@ -18,6 +18,8 @@ def msgtype(data):
                 resp = grpphoto(data)
             elif 'video' in data['message']:
                 resp = grpvideo(data)
+            elif 'animation' in data['message']:
+                resp = grpgif(data)
             elif 'document' in data['message']:
                 resp = grpfile(data)
             elif 'edited_message' in data:
@@ -42,6 +44,8 @@ def msgtype(data):
                 resp = privphoto(data)
             elif 'video' in data['message']:
                 resp = privvideo(data)
+            elif 'animation' in data['message']:
+                resp = privgif(data)
             elif 'document' in data['message']:
                 resp = privfile(data)
             elif 'sticker' in data['message']:

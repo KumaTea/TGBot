@@ -1,4 +1,4 @@
-from dataio import getchatid, getmsgid, getfileid, getmsg, sendmsg, sendsticker, sendfile, sendphoto, sendvideo
+from dataio import getchatid, getmsgid, getfileid, getmsg, sendmsg, sendsticker, sendfile, sendphoto, sendvideo, sendgif
 from mdgrpcmd import mdgrpcmd
 from botdb import grpwelcome
 
@@ -58,3 +58,12 @@ def grpfile(data):
     msgid = getmsgid(data)
     resp = sendfile(chatid, file, msgid)
     return resp
+
+
+def grpgif(data):
+    chatid = getchatid(data)
+    file = getfileid(data)
+    msgid = getmsgid(data)
+    resp = sendgif(chatid, file, msgid)
+    return resp
+
