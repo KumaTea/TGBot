@@ -43,10 +43,10 @@ def mdgrpcmd(data):
             return resp
 
     elif command.startswith(('/joke', '/soviet')):
-        joke = randomjoke()
+        joke = randomjoke(True)
         resp = sendmsg(chatid, joke, msgid)
         jokeid = getmsgid(resp)
-        deljoke = Timer(3600, editmsg, [chatid, jokeid, '笑话过期了！请使用 /joke 再来一条。'])
+        deljoke = Timer(3600, editmsg, [chatid, jokeid, '　　　　　！　　　 /joke 　　　　。'])
         deljoke.start()
         return resp
 
