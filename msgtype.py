@@ -34,6 +34,9 @@ def msgtype(data):
 
         return 'Unknown group reply'
 
+    elif chatid == 0:
+        return 'Can\'t get chatid.'
+
     else:
         if 'message' in data:
             if 'text' in data['message']:
