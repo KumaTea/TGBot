@@ -14,6 +14,8 @@ def logcsv(request, response):
             usrnm = request['channel_post']['chat'].get('username', 'NoUsername')
         elif 'edited_channel_post' in request:
             usrnm = request['edited_channel_post']['chat'].get('username', 'NoUsername')
+        else:
+            usrnm = 'User not found'
 
         if type(response) == dict:
             resp = json.dumps(response).replace(',', '.')
