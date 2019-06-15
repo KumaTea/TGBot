@@ -5,9 +5,8 @@ grpwelcome = {
         'sticker': 'CAADBQADgAADMwMcCJWbCk051Y0BAg',
     },
     -1001333862230: {
-        'name': 'Dragalia',
-        'message': '欢迎新大佬！',
-        'sticker': 'CAADAQADWwADpHMBBheEyAEZ9ulSAg',
+        'name': 'SYSU',
+        'message': '有',
     },
     -268873964: {
         'name': 'Bot Test',

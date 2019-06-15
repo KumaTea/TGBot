@@ -1,6 +1,6 @@
 from dataio import getchatid, getmsg, sendmsg, getmsgid, editmsg, getreply, delmsg, getusrinfo, getgrpadmin, sendfile, sendvideo, sendphoto,sendsticker
 from mddebug import mddebug
-from mdfunc import randomjoke
+from mdfunc import randomjoke, sysujoke
 from threading import Timer
 from botinfo import selfid
 from starting import getadminid
@@ -41,6 +41,11 @@ def mdgrpcmd(data):
         else:
             resp = sendmsg(chatid, rptext, msgid)
             return resp
+
+    elif command.startswith(('/sysu', '/中', '/双鸭山')):
+        joke = sysujoke()
+        resp = sendmsg(chatid, joke, msgid)
+        return resp
 
     elif command.startswith(('/joke', '/soviet')):
         joke = randomjoke()

@@ -2,7 +2,7 @@ from dataio import getchatid, getmsg, sendmsg
 from mddebug import mddebug
 import botinfo
 from starting import getadminid
-from mdfunc import randomjoke
+from mdfunc import randomjoke, sysujoke
 
 
 def mdprivcmd(data):
@@ -47,6 +47,11 @@ def mdprivcmd(data):
 
     elif command.startswith(('/joke', '/soviet')):
         joke = randomjoke()
+        resp = sendmsg(chatid, joke)
+        return resp
+
+    elif command.startswith(('/sysu', '/中', '/双鸭山')):
+        joke = sysujoke()
         resp = sendmsg(chatid, joke)
         return resp
 

@@ -10,3 +10,12 @@ def randomjoke(nojo=False):
             nojoke = re.compile('[^0-9\\n，。、？！（…“”：；‘’《》）]|_')
             jk = re.sub(nojoke, '　', jk)
         return jk
+
+
+def sysujoke(nojo=False):
+    with open('joke/sysu0', 'r', encoding='utf-8') as joke:
+        jk = random.choice(list(joke)).replace('br', '\n')
+        if nojo:
+            nojoke = re.compile('[^0-9\\n，。、？！（…“”：；‘’《》）]|_')
+            jk = re.sub(nojoke, '　', jk)
+        return jk
