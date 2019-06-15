@@ -1,5 +1,7 @@
 .idea
-botapi.txt
+token.txt
 adminid.txt
 joke
 botdb.py
+app.yaml
+.gcloudignore

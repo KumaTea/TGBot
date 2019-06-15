@@ -1,5 +1,5 @@
 cmds = '/start: wake me up\n/help: display this message\n/fw: forward messages to @kumatea\n/rp: repeat messages'
 
 selfid = 781791363
-version = '1.3.0.2'
-channel = 'local'
+version = '1.3.1.0'
+channel = 'cloud'
