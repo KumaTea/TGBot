@@ -1,5 +1,4 @@
 import os
-from pyproxy import setproxy
 
 
 def startlog():
@@ -22,9 +21,9 @@ def setapi():
 
 
 def getapi():
-    apiex = os.path.isfile('botapi.txt')
+    apiex = os.path.isfile('token.txt')
     if apiex:
-        with open('botapi.txt', 'r') as api:
+        with open('token.txt', 'r') as api:
             botapi = 'https://api.telegram.org/' + api.read() + '/'
     else:
         botapi = setapi()
@@ -39,9 +38,3 @@ def getadminid():
     else:
         adminid = [100000000]  # not set!
     return adminid
-
-
-def starting():
-    startlog()
-    setproxy()
-    print('Starting fine.')

@@ -1,6 +1,6 @@
 # import os
 import json
-from dataio import sendmsg, sendfile  # , sendphoto
+from dataio import sendmsg  # sendfile, sendphoto
 # import pyscreenshot as scrshot
 # from flask import request as flaskreq
 # from threading import Timer
@@ -11,9 +11,9 @@ def mddebug(data, log=False):
     adminid = getadminid()
     debugmsg = json.dumps(data)
     sendmsg(adminid[0], debugmsg)
+    """
     if log:
         sendfile(adminid[0], 'log/log.csv', False, 'upload')
-    """
     if os.name == 'nt':
         scrst = scrshot.grab()
         scrst.save('log/screenshot.png')
