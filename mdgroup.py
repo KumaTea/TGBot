@@ -7,13 +7,16 @@ def grpnewmem(data):
     if not data['message']['new_chat_member']['is_bot']:
         groupid = getchatid(data)
         if grpwelcome.get(groupid) is not None:
+            resp = 'Initialize'
             if grpwelcome[groupid].get('message') is not None:
                 resp = sendmsg(groupid, grpwelcome[groupid]['message'])
             if grpwelcome[groupid].get('sticker') is not None:
                 resp = sendsticker(groupid, grpwelcome[groupid]['sticker'])
+        else:
+            resp = 'Not familiar using default'
         return resp
     else:
-        return 'Passed in unfamiliar group'
+        return 'Is bot'
 
 
 def grptext(data):
