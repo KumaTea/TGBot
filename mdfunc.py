@@ -1,6 +1,5 @@
 import random
 import re
-import botdb
 
 
 def randomjoke(nojo=False):
@@ -20,7 +19,3 @@ def sysujoke(nojo=False):
             nojoke = re.compile('[^0-9\\n，。、？！（…“”：；‘’《》）]|_')
             jk = re.sub(nojoke, '　', jk)
         return jk
-
-
-def mars():
-    return random.choice(botdb.marsmedia['photo'])

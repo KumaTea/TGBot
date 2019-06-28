@@ -1,6 +1,6 @@
 from dataio import getchatid, getmsg, sendmsg, getmsgid, editmsg, getreply, delmsg, getusrinfo, getgrpadmin, sendfile, sendvideo, sendphoto,sendsticker
 from mddebug import mddebug
-from mdfunc import randomjoke, sysujoke, mars
+from mdfunc import randomjoke, sysujoke
 from threading import Timer
 from botinfo import selfid
 from starting import getadminid
@@ -53,11 +53,6 @@ def mdgrpcmd(data):
         jokeid = getmsgid(resp)
         deljoke = Timer(3600, editmsg, [chatid, jokeid, '笑话已过期！请使用 /joke 再来一条。'])
         deljoke.start()
-        return resp
-
-    elif command.startswith(('/mars', '/old', '/火星', '/老')):
-        marspic = mars()
-        resp = sendphoto(chatid, marspic)
         return resp
 
     elif command.startswith('/del'):
