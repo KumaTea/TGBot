@@ -15,8 +15,8 @@ def md_priv_cmd(data):
         return resp
 
     elif command.startswith('/help'):
-        helpmsg = '{}\n\nI\'am in my {} ({}) version.'.format(botInfo.help_msg, botInfo.version, botInfo.channel)
-        resp = send_msg(chatid, helpmsg)
+        help_msg = f'{botInfo.help_msg}\n\nI\'am in my {botInfo.version} ({botInfo.channel}) version.'
+        resp = send_msg(chatid, help_msg)
         return resp
 
     elif command.startswith(('/fw', '/forward')):
@@ -56,8 +56,8 @@ def md_priv_cmd(data):
         return resp
 
     elif command.startswith('/del'):
-        helpmsg = 'This command is not available in private chats. Try it in groups!'
-        resp = send_msg(chatid, helpmsg)
+        help_msg = 'This command is not available in private chats. Try it in groups!'
+        resp = send_msg(chatid, help_msg)
         return resp
 
     elif command.startswith('/debug'):
