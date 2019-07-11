@@ -1,27 +1,27 @@
-from dataio import getchatid
-from mdgroup import grpnewmem, grptext, grpfile, grpphoto, grpsticker, grpvideo, grpgif
-from mdpriv import privtext, privfile, privphoto, privsticker, privvideo, privgif
-from mduktp import mduktp
+from dataIO import get_chat_id
+from mdGroup import group_new_member, group_text, group_file, group_photo, group_sticker, group_video, group_gif
+from mdPriv import priv_text, priv_file, priv_photo, priv_sticker, priv_video, priv_gif
+from mdUnknown import md_unknown
 
 
-def msgtype(data):
-    chatid = getchatid(data)
+def msg_type(data):
+    chatid = get_chat_id(data)
     if chatid < 0:
         if 'message' in data:
             if 'new_chat_member' in data['message']:
-                resp = grpnewmem(data)
+                resp = group_new_member(data)
             elif 'text' in data['message']:
-                resp = grptext(data)
+                resp = group_text(data)
             elif 'sticker' in data['message']:
-                resp = grpsticker(data)
+                resp = group_sticker(data)
             elif 'photo' in data['message']:
-                resp = grpphoto(data)
+                resp = group_photo(data)
             elif 'video' in data['message']:
-                resp = grpvideo(data)
+                resp = group_video(data)
             elif 'animation' in data['message']:
-                resp = grpgif(data)
+                resp = group_gif(data)
             elif 'document' in data['message']:
-                resp = grpfile(data)
+                resp = group_file(data)
             elif 'edited_message' in data:
                 resp = 'ignore edited message.'
             else:
@@ -40,24 +40,24 @@ def msgtype(data):
     else:
         if 'message' in data:
             if 'text' in data['message']:
-                resp = privtext(data)
+                resp = priv_text(data)
             elif 'sticker' in data['message']:
-                resp = privsticker(data)
+                resp = priv_sticker(data)
             elif 'photo' in data['message']:
-                resp = privphoto(data)
+                resp = priv_photo(data)
             elif 'video' in data['message']:
-                resp = privvideo(data)
+                resp = priv_video(data)
             elif 'animation' in data['message']:
-                resp = privgif(data)
+                resp = priv_gif(data)
             elif 'document' in data['message']:
-                resp = privfile(data)
+                resp = priv_file(data)
             elif 'sticker' in data['message']:
-                resp = privsticker(data)
+                resp = priv_sticker(data)
             else:
                 resp = 'Unknown message.'
             return resp
         elif 'edited_message' in data:
             return 'ignore edited message.'
 
-        resp = mduktp(data)
+        resp = md_unknown(data)
         return resp

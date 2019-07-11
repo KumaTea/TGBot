@@ -1,44 +1,43 @@
 import requests
 from starting import getapi
-# from botdb import langlist, langdict
 
-botapi = getapi()
+bot_api = getapi()
 
 # GET INFO
 
 
-def getchatid(data):
+def get_chat_id(data):
     if 'message' in data:
-        chatid = data['message']['chat']['id']
+        chat_id = data['message']['chat']['id']
     elif 'edited_message' in data:
-        chatid = data['edited_message']['chat']['id']
+        chat_id = data['edited_message']['chat']['id']
     elif 'channel_post' in data:
-        chatid = data['channel_post']['chat']['id']
+        chat_id = data['channel_post']['chat']['id']
     elif 'edited_channel_post' in data:
-        chatid = data['edited_channel_post']['chat']['id']
+        chat_id = data['edited_channel_post']['chat']['id']
     elif 'channel_post' in data:
-        chatid = data['left_chat_member']['chat']['id']
+        chat_id = data['left_chat_member']['chat']['id']
     else:
-        chatid = 0
-    return chatid
+        chat_id = 0
+    return chat_id
 
 
-def getmsg(data, prefix='message'):
-    msgtxt = data[prefix]['text']
-    return msgtxt
+def get_msg(data, prefix='message'):
+    msg_text = data[prefix]['text']
+    return msg_text
 
 
-def getmsgid(data, prefix='message'):
+def get_msg_id(data, prefix='message'):
     if 'message' in data:
-        msgid = data['message']['message_id']
+        msg_id = data['message']['message_id']
     elif 'result' in data:
-        msgid = data['result']['message_id']
+        msg_id = data['result']['message_id']
     else:
-        msgid = data[prefix]['message_id']
-    return msgid
+        msg_id = data[prefix]['message_id']
+    return msg_id
 
 
-def getreply(data, info='msgid'):
+def get_reply(data, info='msgid'):
     """info:msgid, id, first, last, username, text, type: text/media, fileid"""
     if 'reply_to_message' in data['message']:
         if info == 'msgid':
@@ -48,9 +47,9 @@ def getreply(data, info='msgid'):
         elif info == 'text':
             reply = data['message']['reply_to_message']['text']
         elif info == 'type':
-            reply = getmsgtype(data['message'], 'reply_to_message')
+            reply = get_msg_type(data['message'], 'reply_to_message')
         elif info == 'fileid':
-            reply = getfileid(data['message'], 'reply_to_message')
+            reply = get_file_id(data['message'], 'reply_to_message')
         elif info == 'first':
             reply = data['message']['reply_to_message']['from']['first_name']
         elif info == 'last':
@@ -62,7 +61,7 @@ def getreply(data, info='msgid'):
     return reply
 
 
-def getmsgtype(data, prefix='message'):
+def get_msg_type(data, prefix='message'):
     if 'photo' in data[prefix]:
         return 'photo'
     elif 'video' in data[prefix]:
@@ -77,7 +76,7 @@ def getmsgtype(data, prefix='message'):
         return 'Unknown Type'
 
 
-def getfileid(data, prefix='message'):
+def get_file_id(data, prefix='message'):
     if 'photo' in data[prefix]:
         fileid = data[prefix]['photo'][-1]['file_id']
         return fileid
@@ -94,37 +93,37 @@ def getfileid(data, prefix='message'):
         return 'Unknown Type'
 
 
-def getusrinfo(data, info='id'):
+def get_user_info(data, info='id'):
     """info: id, first, last, username, language, bot"""
     if info == 'id':
-        usrinfo = data['message']['from']['id']
+        user_info = data['message']['from']['id']
     elif 'first' in info:
-        usrinfo = data['message']['from']['first_name']
+        user_info = data['message']['from']['first_name']
     elif 'last' in info:
-        usrinfo = data['message']['from'].get('last_name', 'No last name')
+        user_info = data['message']['from'].get('last_name', 'No last name')
     elif info == 'username':
-        usrinfo = data['message']['from'].get('username', 'No username')
+        user_info = data['message']['from'].get('username', 'No username')
     elif 'lang' in info:
-        usrinfo = data['message']['from'].get('language_code', 'zh-Hans')
+        user_info = data['message']['from'].get('language_code', 'zh-Hans')
     elif info == 'bot':
-        usrinfo = data['message']['from']['is_bot']
+        user_info = data['message']['from']['is_bot']
     else:
-        usrinfo = 'Unknown argument'
-    return usrinfo
+        user_info = 'Unknown argument'
+    return user_info
 
 
-def getgrpadmin(chatid):
-    if type(chatid) == dict:
-        chatid = getchatid(chatid)
+def get_group_admin(chat_id):
+    if type(chat_id) == dict:
+        chat_id = get_chat_id(chat_id)
     answer = {
-        "chat_id": chatid,
+        "chat_id": chat_id,
     }
-    msgurl = botapi + 'getChatAdministrators'
-    orresp = requests.post(msgurl, json=answer)
-    res = orresp.json()
+    msg_url = bot_api + 'getChatAdministrators'
+    ori_resp = requests.post(msg_url, json=answer)
+    res = ori_resp.json()
     adm = []
-    for admusr in res['result']:
-        adm.append(admusr['user']['id'])
+    for admin_user in res['result']:
+        adm.append(admin_user['user']['id'])
     resp = adm
     return resp
 
@@ -132,136 +131,136 @@ def getgrpadmin(chatid):
 # SEND ITEM
 
 
-def sendmsg(chatid, msg, replyto=False, parse=False):
+def send_msg(chat_id, msg, reply_to=False, parse=False):
     """
     sendmsg(chatid, msg, replyto=False, parse=False)
     parse = 'Markdown'
     """
     # should be json which includes at least `chat_id` and `text`
     answer = {
-        "chat_id": chatid,
+        "chat_id": chat_id,
         "text": msg,
     }
-    if replyto:
-        answer['reply_to_message_id'] = replyto
+    if reply_to:
+        answer['reply_to_message_id'] = reply_to
     if parse:
         answer['parse_mode'] = parse
-    msgurl = botapi + 'sendMessage'
-    orresp = requests.post(msgurl, json=answer)
-    resp = orresp.json()
+    msg_url = bot_api + 'sendMessage'
+    ori_resp = requests.post(msg_url, json=answer)
+    resp = ori_resp.json()
     return resp
 
 
-def sendsticker(chatid, fileid, replyto=False):
+def send_sticker(chat_id, fileid, reply_to=False):
     """sendsticker(chatid, fileid, replyto=False)"""
     # should be json which includes at least `chat_id` and `text`
     answer = {
-        "chat_id": chatid,
+        "chat_id": chat_id,
         "sticker": fileid,
     }
-    if replyto:
-        answer['reply_to_message_id'] = replyto
-    msgurl = botapi + 'sendSticker'
+    if reply_to:
+        answer['reply_to_message_id'] = reply_to
+    msgurl = bot_api + 'sendSticker'
     orresp = requests.post(msgurl, json=answer)
     resp = orresp.json()
     return resp
 
 
-def sendfile(chatid, file, replyto=False, upload=False):
+def send_file(chat_id, file, reply_to=False, upload=False):
     """sendfile(chatid, file, replyto=False, upload=False)"""
     if upload:
         with open(file, 'rb') as fl:
             sending = {'document': fl}
-            if replyto:
-                newurl = botapi + 'sendDocument?chat_id=' + str(chatid) + '&' + str(replyto)
+            if reply_to:
+                newurl = bot_api + 'sendDocument?chat_id=' + str(chat_id) + '&' + str(reply_to)
             else:
-                newurl = botapi + 'sendDocument?chat_id=' + str(chatid)
+                newurl = bot_api + 'sendDocument?chat_id=' + str(chat_id)
             orresp = requests.post(newurl, files=sending)
             resp = orresp.json()
         return resp
     else:
         answer = {
-            "chat_id": chatid,
+            "chat_id": chat_id,
             "document": file,
         }
-        if replyto:
-            answer['reply_to_message_id'] = replyto
-        msgurl = botapi + 'sendDocument'
+        if reply_to:
+            answer['reply_to_message_id'] = reply_to
+        msgurl = bot_api + 'sendDocument'
         orresp = requests.post(msgurl, json=answer)
         resp = orresp.json()
         return resp
 
 
-def sendphoto(chatid, photo, replyto=False, upload=False):
+def send_photo(chat_id, photo, reply_to=False, upload=False):
     """sendphoto(chatid, photo, replyto=False, upload=False)"""
     if upload:
         with open(photo, 'rb') as fl:
             sending = {'photo': fl}
-            if replyto:
-                newurl = botapi + 'sendPhoto?chat_id=' + str(chatid) + '&' + str(replyto)
+            if reply_to:
+                newurl = bot_api + 'sendPhoto?chat_id=' + str(chat_id) + '&' + str(reply_to)
             else:
-                newurl = botapi + 'sendPhoto?chat_id=' + str(chatid)
+                newurl = bot_api + 'sendPhoto?chat_id=' + str(chat_id)
             orresp = requests.post(newurl, files=sending)
             resp = orresp.json()
             return resp
     else:
         answer = {
-            "chat_id": chatid,
+            "chat_id": chat_id,
             "photo": photo,
         }
-        if replyto:
-            answer['reply_to_message_id'] = replyto
-        msgurl = botapi + 'sendPhoto'
+        if reply_to:
+            answer['reply_to_message_id'] = reply_to
+        msgurl = bot_api + 'sendPhoto'
         orresp = requests.post(msgurl, json=answer)
         resp = orresp.json()
         return resp
 
 
-def sendvideo(chatid, video, replyto=False, upload=False):
+def send_video(chat_id, video, reply_to=False, upload=False):
     """sendvideo(chatid, video, replyto=False, upload=False)"""
     if upload:
         with open(video, 'rb') as fl:
             sending = {'video': fl}
-            if replyto:
-                newurl = botapi + 'sendVideo?chat_id=' + str(chatid) + '&' + str(replyto)
+            if reply_to:
+                newurl = bot_api + 'sendVideo?chat_id=' + str(chat_id) + '&' + str(reply_to)
             else:
-                newurl = botapi + 'sendVideo?chat_id=' + str(chatid)
+                newurl = bot_api + 'sendVideo?chat_id=' + str(chat_id)
             orresp = requests.post(newurl, files=sending)
             resp = orresp.json()
             return resp
     else:
         answer = {
-            "chat_id": chatid,
+            "chat_id": chat_id,
             "video": video,
         }
-        if replyto:
-            answer['reply_to_message_id'] = replyto
-        msgurl = botapi + 'sendVideo'
+        if reply_to:
+            answer['reply_to_message_id'] = reply_to
+        msgurl = bot_api + 'sendVideo'
         orresp = requests.post(msgurl, json=answer)
         resp = orresp.json()
         return resp
 
 
-def sendgif(chatid, gif, replyto=False, upload=False):
+def send_gif(chat_id, gif, reply_to=False, upload=False):
     """sendgif(chatid, video, replyto=False, upload=False)"""
     if upload:
         with open(gif, 'rb') as fl:
             sending = {'animation': fl}
-            if replyto:
-                newurl = botapi + 'sendAnimation?chat_id=' + str(chatid) + '&' + str(replyto)
+            if reply_to:
+                newurl = bot_api + 'sendAnimation?chat_id=' + str(chat_id) + '&' + str(reply_to)
             else:
-                newurl = botapi + 'sendAnimation?chat_id=' + str(chatid)
+                newurl = bot_api + 'sendAnimation?chat_id=' + str(chat_id)
             orresp = requests.post(newurl, files=sending)
             resp = orresp.json()
             return resp
     else:
         answer = {
-            "chat_id": chatid,
+            "chat_id": chat_id,
             "animation": gif,
         }
-        if replyto:
-            answer['reply_to_message_id'] = replyto
-        msgurl = botapi + 'sendAnimation'
+        if reply_to:
+            answer['reply_to_message_id'] = reply_to
+        msgurl = bot_api + 'sendAnimation'
         orresp = requests.post(msgurl, json=answer)
         resp = orresp.json()
         return resp
@@ -270,51 +269,25 @@ def sendgif(chatid, gif, replyto=False, upload=False):
 # MESSAGE OPERATION
 
 
-def editmsg(chatid, msgid, text):
+def edit_msg(chat_id, msg_id, text):
     """editmessage(chatid, msgid, text)"""
     answer = {
-        "chat_id": chatid,
-        "message_id": msgid,
+        "chat_id": chat_id,
+        "message_id": msg_id,
         "text": text,
     }
-    msgurl = botapi + 'editMessageText'
+    msgurl = bot_api + 'editMessageText'
     orresp = requests.post(msgurl, json=answer)
     resp = orresp.json()
     return resp
 
 
-def delmsg(chatid, msgid):
+def del_msg(chat_id, msg_id):
     answer = {
-        "chat_id": chatid,
-        "message_id": msgid,
+        "chat_id": chat_id,
+        "message_id": msg_id,
     }
-    msgurl = botapi + 'deleteMessage'
+    msgurl = bot_api + 'deleteMessage'
     orresp = requests.post(msgurl, json=answer)
     resp = orresp.json()
     return resp
-
-# LOCALIZATION
-
-
-"""
-def codetolang(langcode):
-    for lang in langlist:
-        if lang in langcode:  # if 'Hans' in 'zh-Hans'
-            code = langdict[lang]
-            return code
-    return 'Hans'
-
-
-def localization(multilang, langcode):
-    # localization(dict=multilang, langcode)
-    if type(multilang) == dict:
-        code = codetolang(langcode)
-        localize = multilang.get(code, 'Hans')
-        return localize
-    elif type(multilang) == str:
-        return multilang
-    else:
-        # Dangerous
-        # raise TypeError
-        return 'TypeError'
-"""

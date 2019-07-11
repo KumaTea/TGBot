@@ -1,5 +1,5 @@
 from flask import Flask, request as flaskreq
-from msgtype import msgtype
+from msgType import msg_type
 
 app = Flask(__name__)
 
@@ -8,7 +8,7 @@ app = Flask(__name__)
 def main():
     data = flaskreq.json
     # print(data)
-    resp = msgtype(data)
+    resp = msg_type(data)
     # logcsv(data, resp)
     return '', 200
 

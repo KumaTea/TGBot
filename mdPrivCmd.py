@@ -1,22 +1,22 @@
-from dataio import getchatid, getmsg, sendmsg
-from mddebug import mddebug
-import botinfo
+from dataIO import get_chat_id, get_msg, send_msg
+from mdDebug import md_debug
+import botInfo
 from starting import getadminid
-from mdfunc import randomjoke, sysujoke
+from mdFunc import random_joke, sysu_joke
 
 
-def mdprivcmd(data):
-    chatid = getchatid(data)
-    command = getmsg(data)
+def md_priv_cmd(data):
+    chatid = get_chat_id(data)
+    command = get_msg(data)
 
     if command.startswith('/start'):
         hellomsg = 'Thank you for using Kumatea bot!\nYou may see commands sending \"/help\".'
-        resp = sendmsg(chatid, hellomsg)
+        resp = send_msg(chatid, hellomsg)
         return resp
 
     elif command.startswith('/help'):
-        helpmsg = '{}\n\nI\'am in my {} ({}) version.'.format(botinfo.cmds, botinfo.version, botinfo.channel)
-        resp = sendmsg(chatid, helpmsg)
+        helpmsg = '{}\n\nI\'am in my {} ({}) version.'.format(botInfo.help_msg, botInfo.version, botInfo.channel)
+        resp = send_msg(chatid, helpmsg)
         return resp
 
     elif command.startswith(('/fw', '/forward')):
@@ -27,50 +27,50 @@ def mdprivcmd(data):
         okmsg = 'Message successfully sent.'
         errmsg = 'You haven\'t type in your message!'
         if cont == -1:
-            resp = sendmsg(chatid, errmsg)
+            resp = send_msg(chatid, errmsg)
             return resp
         else:
             adminid = getadminid()
-            sendmsg(adminid[0], fwmsg)
-            resp = sendmsg(chatid, okmsg)
+            send_msg(adminid[0], fwmsg)
+            resp = send_msg(chatid, okmsg)
             return resp
 
     elif command.startswith(('/rp', '/repeat')):
         cont = command.find(' ')
         rptext = command[cont:]
         if cont == -1:
-            resp = sendmsg(chatid, command)
+            resp = send_msg(chatid, command)
             return resp
         else:
-            resp = sendmsg(chatid, rptext)
+            resp = send_msg(chatid, rptext)
             return resp
 
     elif command.startswith(('/joke', '/soviet')):
-        joke = randomjoke()
-        resp = sendmsg(chatid, joke)
+        joke = random_joke()
+        resp = send_msg(chatid, joke)
         return resp
 
     elif command.startswith(('/sysu', '/中', '/双鸭山')):
-        joke = sysujoke()
-        resp = sendmsg(chatid, joke)
+        joke = sysu_joke()
+        resp = send_msg(chatid, joke)
         return resp
 
     elif command.startswith('/del'):
         helpmsg = 'This command is not available in private chats. Try it in groups!'
-        resp = sendmsg(chatid, helpmsg)
+        resp = send_msg(chatid, helpmsg)
         return resp
 
     elif command.startswith('/debug'):
         cont = command.find(' ')
         if cont == -1:
-            resp = mddebug(data)
+            resp = md_debug(data)
         else:
-            resp = mddebug(data, True)
+            resp = md_debug(data, True)
         return resp
 
     else:
         ukmsg = 'I can\'t understand your command. You may check the /help list.'
-        resp = sendmsg(chatid, ukmsg)
+        resp = send_msg(chatid, ukmsg)
         return resp
 
     """
