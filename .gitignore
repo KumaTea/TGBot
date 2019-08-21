@@ -5,3 +5,4 @@ joke
 botdb.py
 app.yaml
 .gcloudignore
+token*

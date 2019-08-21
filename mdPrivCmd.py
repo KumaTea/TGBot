@@ -1,25 +1,25 @@
-from dataIO import get_chat_id, get_msg, send_msg
 from mdDebug import md_debug
 import botInfo
 from starting import getadminid
 from mdFunc import random_joke, sysu_joke
+from botSession import bot
 
 
-def md_priv_cmd(data):
-    chatid = get_chat_id(data)
-    command = get_msg(data)
+def priv_cmd(data):
+    chatid = bot.get(data).chat('id')
+    command = bot.get(data).message('text')[1:]
 
-    if command.startswith('/start'):
-        hellomsg = 'Thank you for using Kumatea bot!\nYou may see commands sending \"/help\".'
-        resp = send_msg(chatid, hellomsg)
+    if command.startswith('start'):
+        hellomsg = 'Thank you for using KumaTea bot!\nYou may see commands sending \"/help\".'
+        resp = bot.send(chatid).message(hellomsg)
         return resp
 
-    elif command.startswith('/help'):
+    elif command.startswith('help'):
         help_msg = f'{botInfo.help_msg}\n\nI\'am in my {botInfo.version} ({botInfo.channel}) version.'
-        resp = send_msg(chatid, help_msg)
+        resp = bot.send(chatid).message(help_msg)
         return resp
 
-    elif command.startswith(('/fw', '/forward')):
+    elif command.startswith(('fw', 'forward')):
         cont = command.find(' ')
         lstnm = data['message']['from'].get('last_name', '')
         usrnm = data['message']['from'].get('username', 'No username')
@@ -27,50 +27,44 @@ def md_priv_cmd(data):
         okmsg = 'Message successfully sent.'
         errmsg = 'You haven\'t type in your message!'
         if cont == -1:
-            resp = send_msg(chatid, errmsg)
-            return resp
+            resp = bot.send(chatid).message(errmsg)
         else:
             adminid = getadminid()
-            send_msg(adminid[0], fwmsg)
-            resp = send_msg(chatid, okmsg)
-            return resp
+            bot.send(adminid[0]).message(fwmsg)
+            resp = bot.send(chatid).message(okmsg)
+        return resp
 
-    elif command.startswith(('/rp', '/repeat')):
+    elif command.startswith(('rp', 'repeat')):
         cont = command.find(' ')
         rptext = command[cont:]
         if cont == -1:
-            resp = send_msg(chatid, command)
-            return resp
+            resp = bot.send(chatid).message(command)
         else:
-            resp = send_msg(chatid, rptext)
-            return resp
+            resp = bot.send(chatid).message(rptext)
+        return resp
 
-    elif command.startswith(('/joke', '/soviet')):
+    elif command.startswith(('joke', 'soviet')):
         joke = random_joke()
-        resp = send_msg(chatid, joke)
+        resp = bot.send(chatid).message(joke)
         return resp
 
-    elif command.startswith(('/sysu', '/中', '/双鸭山')):
+    elif command.startswith(('sysu', '中', '双鸭山')):
         joke = sysu_joke()
-        resp = send_msg(chatid, joke)
+        resp = bot.send(chatid).message(joke)
         return resp
 
-    elif command.startswith('/del'):
+    elif command.startswith('del'):
         help_msg = 'This command is not available in private chats. Try it in groups!'
-        resp = send_msg(chatid, help_msg)
+        resp = bot.send(chatid).message(help_msg)
         return resp
 
-    elif command.startswith('/debug'):
-        cont = command.find(' ')
-        if cont == -1:
-            resp = md_debug(data)
-        else:
-            resp = md_debug(data, True)
+    elif command.startswith('debug'):
+        resp = md_debug(data)
         return resp
 
     else:
         ukmsg = 'I can\'t understand your command. You may check the /help list.'
-        resp = send_msg(chatid, ukmsg)
+        resp = bot.send(chatid).message(ukmsg)
         return resp
 
     """

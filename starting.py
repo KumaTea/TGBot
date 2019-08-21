@@ -36,5 +36,13 @@ def getadminid():
         with open('adminid.txt', 'r') as admid:
             adminid = list(map(int, admid.readlines()))
     else:
-        adminid = [100000000]  # not set!
+        adminid = [0]  # not set!
     return adminid
+
+
+def set_proxy(ip='127.0.0.1', port='1080', protocol='http'):
+    proxy = f'{protocol}://{ip}:{port}'
+    os.environ['http_proxy'] = proxy
+    os.environ['HTTP_PROXY'] = proxy
+    os.environ['https_proxy'] = proxy
+    os.environ['HTTPS_PROXY'] = proxy
