@@ -81,6 +81,8 @@ def group_cmd(data):
                     delinfoid = bot.get(delinfo).message('id')
                     deldel = Timer(60, bot.delete(chat_id).message, [delinfoid])
                     deldel.start()
+                else:
+                    resp = False
         return resp
 
     elif command.startswith('debug'):
