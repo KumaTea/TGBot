@@ -1,49 +1,55 @@
-from dataIO import get_chat_id, get_file_id, get_msg, send_msg  # get_msg_id, sendsticker, sendfile, sendphoto, sendvideo
-from mdPrivCmd import md_priv_cmd
+from mdPrivCmd import priv_cmd
+from botSession import bot
 
 
-def priv_text(data):
-    msg = get_msg(data)
-    if msg.startswith('/'):
-        resp = md_priv_cmd(data)
+class Private:
+    
+    def __init__(self, data):
+        self.data = data
+        self.chat_id = bot.get(data).chat('id')
+
+    def text(self, data=None):
+        if not data:
+            data = self.data
+        msg = bot.get(data).message('text')
+        if msg.startswith('/'):
+            resp = priv_cmd(data)
+            return resp
+        else:
+            resp = bot.send(self.chat_id).message(msg)
+            return resp
+
+    def sticker(self, data=None):
+        if not data:
+            data = self.data
+        sticker = bot.get(data).file()(data)
+        resp = bot.send(self.chat_id).message(sticker)
         return resp
-    else:
-        chatid = get_chat_id(data)
-        resp = send_msg(chatid, msg)
+
+    def photo(self, data=None):
+        if not data:
+            data = self.data
+        photo = bot.get(data).file()(data)
+        resp = bot.send(self.chat_id).message(photo)
         return resp
 
+    def video(self, data=None):
+        if not data:
+            data = self.data
+        video = bot.get(data).file()(data)
+        resp = bot.send(self.chat_id).message(video)
+        return resp
 
-def priv_sticker(data):
-    chatid = get_chat_id(data)
-    sticker = get_file_id(data)
-    resp = send_msg(chatid, sticker)
-    return resp
+    def file(self, data=None):
+        if not data:
+            data = self.data
+        file = bot.get(data).file()(data)
+        resp = bot.send(self.chat_id).message(file)
+        return resp
 
-
-def priv_photo(data):
-    chatid = get_chat_id(data)
-    photo = get_file_id(data)
-    resp = send_msg(chatid, photo)
-    return resp
-
-
-def priv_video(data):
-    chatid = get_chat_id(data)
-    video = get_file_id(data)
-    resp = send_msg(chatid, video)
-    return resp
-
-
-def priv_file(data):
-    chatid = get_chat_id(data)
-    file = get_file_id(data)
-    resp = send_msg(chatid, file)
-    return resp
-
-
-def priv_gif(data):
-    chatid = get_chat_id(data)
-    file = get_file_id(data)
-    resp = send_msg(chatid, file)
-    return resp
-
+    def gif(self, data=None):
+        if not data:
+            data = self.data
+        file = bot.get(data).file()(data)
+        resp = bot.send(self.chat_id).message(file)
+        return resp

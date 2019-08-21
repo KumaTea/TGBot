@@ -1,12 +1,12 @@
 # Means unknown type
 import json
-from dataIO import get_chat_id, send_msg
+from botSession import bot
 
 
 def md_unknown(data):
-    chatid = get_chat_id(data)
-    rectext = 'I don\'t know what I\'ve received!'
-    send_msg(chatid, rectext)
+    chat_id = bot.get(data).chat('id')
+    rec_text = 'I don\'t know what I\'ve received!'
+    bot.send(chat_id).message(rec_text)
     uktpmsg = 'Unknown message received.\n' + json.dumps(data)
-    resp = send_msg(345060487, uktpmsg)
+    resp = bot.send(345060487).message(uktpmsg)
     return resp

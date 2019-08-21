@@ -1,63 +1,55 @@
-from dataIO import get_chat_id
-from mdGroup import group_new_member, group_text, group_file, group_photo, group_sticker, group_video, group_gif
-from mdPriv import priv_text, priv_file, priv_photo, priv_sticker, priv_video, priv_gif
+from botSession import bot
+from mdGroup import Group
+from mdPriv import Private
 from mdUnknown import md_unknown
 
 
 def msg_type(data):
-    chatid = get_chat_id(data)
-    if chatid < 0:
-        if 'message' in data:
-            if 'new_chat_member' in data['message']:
-                resp = group_new_member(data)
-            elif 'text' in data['message']:
-                resp = group_text(data)
-            elif 'sticker' in data['message']:
-                resp = group_sticker(data)
-            elif 'photo' in data['message']:
-                resp = group_photo(data)
-            elif 'video' in data['message']:
-                resp = group_video(data)
-            elif 'animation' in data['message']:
-                resp = group_gif(data)
-            elif 'document' in data['message']:
-                resp = group_file(data)
-            elif 'edited_message' in data:
-                resp = 'ignore edited message.'
-            else:
-                resp = 'Unknown message.'
-            return resp
-        elif 'channel_post' or 'edited_channel_post' in data:
-            return 'Channel post'
-        elif 'left_chat_member' in data:
-            return 'Left group'
+    chat_id = bot.get(data).chat('id')
+    message_type = bot.get(data).message('type')
 
-        return 'Unknown group reply'
+    if chat_id < 0:
+        grp = Group(data)
+        if 'new' in message_type:
+            resp = grp.new_member()
+        elif 'text' in message_type:
+            resp = grp.text()
+        elif 'sticker' in message_type:
+            resp = grp.sticker()
+        elif 'photo' in message_type:
+            resp = grp.photo()
+        elif 'video' in message_type:
+            resp = grp.video()
+        elif 'animation' in message_type:
+            resp = grp.gif()
+        elif 'document' in message_type:
+            resp = grp.file()
+        elif 'edited message' in data:
+            resp = message_type
+        else:
+            resp = message_type
 
-    elif chatid == 0:
-        return 'Can\'t get chatid.'
+    elif chat_id == 0:
+        resp = 'Can\'t get chat id.'
 
     else:
-        if 'message' in data:
-            if 'text' in data['message']:
-                resp = priv_text(data)
-            elif 'sticker' in data['message']:
-                resp = priv_sticker(data)
-            elif 'photo' in data['message']:
-                resp = priv_photo(data)
-            elif 'video' in data['message']:
-                resp = priv_video(data)
-            elif 'animation' in data['message']:
-                resp = priv_gif(data)
-            elif 'document' in data['message']:
-                resp = priv_file(data)
-            elif 'sticker' in data['message']:
-                resp = priv_sticker(data)
-            else:
-                resp = 'Unknown message.'
-            return resp
-        elif 'edited_message' in data:
-            return 'ignore edited message.'
+        priv = Private(data)
+        if 'text' in message_type:
+            resp = priv.text()
+        elif 'sticker' in message_type:
+            resp = priv.sticker()
+        elif 'photo' in message_type:
+            resp = priv.photo()
+        elif 'video' in message_type:
+            resp = priv.video()
+        elif 'animation' in message_type:
+            resp = priv.gif()
+        elif 'document' in message_type:
+            resp = priv.file()
+        else:
+            resp = message_type
 
+    if 'undefined' in message_type:
         resp = md_unknown(data)
-        return resp
+
+    return resp
