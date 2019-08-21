@@ -6,3 +6,4 @@ botdb.py
 app.yaml
 .gcloudignore
 token*
+__pycache__
