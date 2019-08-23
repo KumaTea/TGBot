@@ -22,34 +22,34 @@ class Private:
     def sticker(self, data=None):
         if not data:
             data = self.data
-        sticker = bot.get(data).file()(data)
+        sticker = bot.get(data).file()
         resp = bot.send(self.chat_id).message(sticker)
         return resp
 
     def photo(self, data=None):
         if not data:
             data = self.data
-        photo = bot.get(data).file()(data)
+        photo = bot.get(data).file()
         resp = bot.send(self.chat_id).message(photo)
         return resp
 
     def video(self, data=None):
         if not data:
             data = self.data
-        video = bot.get(data).file()(data)
+        video = bot.get(data).file()
         resp = bot.send(self.chat_id).message(video)
         return resp
 
     def file(self, data=None):
         if not data:
             data = self.data
-        file = bot.get(data).file()(data)
+        file = bot.get(data).file()
         resp = bot.send(self.chat_id).message(file)
         return resp
 
     def gif(self, data=None):
         if not data:
             data = self.data
-        file = bot.get(data).file()(data)
+        file = bot.get(data).file()
         resp = bot.send(self.chat_id).message(file)
         return resp
