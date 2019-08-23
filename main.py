@@ -1,9 +1,9 @@
 from flask import Flask, request as flask_req
 from msgType import msg_type
-from starting import set_proxy
+# from starting import set_proxy
 
 app = Flask(__name__)
-set_proxy()
+# set_proxy()
 
 
 @app.route('/', methods=['POST'])
