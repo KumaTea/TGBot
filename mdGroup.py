@@ -19,7 +19,7 @@ class Group:
                 if welcome_msg[self.chat_id].get('message') is not None:
                     resp = bot.send(self.chat_id).message(welcome_msg[self.chat_id]['message'])
                 if welcome_msg[self.chat_id].get('sticker') is not None:
-                    resp = bot.send(self.chat_id).sticker(welcome_msg[self.chat_id]['message'])
+                    resp = bot.send(self.chat_id).sticker(welcome_msg[self.chat_id]['sticker'])
             else:
                 resp = 'Not familiar using default'
             return resp
