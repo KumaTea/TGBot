@@ -1,7 +1,6 @@
 from mdDebug import md_debug
 import botInfo
 from starting import getadminid
-from mdFunc import random_joke, sysu_joke
 from botSession import bot
 
 
@@ -15,7 +14,7 @@ def priv_cmd(data):
         return resp
 
     elif command.startswith('help'):
-        help_msg = f'{botInfo.help_msg}\n\nI\'am in my {botInfo.version} ({botInfo.channel}) version.'
+        help_msg = f'{botInfo.help_msg}\n\nI\'m in my {botInfo.version} ({botInfo.channel}) version.'
         resp = bot.send(chatid).message(help_msg)
         return resp
 
@@ -43,16 +42,6 @@ def priv_cmd(data):
             resp = bot.send(chatid).message(rptext)
         return resp
 
-    elif command.startswith(('joke', 'soviet')):
-        joke = random_joke()
-        resp = bot.send(chatid).message(joke)
-        return resp
-
-    elif command.startswith(('sysu', '中', '双鸭山')):
-        joke = sysu_joke()
-        resp = bot.send(chatid).message(joke)
-        return resp
-
     elif command.startswith('del'):
         help_msg = 'This command is not available in private chats. Try it in groups!'
         resp = bot.send(chatid).message(help_msg)
@@ -66,18 +55,3 @@ def priv_cmd(data):
         ukmsg = 'I can\'t understand your command. You may check the /help list.'
         resp = bot.send(chatid).message(ukmsg)
         return resp
-
-    """
-        elif command.startswith('/stop') or command.startswith('/terminate'):
-        adminid = getadminid()
-        if chatid == adminid:
-            mdexit()
-            return 'Exiting'
-        else:
-            if chatid < 0:
-                return 'Deny in group'
-            else:
-                denytext = 'You are not administrator and can\'t terminate me yet. However, you may use /fw to report problems and bugs to administrators.'
-                resp = sendmsg(chatid, denytext)
-                return resp
-    """
