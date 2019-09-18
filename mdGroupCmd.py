@@ -1,5 +1,4 @@
 from mdDebug import md_debug
-from mdFunc import random_joke, sysu_joke
 from threading import Timer
 from botInfo import self_id
 from starting import getadminid
@@ -38,19 +37,6 @@ def group_cmd(data):
                         resp = bot.send(chat_id).file(fileid, reply_to=msg_id)
         else:
             resp = bot.send(chat_id).message(rptext, msg_id)
-        return resp
-
-    elif command.startswith(('sysu', '中', '双鸭山')):
-        joke = sysu_joke()
-        resp = bot.send(chat_id).message(joke, msg_id)
-        return resp
-
-    elif command.startswith(('joke', 'soviet')):
-        joke = random_joke()
-        resp = bot.send(chat_id).message(joke, msg_id)
-        jokeid = bot.get(resp).message('id')
-        deljoke = Timer(3600, bot.edit(chat_id, jokeid).message, ['笑话已过期！请使用 /joke 再来一条。'])
-        deljoke.start()
         return resp
 
     elif command.startswith('del'):
