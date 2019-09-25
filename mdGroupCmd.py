@@ -35,6 +35,8 @@ def group_cmd(data):
                         resp = bot.send(chat_id).sticker(fileid, reply_to=msg_id)
                     elif replytype == 'file':
                         resp = bot.send(chat_id).file(fileid, reply_to=msg_id)
+                    else:
+                        resp = 'undefined type'
         else:
             resp = bot.send(chat_id).message(rptext, msg_id)
         return resp

@@ -25,6 +25,8 @@ def msg_type(data):
                 resp = grp.gif()
             elif 'document' in message_type:
                 resp = grp.file()
+            else:
+                resp = message_type
         else:
             resp = message_type
 
