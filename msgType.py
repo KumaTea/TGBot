@@ -9,23 +9,22 @@ def msg_type(data):
     message_type = bot.get(data).message('type')
 
     if chat_id < 0:
-        grp = Group(data)
-        if 'new' in message_type:
-            resp = grp.new_member()
-        elif 'text' in message_type:
-            resp = grp.text()
-        elif 'sticker' in message_type:
-            resp = grp.sticker()
-        elif 'photo' in message_type:
-            resp = grp.photo()
-        elif 'video' in message_type:
-            resp = grp.video()
-        elif 'animation' in message_type:
-            resp = grp.gif()
-        elif 'document' in message_type:
-            resp = grp.file()
-        elif 'edited message' in data:
-            resp = message_type
+        if 'message' in data:
+            grp = Group(data)
+            if 'new' in message_type:
+                resp = grp.new_member()
+            elif 'text' in message_type:
+                resp = grp.text()
+            elif 'sticker' in message_type:
+                resp = grp.sticker()
+            elif 'photo' in message_type:
+                resp = grp.photo()
+            elif 'video' in message_type:
+                resp = grp.video()
+            elif 'animation' in message_type:
+                resp = grp.gif()
+            elif 'document' in message_type:
+                resp = grp.file()
         else:
             resp = message_type
 
