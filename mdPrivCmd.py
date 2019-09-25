@@ -14,7 +14,13 @@ def priv_cmd(data):
         return resp
 
     elif command.startswith('help'):
-        help_msg = f'{botInfo.help_msg}\n\nI\'m in my {botInfo.version} ({botInfo.channel}) version.'
+        try:
+            from tgapi import __version__
+            ver = __version__
+            ver_info = f'using tgapi v{ver}'
+        except ImportError:
+            ver_info = 'using a deprecated version of tgapi'
+        help_msg = f'{botInfo.help_msg}\n\nI\'m in my {botInfo.version} ({botInfo.channel}) version, {ver_info}.'
         resp = bot.send(chatid).message(help_msg)
         return resp
 
