@@ -1,3 +1,3 @@
 requests
 flask
-tgapi>=0.3.2.8.1
+tgapi>=0.3.2.8.2
