@@ -46,6 +46,8 @@ def msg_type(data):
             resp = priv.gif()
         elif 'document' in message_type:
             resp = priv.file()
+        elif 'edited message' in data:
+            resp = message_type
         else:
             resp = message_type
 
