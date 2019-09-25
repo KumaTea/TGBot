@@ -51,7 +51,7 @@ def msg_type(data):
         else:
             resp = message_type
 
-    if 'undefined' in message_type:
+    if chat_id > 0 and 'undefined' in message_type:
         resp = md_unknown(data)
 
     return resp
