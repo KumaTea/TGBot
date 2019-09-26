@@ -48,11 +48,6 @@ def priv_cmd(data):
             resp = bot.send(chatid).message(rptext)
         return resp
 
-    elif command.startswith('del'):
-        help_msg = 'This command is not available in private chats. Try it in groups!'
-        resp = bot.send(chatid).message(help_msg)
-        return resp
-
     elif command.startswith('debug'):
         resp = md_debug(data)
         return resp

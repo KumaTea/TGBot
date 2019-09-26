@@ -47,14 +47,15 @@ def group_cmd(data):
             return 'Not reply'
         else:
             to_whom = bot.get(data).reply('user')
-            grp_admin_list = bot.get(data).group_admin(chat_id)
+            grp_admin_list = bot.query(chat_id).group_admin()
             user_id = bot.get(data).user()
             bot_admin_list = getadminid()
             if to_whom == self_id:
                 if user_id in grp_admin_list or user_id in bot_admin_list:
                     resp = bot.delete(chat_id).message(replyid)
-                    del_info = bot.send(chat_id).message('Message deleted. This info will disappear in 30 seconds.',
-                                                         reply_to=msg_id)
+                    if self_id in grp_admin_list:
+                        bot.delete(chat_id).message(msg_id)
+                    del_info = bot.send(chat_id).message('Message deleted. This info will disappear in 30 seconds.')
                     del_info_id = bot.get(del_info).message('id')
                     del_del_info = Timer(30, bot.delete(chat_id).message, [del_info_id])
                     del_del_info.start()
@@ -62,17 +63,25 @@ def group_cmd(data):
                     resp = bot.send(chat_id).message(
                         'You are not admin of this group or bot yet. This info will disappear in 30 seconds.',
                         reply_to=msg_id)
-                    resp_id = bot.get(resp).message('id')
-                    del_del_info = Timer(60, bot.delete(chat_id).message, [resp_id])
+                    del_info_id = bot.get(resp).message('id')
+                    del_del_info = Timer(30, bot.delete(chat_id).message, [del_info_id])
                     del_del_info.start()
             else:
                 if to_whom == user_id:
-                    resp = bot.send(chat_id).message('DIY (*Delete* It Yourself)', reply_to=msg_id, parse='Markdown')
-                    resp_id = bot.get(resp).message('id')
-                    del_del_info = Timer(30, bot.delete(chat_id).message, [resp_id])
+                    if self_id in grp_admin_list:
+                        resp = bot.delete(chat_id).message(replyid)
+                        bot.delete(chat_id).message(msg_id)
+                        del_info = bot.send(chat_id).message('Message deleted. This info will disappear in 30 seconds.')
+                        del_info_id = bot.get(del_info).message('id')
+                    else:
+                        resp = bot.send(chat_id).message(
+                            'DIY (*Delete* It Yourself)', reply_to=msg_id, parse='Markdown')
+                        del_info_id = bot.get(resp).message('id')
+                    del_del_info = Timer(30, bot.delete(chat_id).message, [del_info_id])
                     del_del_info.start()
                 elif user_id in grp_admin_list and self_id in grp_admin_list:
                     resp = bot.delete(chat_id).message(replyid)
+                    bot.delete(chat_id).message(msg_id)
                     del_info = bot.send(chat_id).message('Message deleted. This info will disappear in 30 seconds.',
                                                          reply_to=msg_id)
                     del_info_id = bot.get(del_info).message('id')
