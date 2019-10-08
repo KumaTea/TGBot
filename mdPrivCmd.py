@@ -39,18 +39,24 @@ def priv_cmd(data):
             resp = bot.send(chatid).message(okmsg)
         return resp
 
-    elif command.startswith(('rp', 'repeat')):
-        cont = command.find(' ')
-        rptext = command[cont:]
-        if cont == -1:
-            resp = bot.send(chatid).message(command)
-        else:
-            resp = bot.send(chatid).message(rptext)
-        return resp
-
     elif command.startswith('debug'):
         resp = md_debug(data)
         return resp
+
+    elif command.startswith(('ping', 'delay')):
+        first_timestamp = bot.get(data).message('time')
+        second = bot.send(chatid).message('Checking delay...')
+        second_timestamp = bot.get(second).message('time')
+        second_msg_id = bot.get(second).message('id')
+        delay = second_timestamp - first_timestamp
+        if delay == 0:
+            status = 'excellent'
+        elif delay == 1:
+            status = 'good'
+        else:
+            status = 'bad'
+        result = bot.edit(chatid, second_msg_id).message(f'Delay is {delay}s.\nThe connectivity is {status}.')
+        return result
 
     else:
         ukmsg = 'I can\'t understand your command. You may check the /help list.'

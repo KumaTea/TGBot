@@ -35,9 +35,6 @@ class Group:
         resp = False
         if msg.startswith('/'):
             resp = group_cmd(data)
-        else:
-            if self.is_reply == self_id:
-                resp = bot.send(self.chat_id).message(msg, reply_to=self.msg_id)
         return resp
 
     def sticker(self, data=None):
