@@ -99,5 +99,20 @@ def group_cmd(data):
         resp = md_debug(data)
         return resp
 
+    elif command.startswith(('ping', 'delay')):
+        first_timestamp = bot.get(data).message('time')
+        second = bot.send(chat_id).message('Checking delay...', reply_to=msg_id)
+        second_timestamp = bot.get(second).message('time')
+        second_msg_id = bot.get(second).message('id')
+        delay = second_timestamp - first_timestamp
+        if delay == 0:
+            status = 'excellent'
+        elif delay == 1:
+            status = 'good'
+        else:
+            status = 'bad'
+        result = bot.edit(chat_id, second_msg_id).message(f'Delay is {delay}s.\nThe connectivity is {status}.')
+        return result
+
     else:
         return 'Pass in group'
