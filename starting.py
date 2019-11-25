@@ -1,7 +1,7 @@
 import os
 
 
-def startlog():
+def start_log():
     if not os.path.exists('log'):
         os.mkdir('log')
     else:
@@ -14,23 +14,23 @@ def startlog():
         log.write('{},{},{},{},{}\n'.format('date', 'time', 'from', 'request', 'response'))
 
 
-def setapi():
+def set_api():
     botapi = 'https://api.telegram.org/' + input(
         'Please input your bot API.\nIt should start with \"bot\", include \":\" and without \"/\".\n') + '/'
     return botapi
 
 
-def getapi():
+def get_api():
     apiex = os.path.isfile('token.txt')
     if apiex:
         with open('token.txt', 'r') as api:
             botapi = 'https://api.telegram.org/' + api.read() + '/'
     else:
-        botapi = setapi()
+        botapi = set_api()
     return botapi
 
 
-def getadminid():
+def get_admin_id():
     adminex = os.path.isfile('adminid.txt')
     if adminex:
         with open('adminid.txt', 'r') as admid:

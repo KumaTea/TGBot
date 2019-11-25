@@ -1,16 +1,17 @@
-from mdDebug import md_debug
+from Tools import md_debug, delay
 import botInfo
-from starting import getadminid
+from starting import get_admin_id
 from botSession import bot
 
 
 def priv_cmd(data):
-    chatid = bot.get(data).chat('id')
-    command = bot.get(data).message('text')[1:]
+    bot_getter = bot.get(data)
+    chat_id = bot_getter.chat('id')
+    command = bot_getter.message('text')[1:]
 
     if command.startswith('start'):
-        hellomsg = 'Thank you for using KumaTea bot!\nYou may see commands sending \"/help\".'
-        resp = bot.send(chatid).message(hellomsg)
+        hello_msg = 'Thank you for using KumaTea bot!\nYou may see commands sending \"/help\".'
+        resp = bot.send(chat_id).message(hello_msg)
         return resp
 
     elif command.startswith('help'):
@@ -21,44 +22,32 @@ def priv_cmd(data):
         except ImportError:
             ver_info = 'using a deprecated version of tgapi'
         help_msg = f'{botInfo.help_msg}\n\nI\'m in my {botInfo.version} ({botInfo.channel}) version, {ver_info}.'
-        resp = bot.send(chatid).message(help_msg)
+        resp = bot.send(chat_id).message(help_msg)
         return resp
 
     elif command.startswith(('fw', 'forward')):
         cont = command.find(' ')
-        lstnm = data['message']['from'].get('last_name', '')
-        usrnm = data['message']['from'].get('username', 'No username')
-        fwmsg = data['message']['from']['first_name'] + ' ' + lstnm + ' (@' + usrnm + ')\n\n' + command[cont:]
-        okmsg = 'Message successfully sent.'
+        lst_nm = data['message']['from'].get('last_name', '')
+        usr_nm = data['message']['from'].get('username', 'No username')
+        fw_msg = data['message']['from']['first_name'] + ' ' + lst_nm + ' (@' + usr_nm + ')\n\n' + command[cont:]
+        ok_msg = 'Message successfully sent.'
         errmsg = 'You haven\'t type in your message!'
         if cont == -1:
-            resp = bot.send(chatid).message(errmsg)
+            resp = bot.send(chat_id).message(errmsg)
         else:
-            adminid = getadminid()
-            bot.send(adminid[0]).message(fwmsg)
-            resp = bot.send(chatid).message(okmsg)
+            admin_id = get_admin_id()
+            bot.send(admin_id[0]).message(fw_msg)
+            resp = bot.send(chat_id).message(ok_msg)
         return resp
 
     elif command.startswith('debug'):
-        resp = md_debug(data)
+        resp = md_debug(chat_id, data)
         return resp
 
     elif command.startswith(('ping', 'delay')):
-        first_timestamp = bot.get(data).message('time')
-        second = bot.send(chatid).message('Checking delay...')
-        second_timestamp = bot.get(second).message('time')
-        second_msg_id = bot.get(second).message('id')
-        delay = second_timestamp - first_timestamp
-        if delay == 0:
-            status = 'excellent'
-        elif delay == 1:
-            status = 'good'
-        else:
-            status = 'bad'
-        result = bot.edit(chatid, second_msg_id).message(f'Delay is {delay}s.\nThe connectivity is {status}.')
-        return result
+        return delay(data)
 
     else:
-        ukmsg = 'I can\'t understand your command. You may check the /help list.'
-        resp = bot.send(chatid).message(ukmsg)
+        uk_msg = 'I can\'t understand your command. You may check the /help list.'
+        resp = bot.send(chat_id).message(uk_msg)
         return resp
