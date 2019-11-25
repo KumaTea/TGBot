@@ -1,8 +1,7 @@
 .idea
 token.txt
 adminid.txt
-joke
-botdb.py
+botDb.py
 app.yaml
 .gcloudignore
 token*

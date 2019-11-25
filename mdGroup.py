@@ -1,5 +1,5 @@
 from mdGroupCmd import group_cmd
-from botDb import welcome_msg
+from mdNewMember import welcome
 from botSession import bot
 from botInfo import self_id
 
@@ -8,22 +8,16 @@ class Group:
 
     def __init__(self, data):
         self.data = data
-        self.chat_id = bot.get(data).chat('id')
-        self.msg_id = bot.get(data).message('id')
-        self.is_reply = bot.get(data).reply('id')
+        bot_getter = bot.get(data)
+        self.chat_id = bot_getter.chat('id')
+        self.msg_id = bot_getter.message('id')
+        self.is_reply = bot_getter.reply('id')
 
     def new_member(self, data=None):
         if not data:
             data = self.data
         if not data['message']['new_chat_member']['is_bot']:
-            if welcome_msg.get(self.chat_id) is not None:
-                resp = 'Initialize'
-                if welcome_msg[self.chat_id].get('message') is not None:
-                    resp = bot.send(self.chat_id).message(welcome_msg[self.chat_id]['message'])
-                if welcome_msg[self.chat_id].get('sticker') is not None:
-                    resp = bot.send(self.chat_id).sticker(welcome_msg[self.chat_id]['sticker'])
-            else:
-                resp = 'Not familiar using default'
+            resp = welcome(self.chat_id, data['message']['new_chat_member']['id'], self.msg_id)
             return resp
         else:
             return 'Is bot'

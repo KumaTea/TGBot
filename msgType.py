@@ -5,8 +5,9 @@ from mdUnknown import md_unknown
 
 
 def msg_type(data):
-    chat_id = bot.get(data).chat('id')
-    message_type = bot.get(data).message('type')
+    bot_getter = bot.get(data)
+    chat_id = bot_getter.chat('id')
+    message_type = bot_getter.message('type')
 
     if chat_id < 0:
         if 'message' in data:

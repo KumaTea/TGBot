@@ -1,59 +1,60 @@
-from mdDebug import md_debug
+from Tools import md_debug, delay
 from threading import Timer
 from botInfo import self_id
-from starting import getadminid
+from starting import get_admin_id
 from botSession import bot
 
 
 def group_cmd(data):
-    chat_id = bot.get(data).chat('id')
-    command = bot.get(data).message('text')[1:]
-    msg_id = bot.get(data).message('id')
+    bot_getter = bot.get(data)
+    chat_id = bot_getter.chat('id')
+    command = bot_getter.message('text')[1:]
+    msg_id = bot_getter.message('id')
 
     if command.startswith(('rp', 'repeat')):
         cont = command.find(' ')
-        rptext = command[cont:]
+        rp_text = command[cont:]
         if cont == -1:
-            replyid = bot.get(data).reply('id')
-            if replyid == 0:
+            reply_id = bot_getter.reply('id')
+            if reply_id == 0:
                 resp = bot.send(chat_id).message(f'/{command}', msg_id)
             else:
-                replytype = bot.get(data).reply('type')
-                if replytype == 'text':
-                    first = bot.get(data).reply('first')
-                    last = bot.get(data).reply('last')
-                    replytext = bot.get(data).reply('text')
-                    rpword = first + ' ' + last + ': \n' + replytext
-                    resp = bot.send(chat_id).message(rpword, msg_id)
+                reply_type = bot_getter.reply('type')
+                if reply_type == 'text':
+                    first = bot_getter.reply('first')
+                    last = bot_getter.reply('last')
+                    reply_text = bot_getter.reply('text')
+                    rp_word = first + ' ' + last + ': \n' + reply_text
+                    resp = bot.send(chat_id).message(rp_word, msg_id)
                 else:
-                    fileid = bot.get(data).reply('file')
-                    if replytype == 'photo':
+                    fileid = bot_getter.reply('file')
+                    if reply_type == 'photo':
                         resp = bot.send(chat_id).photo(fileid, reply_to=msg_id)
-                    elif replytype == 'video':
+                    elif reply_type == 'video':
                         resp = bot.send(chat_id).video(fileid, reply_to=msg_id)
-                    elif replytype == 'sticker':
+                    elif reply_type == 'sticker':
                         resp = bot.send(chat_id).sticker(fileid, reply_to=msg_id)
-                    elif replytype == 'file':
+                    elif reply_type == 'file':
                         resp = bot.send(chat_id).file(fileid, reply_to=msg_id)
                     else:
                         resp = 'undefined type'
         else:
-            resp = bot.send(chat_id).message(rptext, msg_id)
+            resp = bot.send(chat_id).message(rp_text, msg_id)
         return resp
 
     elif command.startswith('del'):
-        replyid = bot.get(data).reply('id')
-        if replyid == 0:
+        reply_id = bot_getter.reply('id')
+        if reply_id == 0:
             return 'Not reply'
         else:
             try:
-                to_whom = bot.get(data).reply('user')
+                to_whom = bot_getter.reply('user')
                 grp_admin_list = bot.query(chat_id).group_admin()
-                user_id = bot.get(data).user()
-                bot_admin_list = getadminid()
+                user_id = bot_getter.user()
+                bot_admin_list = get_admin_id()
                 if to_whom == self_id:
                     if user_id in grp_admin_list or user_id in bot_admin_list:
-                        resp = bot.delete(chat_id).message(replyid)
+                        resp = bot.delete(chat_id).message(reply_id)
                         if self_id in grp_admin_list:
                             bot.delete(chat_id).message(msg_id)
                         del_info = bot.send(chat_id).message('Message deleted. This info will disappear in 30 seconds.')
@@ -70,7 +71,7 @@ def group_cmd(data):
                 else:
                     if to_whom == user_id:
                         if self_id in grp_admin_list:
-                            resp = bot.delete(chat_id).message(replyid)
+                            resp = bot.delete(chat_id).message(reply_id)
                             bot.delete(chat_id).message(msg_id)
                             del_info = bot.send(chat_id).message(
                                 'Message deleted. This info will disappear in 30 seconds.')
@@ -82,7 +83,7 @@ def group_cmd(data):
                         del_del_info = Timer(30, bot.delete(chat_id).message, [del_info_id])
                         del_del_info.start()
                     elif user_id in grp_admin_list and self_id in grp_admin_list:
-                        resp = bot.delete(chat_id).message(replyid)
+                        resp = bot.delete(chat_id).message(reply_id)
                         bot.delete(chat_id).message(msg_id)
                         del_info = bot.send(chat_id).message('Message deleted. This info will disappear in 30 seconds.',
                                                              reply_to=msg_id)
@@ -96,23 +97,11 @@ def group_cmd(data):
                 return False
 
     elif command.startswith('debug'):
-        resp = md_debug(data)
+        resp = md_debug(chat_id, data)
         return resp
 
     elif command.startswith(('ping', 'delay')):
-        first_timestamp = bot.get(data).message('time')
-        second = bot.send(chat_id).message('Checking delay...', reply_to=msg_id)
-        second_timestamp = bot.get(second).message('time')
-        second_msg_id = bot.get(second).message('id')
-        delay = second_timestamp - first_timestamp
-        if delay == 0:
-            status = 'excellent'
-        elif delay == 1:
-            status = 'good'
-        else:
-            status = 'bad'
-        result = bot.edit(chat_id, second_msg_id).message(f'Delay is {delay}s.\nThe connectivity is {status}.')
-        return result
+        return delay(data)
 
     else:
         return 'Pass in group'
