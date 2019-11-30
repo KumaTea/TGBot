@@ -9,9 +9,7 @@ app = Flask(__name__)
 @app.route('/', methods=['POST'])
 def main():
     data = flask_req.json
-    # print(data)
-    resp = msg_type(data)
-    # print(f'\n\n{resp}\n\n')
+    msg_type(data)
     return '', 200
 
 
