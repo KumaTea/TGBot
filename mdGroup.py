@@ -16,11 +16,20 @@ class Group:
     def new_member(self, data=None):
         if not data:
             data = self.data
-        if not data['message']['new_chat_member']['is_bot']:
-            resp = welcome(self.chat_id, data['message']['new_chat_member']['id'], self.msg_id)
-            return resp
-        else:
-            return 'Is bot'
+        if 'new_chat_member' in data['message']:
+            if not data['message']['new_chat_member']['is_bot']:
+                resp = welcome(self.chat_id, data['message']['new_chat_member'], self.msg_id)
+                return resp
+            else:
+                return 'Is bot'
+        elif 'new_chat_members' in data['message'] and type(data['message']['new_chat_members'] == dict):
+            user = None
+            for i in data['message']['new_chat_members']:
+                if not i['is_bot']:
+                    user = i
+            if user:
+                resp = welcome(self.chat_id, user, self.msg_id)
+                return resp
 
     def text(self, data=None):
         if not data:
