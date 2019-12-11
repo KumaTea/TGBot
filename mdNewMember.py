@@ -1,62 +1,64 @@
-from botSession import bot
-from localDb import welcome_msg
+from botSession import kuma
+from localDb import welcome_chat
 from botInfo import creator
 from threading import Timer
 
 
-def welcome(chat_id, user_data, system_new_mem_msg_id):
-    if chat_id in welcome_msg:
-        resp = 'Familiar'
-        user_id = user_data['id']
-        if 'message' in welcome_msg[chat_id]:
-            if '{name}' in welcome_msg[chat_id]['message']:
-                user_name = user_data['first_name']
-                if 'last_name' in user_data:
-                    user_name += ' ' + user_data['last_name']
-                user_name = f'[{user_name}](tg://user?id={user_id})'
-                new_welcome_msg = welcome_msg[chat_id]['message'].format(name=user_name)
-                message = bot.send(chat_id).message(new_welcome_msg, parse='Markdown')
+def welcome(update, context):
+    chat_id = update.message.chat_id
+    alert_id = update.message.message_id
+    bot_status = update.message.from_user.is_bot
+    if chat_id in welcome_chat and not bot_status:
+        resp = True
+        user_id = update.message.from_user.id
+        if 'message' in welcome_chat[chat_id]:
+            if '{name}' in welcome_chat[chat_id]['message']:
+                user_name = update.message.from_user.first_name
+                if update.message.from_user.last_name:
+                    user_name += ' ' + update.message.from_user.last_name
+                user_link = f'[{user_name}](tg://user?id={user_id})'
+                formatted_message = welcome_chat[chat_id]['message'].format(name=user_link)
+                welcome_message = update.message.reply_text(formatted_message, parse_mode='Markdown', quote=False)
             else:
-                message = bot.send(chat_id).message(welcome_msg[chat_id]['message'])
-            msg_id = bot.get(message).message('id')
+                welcome_message = update.message.reply_text(welcome_chat[chat_id]['message'], quote=False)
+            msg_id = welcome_message.message_id
         else:
             msg_id = None
-        if 'sticker' in welcome_msg[chat_id]:
-            sticker = bot.send(chat_id).sticker(welcome_msg[chat_id]['sticker'])
-            sticker_id = bot.get(sticker).message('id')
+        if 'sticker' in welcome_chat[chat_id]:
+            welcome_sticker = update.message.reply_sticker(welcome_chat[chat_id]['sticker'], quote=False)
+            sticker_id = welcome_sticker.message_id
         else:
             sticker_id = None
-        check = Timer(300, check_member, [chat_id, user_id, system_new_mem_msg_id, msg_id, sticker_id])
+        check = Timer(300, check_member, [chat_id, user_id, alert_id, msg_id, sticker_id])
         # Ignore PyCharm Error
         check.start()
     else:
-        resp = 'Not familiar using default'
+        resp = None
     return resp
 
 
-def check_member(chat_id, user_id, system_new_mem_msg_id, msg_id=None, sticker_id=None):
+def check_member(chat_id, user_id, alert_id, msg_id=None, sticker_id=None):
     print(f'[INFO] Starting new member checking...')
     left = False
-    try:
-        user = bot.query(chat_id).chat_member(user_id, raw=True)
-        if 'left' in user['status'] or 'kick' in user['status']:
-            left = True
-    except KeyError:
+    user = kuma.get_chat_member(chat_id, user_id)
+    user_status = user.status
+    if 'left' in user_status or 'kick' in user_status:
         left = True
 
     if left:
-        bot.delete(chat_id).message(system_new_mem_msg_id)
+        kuma.delete_message(chat_id, alert_id)
         if sticker_id:
-            bot.delete(chat_id).message(sticker_id)
+            kuma.delete_message(chat_id, sticker_id)
         if msg_id:
-            bot.edit(chat_id, msg_id).message('验证机器人已移除一位未通过验证的用户。')
+            kuma.edit_message_text('验证机器人已移除一位未通过验证的用户。', chat_id, msg_id)
         print(f'[INFO] User {user_id} status: LEFT; NOT member.')
     else:
         print(f'[INFO] User {user_id} status: IN; IS member.')
-        if 'review' in welcome_msg[chat_id]:
+        if 'review' in welcome_chat[chat_id] and welcome_chat[chat_id]['username']:
             referer = msg_id or sticker_id
-            group_username = welcome_msg[chat_id]['username']
-            bot.send(creator).message(
-                f'Please review new member of @{group_username} '
-                f'by [this link](https://t.me/{group_username}/{referer})', parse='Markdown')
-    return True
+            group_username = welcome_chat[chat_id]['username']
+            kuma.send_message(creator,
+                              f'Please review new member of @{group_username} '
+                              f'by [this link](https://t.me/{group_username}/{referer})',
+                              parse_mode='Markdown', disable_web_page_preview=True)
+    return not left

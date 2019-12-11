@@ -1,6 +1,6 @@
 .idea
 token.txt
-adminid.txt
+admin*
 localDb.py
 app.yaml
 .gcloudignore

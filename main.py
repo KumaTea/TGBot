@@ -1,18 +1,18 @@
 from flask import Flask, request as flask_req
-from msgType import msg_type
-import logging
+from botSession import kuma, dp
+from telegram import Update
+from register import register_handlers
 
 
 app = Flask(__name__)
 
-log = logging.getLogger('werkzeug')
-log.setLevel(logging.ERROR)
+register_handlers()
 
 
 @app.route('/', methods=['POST'])
 def main():
-    data = flask_req.json
-    msg_type(data)
+    update = Update.de_json(flask_req.json, kuma)
+    dp.process_update(update)
     return '', 200
 
 
