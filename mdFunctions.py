@@ -5,7 +5,7 @@ from botSession import kuma
 
 def debug(update, context):
     debug_message = update.to_dict()
-    resp = update.message.reply_text(debug_message, parse_mode='Markdown', quote=False)
+    resp = update.message.reply_text(f'`{debug_message}`', parse_mode='Markdown', quote=False)
     return resp
 
 

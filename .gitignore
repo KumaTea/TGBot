@@ -1,5 +1,4 @@
 .idea
-token.txt
 admin*
 localDb.py
 app.yaml

@@ -7,15 +7,16 @@ from threading import Timer
 def welcome(update, context):
     chat_id = update.message.chat_id
     alert_id = update.message.message_id
-    bot_status = update.message.from_user.is_bot
+    new_member = update.message.new_chat_members[0]
+    bot_status = new_member.is_bot
     if chat_id in welcome_chat and not bot_status:
         resp = True
-        user_id = update.message.from_user.id
+        user_id = new_member.id
         if 'message' in welcome_chat[chat_id]:
             if '{name}' in welcome_chat[chat_id]['message']:
-                user_name = update.message.from_user.first_name
-                if update.message.from_user.last_name:
-                    user_name += ' ' + update.message.from_user.last_name
+                user_name = new_member.first_name
+                if new_member.last_name:
+                    user_name += ' ' + new_member.last_name
                 user_link = f'[{user_name}](tg://user?id={user_id})'
                 formatted_message = welcome_chat[chat_id]['message'].format(name=user_link)
                 welcome_message = update.message.reply_text(formatted_message, parse_mode='Markdown', quote=False)
