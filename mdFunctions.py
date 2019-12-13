@@ -1,10 +1,14 @@
 import botInfo
 from datetime import datetime
 from botSession import kuma
+from botTools import trimmer, trim_key
 
 
 def debug(update, context):
     debug_message = update.to_dict()
+    if update.message.reply_to_message:
+        debug_message = debug_message['message']['reply_to_message']
+    debug_message = trim_key(trimmer(debug_message))
     resp = update.message.reply_text(f'`{debug_message}`', parse_mode='Markdown', quote=False)
     return resp
 

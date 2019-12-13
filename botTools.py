@@ -26,6 +26,33 @@ def query_token(token_id=self_id):
     return read_file(f'token_{token_id}', True)
 
 
+def trimmer(data):
+    if type(data) is dict:
+        new_data = {}
+        for key in data:
+            if data[key]:
+                new_data[key] = trimmer(data[key])
+        return new_data
+    elif type(data) is list:
+        new_data = []
+        for index in range(len(data)):
+            if data[index]:
+                new_data.append(trimmer(data[index]))
+        return new_data
+    else:
+        return data
+
+
+def trim_key(data, char='_'):
+    trim_list = []
+    for i in data:
+        if i.startswith(char):
+            trim_list.append(i)
+    for i in trim_list:
+        data.pop(i)
+    return data
+
+
 """
 def set_proxy(ip='127.0.0.1', port='1080', protocol='http'):
     proxy = f'{protocol}://{ip}:{port}'
