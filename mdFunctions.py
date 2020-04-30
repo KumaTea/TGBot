@@ -77,14 +77,16 @@ def private_help(update, context):
 def private_forward(update, context):
     command = update.message.text
     content_index = command.find(' ')
+    user = update.message.from_user
     if content_index == -1:
         resp = update.message.reply_text('You haven\'t type in your message!')
     else:
-        first = update.message.from_user.first_name
-        last = ' ' + update.message.from_user.last_name if update.message.from_user.last_name else ''
-        username = '(@' + update.message.from_user.username + ')' if update.message.from_user.username else ''
-        forward_msg = first + last + username + '\n\n' + command[content_index:]
-
+        first = user.first_name
+        last = (' ' + user.last_name) if user.last_name else ''
+        user_id = user.id
+        username = ' (' + (('@' + user.username + ', ') if user.username else '') + str(user_id) + ')'
+        forward_msg = first + last + username + '\n\n' + command[content_index+1:]
+        
         kuma.send_message(botInfo.creator, forward_msg)
         resp = update.message.reply_text('Message successfully sent.')
     return resp

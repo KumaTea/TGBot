@@ -17,6 +17,8 @@ def welcome(update, context):
                 user_name = new_member.first_name
                 if new_member.last_name:
                     user_name += ' ' + new_member.last_name
+                if len(user_name) > 12:
+                    user_name = user_name[:12]
                 user_link = f'[{user_name}](tg://user?id={user_id})'
                 formatted_message = welcome_chat[chat_id]['message'].format(name=user_link)
                 welcome_message = update.message.reply_text(formatted_message, parse_mode='Markdown', quote=False)
