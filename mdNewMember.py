@@ -32,7 +32,7 @@ def welcome(update, context):
             sticker_id = welcome_sticker.message_id
         else:
             sticker_id = None
-        check = Timer(300, check_member, [chat_id, user_id, alert_id, msg_id, sticker_id])
+        check = Timer(125, check_member, [chat_id, user_id, alert_id, msg_id, sticker_id])
         # Ignore PyCharm Error
         check.start()
     else:
@@ -57,6 +57,8 @@ def check_member(chat_id, user_id, alert_id, msg_id=None, sticker_id=None):
         print(f'[INFO] User {user_id} status: LEFT; NOT member.')
     else:
         print(f'[INFO] User {user_id} status: IN; IS member.')
+        if msg_id:
+            kuma.edit_message_text('你已经是群大佬了，快来跟萌新打个招呼吧！', chat_id, msg_id)
         if 'review' in welcome_chat[chat_id] and welcome_chat[chat_id]['username']:
             referer = msg_id or sticker_id
             group_username = welcome_chat[chat_id]['username']
