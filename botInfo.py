@@ -4,5 +4,5 @@ help_message = '/start: wake me up\n/help: display this message\n' \
 
 self_id = 781791363
 creator = 345060487
-version = '3.1.0.3'
+version = '3.1.1.0'
 channel = 'cloud'

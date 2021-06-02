@@ -17,11 +17,13 @@ def title(update, context):
     message = update.message
     text = message.text
     chat_id = message.chat.id
-    command = text.split(' ')
+    title_index = text.find(' ')
 
     promoted = False
 
-    if len(command) == 2:
+    if title_index == -1:
+        resp = update.message.reply_text(usage, parse_mode='Markdown', disable_web_page_preview=True, quote=False)
+    else:
         reply = message.reply_to_message
         if reply:
             can_promote = kuma.get_chat_member(chat_id, self_id).can_promote_members
@@ -52,7 +54,8 @@ def title(update, context):
                         except BadRequest:
                             return update.message.reply_text('权限不足，设为管理失败', quote=False)
                     try:
-                        kuma.set_chat_administrator_custom_title(chat_id, reply.from_user.id, command[1][:16])
+                        title_to_set = text[title_index+1:title_index+1+16]
+                        kuma.set_chat_administrator_custom_title(chat_id, reply.from_user.id, title_to_set)
 
                         name = reply.from_user.first_name
                         if reply.from_user.last_name:
@@ -60,7 +63,7 @@ def title(update, context):
                         has_set = '设置了'
                         if promoted:
                             has_set = '设为管理并设置了'
-                        result = f'已为 {name} {has_set} {command[1][:16]} 头衔。'
+                        result = f'已为 {name} {has_set}「{title_to_set}」头衔。'
                         resp = update.message.reply_text(result, quote=False)
                     except BadRequest:
                         resp = update.message.reply_text(
@@ -77,7 +80,5 @@ def title(update, context):
                 resp = update.message.reply_text('我还不是管理员嗷', quote=False)
         else:
             resp = update.message.reply_text(usage, parse_mode='Markdown', disable_web_page_preview=True, quote=False)
-    else:
-        resp = update.message.reply_text(usage, parse_mode='Markdown', disable_web_page_preview=True, quote=False)
 
     return resp

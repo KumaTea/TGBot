@@ -61,7 +61,7 @@ def repeat(update, context):
         else:
             resp = update.message.reply_text(command)
     else:
-        reply_text = command[content_index:]
+        reply_text = command[content_index+1:]
         resp = update.message.reply_text(reply_text)
     return resp
 
