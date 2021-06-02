@@ -10,6 +10,7 @@ def register_handlers():
     dp.add_handler(CommandHandler(['debug', 'dump'], debug))
     dp.add_handler(CommandHandler(['delay', 'ping'], delay))
     dp.add_handler(CommandHandler(['rp', 'repeat'], repeat, Filters.chat_type.groups))
+    dp.add_handler(CommandHandler(['title', 'entitle'], title, Filters.chat_type.groups))
 
     dp.add_handler(CommandHandler('start', private_start, Filters.chat_type.private))
     dp.add_handler(CommandHandler(['fw', 'forward'], private_forward, Filters.chat_type.private))
