@@ -1,3 +1,4 @@
+from time import sleep
 from botInfo import self_id
 from botSession import kuma
 from telegram.error import BadRequest, ChatMigrated
@@ -50,6 +51,7 @@ def title(update, context):
                                                          can_manage_chat=False, can_delete_messages=False,
                                                          can_promote_members=False, can_change_info=False,
                                                          can_invite_users=True, can_pin_messages=False)
+                            sleep(2)
                             promoted = True
                         except BadRequest:
                             return update.message.reply_text('权限不足，设为管理失败', quote=False)
@@ -66,12 +68,13 @@ def title(update, context):
                         result = f'已为 {name} {has_set}「{title_to_set}」头衔。'
                         resp = update.message.reply_text(result, quote=False)
                     except BadRequest:
-                        resp = update.message.reply_text(
-                            '权限不足，请查看我的管理权限是否足够，以及对象是否是由其他管理员设为管理\n'
-                            '或者本群还不是超级群 (supergroup)，请尝试设为公开或允许新成员查看历史记录', quote=False)
+                        if chat_id > 0:
+                            error_msg = '本群还不是超级群 (supergroup)，请尝试设为公开或允许新成员查看历史记录'
+                        else:
+                            error_msg = '权限不足，请查看我的权限是否足够，以及对象是否为bot / 已被设为管理'
+                        resp = update.message.reply_text(error_msg, quote=False)
                     except ChatMigrated:
-                        resp = update.message.reply_text(
-                            '已升级到超级群但群ID未变，请稍后重试', quote=False)
+                        resp = update.message.reply_text('已升级到超级群但群ID未变，请稍后重试', quote=False)
                     except Exception as e:
                         resp = update.message.reply_text(f'未知错误：\n{e}', quote=False)
                 else:
