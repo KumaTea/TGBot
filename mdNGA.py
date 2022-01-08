@@ -58,6 +58,8 @@ def nga_link_process(message):
             url = f'https://bbs.nga.cn/read.php?tid={thread_id}'
         else:
             return False
+    else:
+        return False  # only domain, no post or thread id
     url_for_screenshot = url
     url += '&__output=11'
     if mention_other_bot(text, url_for_screenshot):

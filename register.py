@@ -1,7 +1,7 @@
 import botSession
 import botSessionWeb
 from mdFunctions import *
-from mdNewMember import welcome
+# from mdNewMember import welcome
 from mdNGA import check_nga_login
 from mdMessage import process_msg
 from botTools import session_update
@@ -11,7 +11,7 @@ from telegram.ext import MessageHandler, CommandHandler, Filters
 def register_handlers():
     dp = botSession.dp
 
-    dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, welcome))
+    # dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, welcome))
 
     dp.add_handler(CommandHandler(['debug', 'dump'], debug))
     dp.add_handler(CommandHandler(['delay', 'ping'], delay))
