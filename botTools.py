@@ -1,5 +1,6 @@
+import json
 import base64
-from botInfo import self_id
+from botInfo import self_id, username
 
 
 def read_file(filename, encrypt=False):
@@ -53,11 +54,24 @@ def trim_key(data, char='_'):
     return data
 
 
-"""
-def set_proxy(ip='127.0.0.1', port='1080', protocol='http'):
-    proxy = f'{protocol}://{ip}:{port}'
-    os.environ['http_proxy'] = proxy
-    os.environ['HTTP_PROXY'] = proxy
-    os.environ['https_proxy'] = proxy
-    os.environ['HTTPS_PROXY'] = proxy
-"""
+def session_update(session, original):
+    changed = False
+    session_headers = session.headers
+    session_cookies = session.cookies.get_dict()
+    for item in original['headers']:
+        if original['headers'][item] != session_headers[item]:
+            original['headers'][item] = session_headers[item]
+            changed = True
+    for item in original['cookies']:
+        if original['cookies'][item] != session_cookies[item]:
+            original['cookies'][item] = session_cookies[item]
+            changed = True
+    if changed:
+        write_file(json.dumps(original), 'token_nga', True)
+
+
+def mention_other_bot(text, url):
+    text = text.lower()
+    if ('@' in text and '@' not in url) and ('bot' in text and username.lower() not in text):
+        return True
+    return False

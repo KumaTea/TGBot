@@ -1,2 +1,5 @@
 flask
+requests
+selenium
+apscheduler
 python-telegram-bot
