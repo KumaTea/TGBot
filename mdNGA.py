@@ -1,5 +1,6 @@
 import re
 import time
+import logging
 import subprocess
 from botDB import *
 from urllib import parse
@@ -25,6 +26,8 @@ def nga_link_process(message):
     if not text:
         return None
 
+    # logging.warn('[NGA] reading: ' + text)
+
     nga_domain = None
     if 'http' not in text:
         url = ''
@@ -41,6 +44,9 @@ def nga_link_process(message):
             url = url[0]
         else:
             return None
+
+    # logging.warn('[NGA] reading url: ' + url)
+
     url_domain = parse.urlparse(url).netloc
     if url_domain.lower() not in nga_domains:
         return None
@@ -48,6 +54,8 @@ def nga_link_process(message):
         if keyword in url:
             return None
     url = url.replace('http://', 'https://')
+    if '?' not in url:
+        return False  # only domain, no post or thread id
     if '&' in url:
         params = parse.parse_qs(parse.urlparse(url).query)
         if 'pid' in params:
@@ -58,15 +66,17 @@ def nga_link_process(message):
             url = f'https://bbs.nga.cn/read.php?tid={thread_id}'
         else:
             return False
-    else:
-        return False  # only domain, no post or thread id
     url_for_screenshot = url
     url += '&__output=11'
     if mention_other_bot(text, url_for_screenshot):
         return None
 
+    # logging.warn('[NGA] reading api url: ' + url)
+
     # inform = kuma.send_message(chat_id, 'NGA link found. Retrieving...')
+    # logging.warn(f'[NGA] info: {chat_id}')
     inform = kuma.send_photo(chat_id, choice(loading_image), caption='NGA link found. Retrieving...')
+    # logging.warn('[NGA] inform: ' + inform)
     inform_id = inform.message_id
 
     result = nga.get(url)

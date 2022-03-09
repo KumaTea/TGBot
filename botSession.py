@@ -10,4 +10,4 @@ kuma = Bot(query_token(self_id))
 update_queue = Queue()
 dp = Dispatcher(kuma, update_queue, use_context=True)
 
-scheduler = BackgroundScheduler(misfire_grace_time=60)
+scheduler = BackgroundScheduler(misfire_grace_time=60, timezone='Asia/Shanghai')

@@ -3,6 +3,9 @@ from botDB import *
 from requests import Session
 from botTools import query_token
 from selenium import webdriver as wd
+from webdriver_manager.utils import ChromeType
+from selenium.webdriver.chrome.service import Service
+from webdriver_manager.chrome import ChromeDriverManager
 
 
 nga = Session()
@@ -26,4 +29,9 @@ options.add_experimental_option('prefs', preferences)
 
 
 def get_driver():
-    return wd.Chrome(executable_path=chromedriver_path, options=options)
+    return wd.Chrome(
+        service=Service(
+            ChromeDriverManager(
+                chrome_type=ChromeType.CHROMIUM).install()
+            ),
+        options=options)

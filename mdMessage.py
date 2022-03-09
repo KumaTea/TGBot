@@ -9,7 +9,8 @@ def process_msg(update, context):
     #     return None  # edited message
     # message_id = message.message_id
 
-    if message.text or message.caption:
+    if message and (message.text or message.caption):
         return link_process(message)
     else:
+        # print(message)
         return None
