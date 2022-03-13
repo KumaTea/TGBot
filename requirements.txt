@@ -3,5 +3,4 @@ requests
 gunicorn
 selenium
 apscheduler
-webdriver_manager
 python-telegram-bot

@@ -1,8 +1,6 @@
 .idea
 admin*
 localDb.py
-app.yaml
-.gcloudignore
 token*
 __pycache__
 data

@@ -4,7 +4,7 @@ import os
 chrome_profile_path = '/home/kuma/data/chrome'
 incognito_profile_path = '/home/kuma/data/incognito'
 
-chromedriver_path = '/usr/local/bin/chromedriver'
+chromedriver_path = '/snap/bin/chromium.chromedriver'
 notify_path = '/usr/local/bin/notify'
 
 url_regex = r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'

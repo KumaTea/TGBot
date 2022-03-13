@@ -1,15 +1,16 @@
-import logging
 import re
 import time
+import logging
 import sqlite3
 import subprocess
 from botDB import *
 from urllib import parse
 from random import choice
+from botSession import kuma
 from mdScreen import get_screenshot
+from telegram.error import TimedOut
 from telegram import InputMediaPhoto
 from botTools import mention_other_bot
-from botSession import kuma
 from botSessionWeb import nga, get_driver
 from datetime import datetime, timezone, timedelta
 
@@ -51,7 +52,7 @@ def write_post_info(pid, tid, title, date, author, author_id, forum, forum_id, i
     conn.commit()
     conn.close()
 
-    return logging.info('Writing post:', pid or tid)
+    return logging.info(f'Writing post: {pid or tid}')
 
 
 def nga_link_process(message):
@@ -151,10 +152,13 @@ def nga_link_process(message):
             kuma.send_chat_action(chat_id, 'upload_photo')
             screenshot = get_screenshot(url_for_screenshot)
             if screenshot:
-                edited = kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
-                image = edited.photo[0].file_id
-                kuma.edit_message_caption(chat_id, inform_id, caption=link_result, parse_mode='Markdown')
-                write_post_info(post_id, thread_id, title, date, author, author_id, forum, forum_id, image)
+                try:
+                    edited = kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
+                    image = edited.photo[0].file_id
+                    kuma.edit_message_caption(chat_id, inform_id, caption=link_result, parse_mode='Markdown')
+                    write_post_info(post_id, thread_id, title, date, author, author_id, forum, forum_id, image)
+                except TimedOut:
+                    logging.warning(f'Telegram reported a timeout: {post_id or thread_id}')
             else:
                 kuma.edit_message_caption(chat_id, inform_id, caption=f'{link_result}\n__截图获取失败！__', parse_mode='Markdown')
             return True

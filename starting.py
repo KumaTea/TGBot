@@ -18,4 +18,4 @@ def starting():
     mkdir(db_dir)
     init_db('NGA')
 
-    logging.warning('Starting fine.')
+    logging.info('Starting fine.')

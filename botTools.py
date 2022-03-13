@@ -95,7 +95,7 @@ def mkdir(folder=None):
 def init_db(table):
     db_path = os.path.join(db_dir, table + '.db')
     if not os.path.isfile(db_path):
-        logging.warning(f'Creating new database...')
+        logging.info(f'Creating new database...')
         conn = sqlite3.connect(db_path)
         c = conn.cursor()
         c.execute(f'CREATE TABLE \"{table}\" ('
