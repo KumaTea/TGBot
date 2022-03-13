@@ -1,5 +1,9 @@
+import os
 import json
 import base64
+import logging
+import sqlite3
+from botDB import db_dir
 from botInfo import self_id, username
 
 
@@ -75,3 +79,31 @@ def mention_other_bot(text, url):
     if ('@' in text and '@' not in url) and ('bot' in text and username.lower() not in text):
         return True
     return False
+
+
+def mkdir(folder=None):
+    if folder:
+        if type(folder) == list or type(folder) == tuple:
+            for items in folder:
+                if not os.path.exists(str(items)):
+                    os.mkdir(str(items))
+        else:
+            if not os.path.exists(str(folder)):
+                os.mkdir(str(folder))
+
+
+def init_db(table):
+    db_path = os.path.join(db_dir, table + '.db')
+    if not os.path.isfile(db_path):
+        logging.warning(f'Creating new database...')
+        conn = sqlite3.connect(db_path)
+        c = conn.cursor()
+        c.execute(f'CREATE TABLE \"{table}\" ('
+                  '\"pid\" INTEGER, \"tid\" INTEGER, '
+                  '\"title\" TEXT, \"date\" TEXT, '
+                  '\"author\" TEXT, \"author_id\" INTEGER, '
+                  '\"forum\" TEXT, \"forum_id\" INTEGER, '
+                  '\"image\" TEXT'
+                  ')')
+        conn.commit()
+        conn.close()

@@ -5,3 +5,4 @@ app.yaml
 .gcloudignore
 token*
 __pycache__
+data

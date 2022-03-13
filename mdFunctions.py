@@ -24,10 +24,12 @@ def delay(update, context):
     second_msg_id = checking_message.message_id
     duration = second_timestamp - first_timestamp
     duration_str = '{:.3f} ms'.format(1000 * duration)
-    if duration < 0:
+    if duration < 0.1:
         status = 'excellent'
-    elif duration < 1:
+    elif duration < 0.5:
         status = 'good'
+    elif duration < 1:
+        status = 'ok'
     else:
         status = 'bad'
     result = kuma.edit_message_text(f'Delay is {duration_str}.\nThe connectivity is {status}.', chat_id, second_msg_id)

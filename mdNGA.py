@@ -1,6 +1,7 @@
+import logging
 import re
 import time
-import logging
+import sqlite3
 import subprocess
 from botDB import *
 from urllib import parse
@@ -20,14 +21,46 @@ def escape_md(text):
     return text
 
 
+def get_post_info(pid=None, tid=None):
+    assert pid or tid
+    table = 'NGA'
+    db_path = os.path.join(db_dir, table + '.db')
+
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+
+    if pid:
+        c.execute(f'SELECT * FROM {table} WHERE pid = ?', (pid,))
+    else:
+        c.execute(f'SELECT * FROM {table} WHERE tid = ?', (tid,))
+    result = c.fetchone()
+    conn.close()
+
+    return result
+
+
+def write_post_info(pid, tid, title, date, author, author_id, forum, forum_id, image):
+    table = 'NGA'
+    db_path = os.path.join(db_dir, table + '.db')
+
+    conn = sqlite3.connect(db_path)
+    c = conn.cursor()
+
+    c.execute(f'INSERT INTO {table} VALUES (?,?,?,?,?,?,?,?,?)',
+              (pid, tid, title, date, author, author_id, forum, forum_id, image))
+    conn.commit()
+    conn.close()
+
+    return logging.info('Writing post:', pid or tid)
+
+
 def nga_link_process(message):
     chat_id = message.chat_id
     text = message.text
     if not text:
         return None
 
-    # logging.warn('[NGA] reading: ' + text)
-
+    # Find url in message
     nga_domain = None
     if 'http' not in text:
         url = ''
@@ -45,8 +78,7 @@ def nga_link_process(message):
         else:
             return None
 
-    # logging.warn('[NGA] reading url: ' + url)
-
+    # Get post id
     url_domain = parse.urlparse(url).netloc
     if url_domain.lower() not in nga_domains:
         return None
@@ -56,36 +88,47 @@ def nga_link_process(message):
     url = url.replace('http://', 'https://')
     if '?' not in url:
         return False  # only domain, no post or thread id
-    if '&' in url:
-        params = parse.parse_qs(parse.urlparse(url).query)
-        if 'pid' in params:
-            post_id = params['pid'][0]
-            url = f'https://bbs.nga.cn/read.php?pid={post_id}'
-        elif 'tid' in params:
-            thread_id = params['tid'][0]
-            url = f'https://bbs.nga.cn/read.php?tid={thread_id}'
-        else:
-            return False
-    url_for_screenshot = url
-    url += '&__output=11'
-    if mention_other_bot(text, url_for_screenshot):
+    # if '&' in url:
+    params = parse.parse_qs(parse.urlparse(url).query)
+    post_id = 0
+    thread_id = 0
+    url_for_info = url
+    if 'pid' in params:
+        post_id = params['pid'][0]
+        url_for_info = f'https://bbs.nga.cn/read.php?pid={post_id}'
+    elif 'tid' in params:
+        thread_id = params['tid'][0]
+        url_for_info = f'https://bbs.nga.cn/read.php?tid={thread_id}'
+    if not post_id and not thread_id:
         return None
 
-    # logging.warn('[NGA] reading api url: ' + url)
+    # Prepare for links
+    url_for_screenshot = url_for_info
+    url_for_info += '&__output=11'
+
+    # Not calling me?
+    if mention_other_bot(text, url):
+        return None
 
     # inform = kuma.send_message(chat_id, 'NGA link found. Retrieving...')
     # logging.warn(f'[NGA] info: {chat_id}')
+    db_result = get_post_info(pid=post_id, tid=thread_id)
+    if db_result:
+        pid, tid, title, date, author, author_id, forum, forum_id, image = db_result
+        link_result = f'*{title}*\n' \
+                      f'[{author}](https://{nga_domain}/nuke.php?func=ucp&uid={author_id}) ' \
+                      f'{date} ' \
+                      f'[{forum}](https://{nga_domain}/thread.php?fid={forum_id})'
+        return kuma.send_photo(chat_id, image, caption=link_result, parse_mode='Markdown')
+
     inform = kuma.send_photo(chat_id, choice(loading_image), caption='NGA link found. Retrieving...')
-    # logging.warn('[NGA] inform: ' + inform)
     inform_id = inform.message_id
 
-    result = nga.get(url)
+    result = nga.get(url_for_info)
     if result.status_code != 200:
-        # return kuma.edit_message_text(f'错误：服务器返回{result.status_code}', chat_id, inform_id)
         return kuma.edit_message_caption(chat_id, inform_id, caption=f'错误：服务器返回{result.status_code}')
     else:
         if 'error' in result.json():
-            # return kuma.edit_message_text('错误' + result.json()['error'][0], chat_id, inform_id)
             return kuma.edit_message_caption(chat_id, inform_id, caption=('错误' + result.json()['error'][0]))
         result_data = result.json()['data']
         title = escape_md(result_data['__T']['subject'])
@@ -101,7 +144,6 @@ def nga_link_process(message):
                       f'{date} ' \
                       f'[{forum}](https://{nga_domain}/thread.php?fid={forum_id})'
         if title in text:
-            # kuma.edit_message_text('哦，已经有标题了啊，那没事了……', chat_id, inform_id)
             kuma.edit_message_caption(chat_id, inform_id, caption='哦，已经有标题了啊，那没事了……')
             time.sleep(5)
             return kuma.delete_message(chat_id, inform_id)
@@ -109,10 +151,10 @@ def nga_link_process(message):
             kuma.send_chat_action(chat_id, 'upload_photo')
             screenshot = get_screenshot(url_for_screenshot)
             if screenshot:
-                # kuma.delete_message(chat_id, inform_id)
-                # return kuma.send_photo(chat_id, screenshot, caption=link_result, parse_mode='Markdown')
-                kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
+                edited = kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
+                image = edited.photo[0].file_id
                 kuma.edit_message_caption(chat_id, inform_id, caption=link_result, parse_mode='Markdown')
+                write_post_info(post_id, thread_id, title, date, author, author_id, forum, forum_id, image)
             else:
                 kuma.edit_message_caption(chat_id, inform_id, caption=f'{link_result}\n__截图获取失败！__', parse_mode='Markdown')
             return True

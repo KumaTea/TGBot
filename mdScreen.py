@@ -20,7 +20,7 @@ def get_screenshot(url, delay=1):
                     logging.warning('An image failed to display.')
         sleep(delay)
         driver.execute_script("window.scrollTo(0, 0);")  # scroll to top
-        logging.warn("Getting: screenshot")
+        logging.warning("Getting: screenshot")
         screenshot = driver.get_screenshot_as_png()
         driver.quit()
         return BytesIO(screenshot)

@@ -1,3 +1,6 @@
+import os
+
+
 chrome_profile_path = '/home/kuma/data/chrome'
 incognito_profile_path = '/home/kuma/data/incognito'
 
@@ -25,3 +28,9 @@ loading_image = [
     'AgACAgQAAxkBAAIUA2HZvQob6DrHnPWEBO9jjBjySyU8AALSrDEb1j_9UZfBrz-baZVGAQADAgADeAADIwQ',
     'AgACAgQAAxkBAAIUBGHZvQr2vS08lALKHpA2Tcr4NfOaAAL-rDEbuwX8UbD2Y5U7YAaIAQADAgADeAADIwQ'
 ]
+
+
+if os.path.isdir('/home/kuma'):
+    db_dir = '/home/kuma/data/db'
+else:
+    db_dir = 'data'
