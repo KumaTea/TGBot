@@ -31,23 +31,26 @@ def look(update, context):
     if chat_id not in trusted_group + [creator]:
         return None
 
+    url_in_reply = None
+    reply = message.reply_to_message
+    if reply:
+        text = reply.text
+        url_in_reply = find_url(text)
+
     command = message.text
     content_index = command.find(' ')
-    if content_index == -1:
-        return kuma.send_message(chat_id, 'No content.')
-    else:
-        text = command[content_index + 1:]
-        url = find_url(text)
-        if not url:
-            return kuma.send_message(chat_id, 'No url.')
+    text = command[content_index + 1:]
+    url = find_url(text) or url_in_reply
+    if not url:
+        return kuma.send_message(chat_id, 'No url.')
 
-        inform = kuma.send_photo(chat_id, choice(loading_image), caption='Getting screenshot...')
-        inform_id = inform.message_id
-        try:
-            kuma.send_chat_action(chat_id, 'upload_photo')
-            screenshot = get_screenshot(url)
-            kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
-            # kuma.edit_message_caption(chat_id, inform_id, caption='')
-            return True
-        except Exception as e:
-            return kuma.edit_message_caption(chat_id, inform_id, 'Error: {}'.format(e))
+    inform = kuma.send_photo(chat_id, choice(loading_image), caption='Getting screenshot...')
+    inform_id = inform.message_id
+    try:
+        kuma.send_chat_action(chat_id, 'upload_photo')
+        screenshot = get_screenshot(url)
+        kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
+        # kuma.edit_message_caption(chat_id, inform_id, caption='')
+        return True
+    except Exception as e:
+        return kuma.edit_message_caption(chat_id, inform_id, 'Error: {}'.format(e))
