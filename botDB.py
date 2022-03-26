@@ -7,7 +7,10 @@ incognito_profile_path = '/home/kuma/data/incognito'
 chromedriver_path = '/snap/bin/chromium.chromedriver'
 notify_path = '/usr/local/bin/notify'
 
-url_regex = r'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+url_regex = r'https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|' \
+            r'www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|' \
+            r'https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|' \
+            r'www\.[a-zA-Z0-9]+\.[^\s]{2,}'
 nga_domains = ['nga.178.com', 'bbs.nga.cn', 'ngabbs.com']
 weibo_domains = ['weibo.com', 'www.weibo.com', 'm.weibo.com',
                  'weibo.cn', 'www.weibo.cn', 'm.weibo.cn']

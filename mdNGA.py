@@ -1,4 +1,3 @@
-import re
 import time
 import logging
 import sqlite3
@@ -10,8 +9,8 @@ from botSession import kuma
 from mdScreen import get_screenshot
 from telegram.error import TimedOut
 from telegram import InputMediaPhoto
-from botTools import mention_other_bot
 from botSessionWeb import nga, get_driver
+from botTools import mention_other_bot, find_url
 from datetime import datetime, timezone, timedelta
 
 
@@ -69,24 +68,26 @@ def nga_link_process(message):
             if domain in text:
                 nga_domain = domain
                 text = text.replace(domain, f'https://{domain}')
-                url = re.findall(url_regex, text)[0]
+                url = find_url(text)
         if not nga_domain:
             return None
     else:
-        url = re.findall(url_regex, text)
-        if url:
-            url = url[0]
-        else:
+        url = find_url(text)
+        if not url:
             return None
-
-    # Get post id
-    url_domain = parse.urlparse(url).netloc
-    if url_domain.lower() not in nga_domains:
-        return None
+        url = url.replace('http://', 'https://')  # noqa
+        url_domain = parse.urlparse(url).netloc
+        if url_domain not in nga_domains:
+            return None
+        else:
+            nga_domain = url_domain
     for keyword in url_blacklist:
         if keyword in url:
             return None
-    url = url.replace('http://', 'https://')
+    if mention_other_bot(text, url):
+        return None
+
+    # Get post id
     if '?' not in url:
         return False  # only domain, no post or thread id
     # if '&' in url:
@@ -106,10 +107,6 @@ def nga_link_process(message):
     # Prepare for links
     url_for_screenshot = url_for_info
     url_for_info += '&__output=11'
-
-    # Not calling me?
-    if mention_other_bot(text, url):
-        return None
 
     # inform = kuma.send_message(chat_id, 'NGA link found. Retrieving...')
     # logging.warn(f'[NGA] info: {chat_id}')
@@ -160,7 +157,8 @@ def nga_link_process(message):
                 except TimedOut:
                     logging.warning(f'Telegram reported a timeout: {post_id or thread_id}')
             else:
-                kuma.edit_message_caption(chat_id, inform_id, caption=f'{link_result}\n__截图获取失败！__', parse_mode='Markdown')
+                kuma.edit_message_caption(chat_id, inform_id, caption=f'{link_result}\n__截图获取失败！__',
+                                          parse_mode='Markdown')
             return True
 
 

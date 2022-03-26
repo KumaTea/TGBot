@@ -1,5 +1,6 @@
 import botInfo
-from mdTitle import title  # noqa: yes it is used by register
+from mdLink import look  # noqa
+from mdTitle import title  # noqa
 from botSession import kuma
 from datetime import datetime
 from botTools import trimmer, trim_key

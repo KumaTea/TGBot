@@ -15,10 +15,15 @@ nga.cookies.update(cookies)
 
 
 options = webdriver.ChromeOptions()
-options.add_argument('--headless')
+
+# options.add_argument('--headless')
+options.add_argument('--headless=chrome')
+# use --headless=chrome to run headless mode using "actual chrome browser code"
+# see https://bugs.chromium.org/p/chromium/issues/detail?id=706008
+
 options.add_argument(f'--user-data-dir={chrome_profile_path}')
 
-mobile_emulation = {'deviceName': 'iPhone 6/7/8 Plus'}
+mobile_emulation = {'deviceName': 'iPhone X'}
 options.add_experimental_option('mobileEmulation', mobile_emulation)
 
 preferences = {'download_restrictions': 3}

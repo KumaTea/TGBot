@@ -1,9 +1,10 @@
 import os
+import re
 import json
 import base64
 import logging
 import sqlite3
-from botDB import db_dir
+from botDB import db_dir, url_regex
 from botInfo import self_id, username
 
 
@@ -107,3 +108,11 @@ def init_db(table):
                   ')')
         conn.commit()
         conn.close()
+
+
+def find_url(text):
+    if text:
+        result = re.findall(url_regex, text)
+        if result:
+            return result[0]
+    return None

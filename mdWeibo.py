@@ -1,10 +1,9 @@
-import re
 from urllib import parse
 from random import choice
 from botSession import kuma
 from mdScreen import get_screenshot
 from telegram import InputMediaPhoto
-from botTools import mention_other_bot
+from botTools import mention_other_bot, find_url
 from botDB import url_blacklist, loading_image, url_regex, weibo_domains
 
 
@@ -28,22 +27,22 @@ def weibo_link_process(message):
             if domain in text:
                 weibo_domain = domain
                 text = text.replace(domain, f'https://{domain}')
-                url = re.findall(url_regex, text)[0]
+                url = find_url(text)
         if not weibo_domain:
             return None
     else:
-        url = re.findall(url_regex, text)
-        if url:
-            url = url[0]
-        else:
+        url = find_url(text)
+        if not url:
             return None
-    url_domain = parse.urlparse(url).netloc
-    if url_domain.lower() not in weibo_domains:
-        return None
+        url = url.replace('http://', 'https://')  # noqa
+        url_domain = parse.urlparse(url).netloc
+        if url_domain not in weibo_domains:
+            return None
+        # else:
+        #     weibo_domain = url_domain
     for keyword in url_blacklist:
         if keyword in url:
             return None
-    url = url.replace('http://', 'https://')
     if mention_other_bot(text, url):
         return None
 
