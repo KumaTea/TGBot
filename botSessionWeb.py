@@ -22,6 +22,8 @@ options.add_argument('--headless=chrome')
 # see https://bugs.chromium.org/p/chromium/issues/detail?id=706008
 
 options.add_argument(f'--user-data-dir={chrome_profile_path}')
+# options.add_argument('--disable-gpu')
+# options.add_argument('--disable-dev-shm-usage')
 
 mobile_emulation = {'deviceName': 'iPhone X'}
 options.add_experimental_option('mobileEmulation', mobile_emulation)

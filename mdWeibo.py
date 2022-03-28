@@ -52,10 +52,7 @@ def weibo_link_process(message):
 
     kuma.send_chat_action(chat_id, 'upload_photo')
     screenshot = get_screenshot(url)
-    if screenshot:
-        # kuma.delete_message(chat_id, inform_id)
-        # return kuma.send_photo(chat_id, screenshot)
-        kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
-    else:
-        kuma.edit_message_caption(chat_id, inform_id, caption='__截图获取失败！__', parse_mode='Markdown')
-    return True
+    if screenshot and type(screenshot) != str:
+        return kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
+    return kuma.edit_message_caption(
+        chat_id, inform_id, caption='__截图获取失败！__', parse_mode='Markdown')

@@ -46,11 +46,10 @@ def look(update, context):
 
     inform = kuma.send_photo(chat_id, choice(loading_image), caption='Getting screenshot...')
     inform_id = inform.message_id
-    try:
-        kuma.send_chat_action(chat_id, 'upload_photo')
-        screenshot = get_screenshot(url)
-        kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
-        # kuma.edit_message_caption(chat_id, inform_id, caption='')
-        return True
-    except Exception as e:
-        return kuma.edit_message_caption(chat_id, inform_id, 'Error: {}'.format(e))
+
+    kuma.send_chat_action(chat_id, 'upload_photo')
+    screenshot = get_screenshot(url)
+    if screenshot and type(screenshot) != str:
+        return kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
+    return kuma.edit_message_caption(
+        chat_id, inform_id, caption=(screenshot if screenshot else '截图获取失败！'))

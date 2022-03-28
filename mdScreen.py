@@ -1,16 +1,19 @@
 import logging
+from time import time
 from io import BytesIO
-from time import sleep
 from botSessionWeb import get_driver
+from selenium.common.exceptions import TimeoutException
+from selenium.webdriver.support.ui import WebDriverWait
 
 
-def get_screenshot(url, delay=1):
+def get_screenshot(url, timeout=30):
+    t0 = time()
     try:
-        logging.debug("Getting: %s" % url)
+        logging.info("{:.3f}s: Task: {}".format(time() - t0, url))
         driver = get_driver()
-        logging.info("Get: driver")
+        logging.info("{:.3f}s: Got: driver".format(time() - t0))
         driver.get(url)
-        logging.info("Get: %s" % url)
+        logging.info("{:.3f}s: Got: {}".format(time()-t0, url))
         if 'nga' in url:
             images = driver.find_elements_by_xpath('//button[normalize-space()="显示图片"]')
             for image in images:
@@ -18,12 +21,22 @@ def get_screenshot(url, delay=1):
                     image.click()
                 except:
                     logging.warning('An image failed to display.')
-        sleep(delay)
+        WebDriverWait(driver, timeout).until(
+            driver.execute_script("return document.readyState") == "complete")
+        logging.info("{:.3f}s: Loaded.".format(time() - t0))
         driver.execute_script("window.scrollTo(0, 0);")  # scroll to top
-        logging.info("Getting: screenshot")
         screenshot = driver.get_screenshot_as_png()
+        logging.info("{:.3f}s: Got: screenshot".format(time() - t0))
         driver.quit()
+        logging.info("{:.3f}s: Quit".format(time() - t0))
         return BytesIO(screenshot)
+    except TimeoutException as e:
+        if 'driver' in locals():
+            driver.quit()  # noqa
+        logging.error(f'Timeout: {str(e)}')
+        return f'Timeout: {str(e)}'
     except Exception as e:
+        if 'driver' in locals():
+            driver.quit()  # noqa
         logging.error(f'Error: {str(e)}')
-        return None
+        return f'Error: {str(e)}'

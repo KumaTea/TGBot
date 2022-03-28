@@ -128,6 +128,7 @@ def nga_link_process(message):
     else:
         if 'error' in result.json():
             return kuma.edit_message_caption(chat_id, inform_id, caption=('错误' + result.json()['error'][0]))
+
         result_data = result.json()['data']
         title = escape_md(result_data['__T']['subject'])
         author = result_data['__T']['author']
@@ -148,18 +149,18 @@ def nga_link_process(message):
         else:
             kuma.send_chat_action(chat_id, 'upload_photo')
             screenshot = get_screenshot(url_for_screenshot)
-            if screenshot:
+            if screenshot and type(screenshot) != str:
                 try:
                     edited = kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
                     image = edited.photo[0].file_id
                     kuma.edit_message_caption(chat_id, inform_id, caption=link_result, parse_mode='Markdown')
                     write_post_info(post_id, thread_id, title, date, author, author_id, forum, forum_id, image)
+                    return True
                 except TimedOut:
                     logging.warning(f'Telegram reported a timeout: {post_id or thread_id}')
-            else:
-                kuma.edit_message_caption(chat_id, inform_id, caption=f'{link_result}\n__截图获取失败！__',
-                                          parse_mode='Markdown')
-            return True
+                    return None
+            return kuma.edit_message_caption(
+                chat_id, inform_id, caption=f'{link_result}\n__截图获取失败！__', parse_mode='Markdown')
 
 
 def check_nga_login():
