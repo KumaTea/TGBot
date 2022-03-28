@@ -10,6 +10,10 @@ def load_complete(driver):
     return driver.execute_script("return document.readyState") == "complete"
 
 
+def load_tweet_complete(driver):
+    return 'data-testid="tweet"' in driver.page_source
+
+
 def get_screenshot(url, timeout=30):
     t0 = time()
     try:
@@ -25,10 +29,14 @@ def get_screenshot(url, timeout=30):
                     image.click()
                 except:
                     logging.warning('An image failed to display.')
-        WebDriverWait(driver, timeout).until(load_complete)
-        # lambda drv: drv.execute_script("return document.readyState") == "complete"
+        if 'twitter' in url:
+            WebDriverWait(driver, timeout).until(load_tweet_complete)
+        else:
+            WebDriverWait(driver, timeout).until(load_complete)
+            # lambda drv: drv.execute_script("return document.readyState") == "complete"
+            driver.execute_script("window.scrollTo(0, 0);")  # scroll to top
+
         logging.info("{:.3f}s: Loaded.".format(time() - t0))
-        driver.execute_script("window.scrollTo(0, 0);")  # scroll to top
         screenshot = driver.get_screenshot_as_png()
         logging.info("{:.3f}s: Got: screenshot".format(time() - t0))
         driver.quit()
