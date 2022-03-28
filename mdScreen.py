@@ -3,7 +3,11 @@ from time import time
 from io import BytesIO
 from botSessionWeb import get_driver
 from selenium.common.exceptions import TimeoutException
-from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support.wait import WebDriverWait
+
+
+def load_complete(driver):
+    return driver.execute_script("return document.readyState") == "complete"
 
 
 def get_screenshot(url, timeout=30):
@@ -21,8 +25,8 @@ def get_screenshot(url, timeout=30):
                     image.click()
                 except:
                     logging.warning('An image failed to display.')
-        WebDriverWait(driver, timeout).until(
-            driver.execute_script("return document.readyState") == "complete")
+        WebDriverWait(driver, timeout).until(load_complete)
+        # lambda drv: drv.execute_script("return document.readyState") == "complete"
         logging.info("{:.3f}s: Loaded.".format(time() - t0))
         driver.execute_script("window.scrollTo(0, 0);")  # scroll to top
         screenshot = driver.get_screenshot_as_png()
