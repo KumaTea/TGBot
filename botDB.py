@@ -1,10 +1,8 @@
 import os
 
 
-chrome_profile_path = '/home/kuma/data/chrome'
-incognito_profile_path = '/home/kuma/data/incognito'
+firefox_profile_path = '/home/kuma/data/firefox'
 
-chromedriver_path = '/snap/bin/chromium.chromedriver'
 notify_path = '/usr/local/bin/notify'
 
 url_regex = r'https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|' \
