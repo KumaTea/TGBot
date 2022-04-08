@@ -4,8 +4,7 @@ from botInfo import creator
 from botTools import find_url
 from botDB import loading_image
 from mdNGA import nga_link_process
-from mdScreen import get_screenshot
-from telegram import InputMediaPhoto
+from mdScreen import screenshot_mp
 from mdWeibo import weibo_link_process
 
 try:
@@ -48,8 +47,5 @@ def look(update, context):
     inform_id = inform.message_id
 
     kuma.send_chat_action(chat_id, 'upload_photo')
-    screenshot = get_screenshot(url)
-    if screenshot and type(screenshot) != str:
-        return kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
-    return kuma.edit_message_caption(
-        chat_id, inform_id, caption=(screenshot if screenshot else '截图获取失败！'))
+    screenshot_mp(chat_id, inform_id, url, '__截图获取失败！__', 'Markdown')
+    return True

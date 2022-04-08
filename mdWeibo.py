@@ -1,9 +1,9 @@
 from urllib import parse
 from random import choice
 from botSession import kuma
-from mdScreen import get_screenshot
 from telegram import InputMediaPhoto
 from botTools import mention_other_bot, find_url
+from mdScreen import get_screenshot, screenshot_mp
 from botDB import url_blacklist, loading_image, url_regex, weibo_domains
 
 
@@ -51,8 +51,5 @@ def weibo_link_process(message):
     inform_id = inform.message_id
 
     kuma.send_chat_action(chat_id, 'upload_photo')
-    screenshot = get_screenshot(url)
-    if screenshot and type(screenshot) != str:
-        return kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
-    return kuma.edit_message_caption(
-        chat_id, inform_id, caption='__截图获取失败！__', parse_mode='Markdown')
+    screenshot_mp(chat_id, inform_id, url, '__截图获取失败！__', 'Markdown')
+    return True

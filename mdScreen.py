@@ -1,7 +1,10 @@
 import logging
 from time import time
 from io import BytesIO
+from botSession import kuma
 from botSessionWeb import get_driver
+from multiprocessing import Process
+from telegram import InputMediaPhoto
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -52,3 +55,16 @@ def get_screenshot(url, timeout=30):
             driver.quit()  # noqa
         logging.error(f'Error: {str(e)}')
         return f'Error: {str(e)}'
+
+
+def update_inform(chat_id, inform_id, url, error_msg='Error!', parse_mode='Markdown'):
+    screenshot = get_screenshot(url)
+    if screenshot and type(screenshot) != str:
+        return kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
+    return kuma.edit_message_caption(
+        chat_id, inform_id, caption=error_msg, parse_mode=parse_mode)
+
+
+def screenshot_mp(chat_id, inform_id, url, error_msg='Error!', parse_mode='Markdown'):
+    p = Process(target=update_inform, args=(chat_id, inform_id, url, error_msg, parse_mode))
+    p.start()

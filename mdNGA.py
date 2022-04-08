@@ -7,6 +7,7 @@ from urllib import parse
 from random import choice
 from botSession import kuma
 from mdScreen import get_screenshot
+from multiprocessing import Process
 from telegram.error import TimedOut
 from telegram import InputMediaPhoto
 from botSessionWeb import nga, get_driver
@@ -52,6 +53,28 @@ def write_post_info(pid, tid, title, date, author, author_id, forum, forum_id, i
     conn.close()
 
     return logging.info(f'Writing post: {pid or tid}')
+
+
+def update_nga(chat_id, inform_id, url, post_info, link_result, error_msg='Error!', parse_mode='Markdown'):
+    post_id, thread_id, title, date, author, author_id, forum, forum_id = post_info
+    screenshot = get_screenshot(url)
+    if screenshot and type(screenshot) != str:
+        try:
+            edited = kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
+            image = edited.photo[0].file_id
+            kuma.edit_message_caption(chat_id, inform_id, caption=link_result, parse_mode='Markdown')
+            write_post_info(post_id, thread_id, title, date, author, author_id, forum, forum_id, image)
+            return True
+        except TimedOut:
+            logging.warning(f'Telegram reported a timeout: {post_id or thread_id}')
+            return None
+    return kuma.edit_message_caption(
+        chat_id, inform_id, caption=f'{link_result}\n{error_msg}', parse_mode=parse_mode)
+
+
+def nga_mp(chat_id, inform_id, url, post_info, link_result, error_msg='Error!', parse_mode='Markdown'):
+    p = Process(target=update_nga, args=(chat_id, inform_id, url, post_info, link_result, error_msg, parse_mode))
+    p.start()
 
 
 def nga_link_process(message):
@@ -148,19 +171,9 @@ def nga_link_process(message):
             return kuma.delete_message(chat_id, inform_id)
         else:
             kuma.send_chat_action(chat_id, 'upload_photo')
-            screenshot = get_screenshot(url_for_screenshot)
-            if screenshot and type(screenshot) != str:
-                try:
-                    edited = kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
-                    image = edited.photo[0].file_id
-                    kuma.edit_message_caption(chat_id, inform_id, caption=link_result, parse_mode='Markdown')
-                    write_post_info(post_id, thread_id, title, date, author, author_id, forum, forum_id, image)
-                    return True
-                except TimedOut:
-                    logging.warning(f'Telegram reported a timeout: {post_id or thread_id}')
-                    return None
-            return kuma.edit_message_caption(
-                chat_id, inform_id, caption=f'{link_result}\n__截图获取失败！__', parse_mode='Markdown')
+            post_info = [post_id, thread_id, title, date, author, author_id, forum, forum_id]
+            nga_mp(chat_id, inform_id, url_for_screenshot, post_info, link_result, '__截图获取失败！__', 'Markdown')
+            return True
 
 
 def check_nga_login():
