@@ -32,7 +32,7 @@ def get_screenshot(url, timeout=30):
                     image.click()
                 except:
                     logging.warning('An image failed to display.')
-        if 'twitter' in url:
+        elif 'twitter' in url:
             WebDriverWait(driver, timeout).until(load_tweet_complete)
         else:
             WebDriverWait(driver, timeout).until(load_complete)
@@ -68,3 +68,4 @@ def update_inform(chat_id, inform_id, url, error_msg='Error!', parse_mode='Markd
 def screenshot_mp(chat_id, inform_id, url, error_msg='Error!', parse_mode='Markdown'):
     p = Process(target=update_inform, args=(chat_id, inform_id, url, error_msg, parse_mode))
     p.start()
+    return True

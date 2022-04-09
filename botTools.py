@@ -73,6 +73,7 @@ def session_update(session, original):
             changed = True
     if changed:
         write_file(json.dumps(original), 'token_nga', True)
+    return True
 
 
 def mention_other_bot(text, url):
@@ -91,6 +92,7 @@ def mkdir(folder=None):
         else:
             if not os.path.exists(str(folder)):
                 os.mkdir(str(folder))
+    return True
 
 
 def init_db(table):
@@ -108,6 +110,7 @@ def init_db(table):
                   ')')
         conn.commit()
         conn.close()
+    return True
 
 
 def find_url(text):

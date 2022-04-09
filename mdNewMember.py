@@ -33,8 +33,7 @@ def welcome(update, context):
         else:
             sticker_id = None
         check = Timer(125, check_member, [chat_id, user_id, alert_id, msg_id, sticker_id])
-        # Ignore PyCharm Error
-        check.start()
+        check.start()  # noqa
     else:
         resp = None
     return resp

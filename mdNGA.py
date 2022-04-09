@@ -75,6 +75,7 @@ def update_nga(chat_id, inform_id, url, post_info, link_result, error_msg='Error
 def nga_mp(chat_id, inform_id, url, post_info, link_result, error_msg='Error!', parse_mode='Markdown'):
     p = Process(target=update_nga, args=(chat_id, inform_id, url, post_info, link_result, error_msg, parse_mode))
     p.start()
+    return True
 
 
 def nga_link_process(message):

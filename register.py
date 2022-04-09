@@ -35,3 +35,4 @@ def manager():
     scheduler.add_job(session_update, 'cron', [botSessionWeb.nga, botSessionWeb.nga_token], hour=4)
     scheduler.add_job(check_nga_login, 'cron', minute=30)
     # scheduler.add_job(cron_timer, 'cron', hour='*')
+    return True
