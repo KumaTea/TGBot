@@ -1,6 +1,5 @@
 import botDB
 from telegram import Update
-from botTools import set_busy
 from starting import starting
 from botSession import kuma, dp
 from flask import Flask, request as flask_req
@@ -17,10 +16,11 @@ def online():
 
 
 @app.route('/', methods=['POST'])
-@set_busy
 def main():
+    botDB.is_idle = False
     update = Update.de_json(flask_req.json, kuma)
     dp.process_update(update)
+    botDB.is_idle = True
     return '', 200
 
 
