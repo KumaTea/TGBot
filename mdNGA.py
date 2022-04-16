@@ -6,6 +6,7 @@ from botDB import *
 from urllib import parse
 from random import choice
 from botSession import kuma
+from botTools import set_busy
 from mdScreen import get_screenshot
 from multiprocessing import Process
 from telegram.error import TimedOut
@@ -55,6 +56,7 @@ def write_post_info(pid, tid, title, date, author, author_id, forum, forum_id, i
     return logging.info(f'Writing post: {pid or tid}')
 
 
+@set_busy
 def update_nga(chat_id, inform_id, url, post_info, link_result, error_msg='Error!', parse_mode='Markdown'):
     post_id, thread_id, title, date, author, author_id, forum, forum_id = post_info
     screenshot = get_screenshot(url)
@@ -150,6 +152,12 @@ def nga_link_process(message):
     if result.status_code != 200:
         return kuma.edit_message_caption(chat_id, inform_id, caption=f'错误：服务器返回{result.status_code}')
     else:
+        try:
+            _ = result.json()
+        except:
+            logging.error(f'Json error!\n{result.text}\n\n')
+            return kuma.edit_message_caption(chat_id, inform_id, caption='NGA API Json 解析错误')
+
         if 'error' in result.json():
             return kuma.edit_message_caption(chat_id, inform_id, caption=('错误' + result.json()['error'][0]))
 
@@ -177,6 +185,7 @@ def nga_link_process(message):
             return True
 
 
+@set_busy
 def check_nga_login():
     login_success_text = 'KumaTea'
     driver = get_driver()
