@@ -1,10 +1,9 @@
 from urllib import parse
 from random import choice
 from botSession import kuma
-from telegram import InputMediaPhoto
+from mdScreen import screenshot_mp
 from botTools import mention_other_bot, find_url
-from mdScreen import get_screenshot, screenshot_mp
-from botDB import url_blacklist, loading_image, url_regex, weibo_domains
+from botDB import url_blacklist, loading_image, weibo_domains
 
 
 def escape_md(text):

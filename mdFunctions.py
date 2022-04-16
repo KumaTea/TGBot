@@ -91,7 +91,7 @@ def private_forward(update, context):
         user_id = user.id
         username = ' (' + (('@' + user.username + ', ') if user.username else '') + str(user_id) + ')'
         forward_msg = first + last + username + '\n\n' + command[content_index+1:]
-        
+
         kuma.send_message(botInfo.creator, forward_msg)
         resp = update.message.reply_text('Message successfully sent.')
     return resp

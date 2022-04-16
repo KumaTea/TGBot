@@ -35,6 +35,3 @@ if os.path.isdir('/home/kuma'):
     db_dir = '/home/kuma/data/db'
 else:
     db_dir = 'data'
-
-
-is_idle = True

@@ -5,8 +5,8 @@ import subprocess
 from botDB import *
 from urllib import parse
 from random import choice
+from idle import set_busy
 from botSession import kuma
-from botTools import set_busy
 from mdScreen import get_screenshot
 from multiprocessing import Process
 from telegram.error import TimedOut
@@ -122,10 +122,10 @@ def nga_link_process(message):
     thread_id = 0
     url_for_info = url
     if 'pid' in params:
-        post_id = params['pid'][0]
+        post_id = params['pid'][0]  # noqa
         url_for_info = f'https://bbs.nga.cn/read.php?pid={post_id}'
     elif 'tid' in params:
-        thread_id = params['tid'][0]
+        thread_id = params['tid'][0]  # noqa
         url_for_info = f'https://bbs.nga.cn/read.php?tid={thread_id}'
     if not post_id and not thread_id:
         return None
@@ -154,8 +154,8 @@ def nga_link_process(message):
     else:
         try:
             _ = result.json()
-        except:
-            logging.error(f'Json error!\n{result.text}\n\n')
+        except Exception as e:
+            logging.error(f'Json error!\n{str(e)}\n\n')
             return kuma.edit_message_caption(chat_id, inform_id, caption='NGA API Json 解析错误')
 
         if 'error' in result.json():

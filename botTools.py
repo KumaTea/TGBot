@@ -1,10 +1,10 @@
 import os
 import re
 import json
-import botDB
 import base64
 import logging
 import sqlite3
+from botDB import db_dir, url_regex
 from botInfo import self_id, username
 
 
@@ -59,15 +59,6 @@ def trim_key(data, char='_'):
     return data
 
 
-def set_busy(operation):
-    def wrapper(*args, **kwargs):
-        botDB.is_idle = False
-        operation(*args, **kwargs)
-        botDB.is_idle = True
-    return wrapper
-
-
-@set_busy
 def session_update(session, original):
     changed = False
     session_headers = session.headers
@@ -105,7 +96,7 @@ def mkdir(folder=None):
 
 
 def init_db(table):
-    db_path = os.path.join(botDB.db_dir, table + '.db')
+    db_path = os.path.join(db_dir, table + '.db')
     if not os.path.isfile(db_path):
         logging.info(f'Creating new database...')
         conn = sqlite3.connect(db_path)
@@ -124,7 +115,7 @@ def init_db(table):
 
 def find_url(text):
     if text:
-        result = re.findall(botDB.url_regex, text)
+        result = re.findall(url_regex, text)
         if result:
             return result[0]
     return None

@@ -1,8 +1,8 @@
 import logging
 from io import BytesIO
+from idle import set_busy
 from botSession import kuma
 from time import time, sleep
-from botTools import set_busy
 from botSessionWeb import get_driver
 from multiprocessing import Process
 from telegram import InputMediaPhoto

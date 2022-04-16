@@ -1,7 +1,6 @@
-import botDB
 from telegram import Update
 from starting import starting
-from botSession import kuma, dp
+from botSession import kuma, dp, idle_mark
 from flask import Flask, request as flask_req
 
 
@@ -17,16 +16,16 @@ def online():
 
 @app.route('/', methods=['POST'])
 def main():
-    botDB.is_idle = False
+    idle_mark.buf[0] = 0
     update = Update.de_json(flask_req.json, kuma)
     dp.process_update(update)
-    botDB.is_idle = True
+    idle_mark.buf[0] = 1
     return '', 200
 
 
 @app.route('/status', methods=['GET'])
 def status():
-    if botDB.is_idle:
+    if idle_mark.buf[0]:
         return 'Idle', 200
     else:
         return 'Busy', 200

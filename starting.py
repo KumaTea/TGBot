@@ -1,12 +1,10 @@
 import logging
 from botDB import db_dir
-from botTools import set_busy
-from botSession import scheduler
 from botTools import mkdir, init_db
+from botSession import scheduler, idle_mark
 from register import register_handlers, manager
 
 
-@set_busy
 def starting():
     logging.basicConfig(
         format='%(asctime)s %(levelname)-8s %(message)s',
@@ -19,5 +17,7 @@ def starting():
 
     mkdir(db_dir)
     init_db('NGA')
+
+    idle_mark.buf[0] = 1
 
     return logging.info('Starting fine.')
