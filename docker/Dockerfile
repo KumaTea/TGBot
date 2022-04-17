@@ -35,24 +35,22 @@ COPY 64-language-selector-prefer.conf /etc/fonts/conf.d/64-language-selector-pre
 # Install conda
 RUN set -ex \
     \
-    && wget https://github.com/conda-forge/miniforge/releases/latest/download/Miniforge3-Linux-aarch64.sh -O /tmp/install-conda.sh \
-    && bash /tmp/install-conda.sh -b -p /opt/conda \
-    && export CONDA_EXE=/opt/conda/bin/conda \
-    && $CONDA_EXE init bash \
-    && source /root/.bashrc > /dev/null \
-    && $CONDA_EXE config --set show_channel_urls false \
-    && rm -rf /tmp/install-conda.sh \
-    && rm -rf /root/.cache/* || echo "No cache in .cache"
+    && wget https://github.com/KumaTea/KumaTea-bot/tarball/master -O /tmp/tgbot.tar.gz \
+    && mkdir -p /tmp/TGBot \
+    && tar -xzf /tmp/tgbot.tar.gz -C /tmp/TGBot --strip-components 1 \
+    && bash /tmp/TGBot/docker/install-conda.sh \
+    && rm -rf /tmp/TGBot \
+    && rm /tmp/tgbot.tar.gz
 
 # Create conda environment
 RUN set -ex \
     \
-    && export CONDA_EXE=/opt/conda/bin/conda \
-    && $CONDA_EXE create -n tg python=3.9 pip setuptools wheel flask requests gunicorn selenium python-telegram-bot -y \
-    && conda activate tg > /dev/null \
-    && export CONDA_TG=/opt/conda/envs/tg/bin/python3 \
-    && $CONDA_TG -m pip install -U python-telegram-bot \
-    && rm -rf /root/.cache/* || echo "No cache in .cache"
+    && wget https://github.com/KumaTea/KumaTea-bot/tarball/master -O /tmp/tgbot.tar.gz \
+    && mkdir -p /tmp/TGBot \
+    && tar -xzf /tmp/tgbot.tar.gz -C /tmp/TGBot --strip-components 1 \
+    && bash /tmp/TGBot/docker/create-env.sh \
+    && rm -rf /tmp/TGBot \
+    && rm /tmp/tgbot.tar.gz
 
 # Download repo
 # No, I'll use volume mount
@@ -63,4 +61,4 @@ RUN set -ex \
 #     && rm -rf /tmp/tg-bot.tar.gz \
 
 # Set entrypoint
-ENTRYPOINT ["/bin/bash", "/home/kuma/bots/TGBot/run-docker.sh"]
+ENTRYPOINT ["/bin/bash", "/home/kuma/bots/TGBot/docker/run-docker.sh"]
