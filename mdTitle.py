@@ -37,7 +37,7 @@ def get_admin_titles(chat_id):
             admin_titles[member.custom_title].append(get_user_name(member.user))
         else:
             admin_titles['AdminWithoutTitle'] = admin_titles.get('AdminWithoutTitle', [])
-            admin_titles[member.custom_title].append(get_user_name(member.user))
+            admin_titles['AdminWithoutTitle'].append(get_user_name(member.user))
             # This key must exceed 16 characters, which is the length of the longest title
     return admin_titles
 
@@ -48,11 +48,18 @@ def print_admin_titles(chat_id):
     text = f'**{chat_name}**\n头衔列表  {date}\n\n'
 
     admin_titles = get_admin_titles(chat_id)
+    admin_titles_list = list(admin_titles.keys())
+    if 'AdminWithoutTitle' in admin_titles_list:
+        admin_titles_list.remove('AdminWithoutTitle')
+    max_length = max([max([len(i) for i in admin_titles_list] or [0]), len('无名氏')])
+    align_length = max_length + len('【】  ')
     for admin_title in admin_titles:
         if admin_title != 'AdminWithoutTitle':
-            text += f'【{admin_title}】' + '  ' + ' '.join(admin_titles[admin_title]) + '\n'
+            text += ('{:　<' + str(align_length) + '}{}\n').format(
+                f'【{admin_title}】  ', ', '.join(admin_titles[admin_title]))
     if 'AdminWithoutTitle' in admin_titles:
-        text += '【无名氏】' + '  ' + ' '.join(admin_titles['AdminWithoutTitle'])
+        text += ('{:<' + str(align_length) + '}{}\n').format(
+            f'【无名氏】  ', ', '.join(admin_titles['AdminWithoutTitle']))
     return text
 
 
