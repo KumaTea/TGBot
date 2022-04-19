@@ -33,25 +33,26 @@ def get_admin_titles(chat_id):
     admins = kuma.get_chat_administrators(chat_id)
     for member in admins:
         if member.custom_title:
-            admin_titles[member.custom_title] = admin_titles.get(
-                member.custom_title, []).append(get_user_name(member.user))
+            admin_titles[member.custom_title] = admin_titles.get(member.custom_title, [])
+            admin_titles[member.custom_title].append(get_user_name(member.user))
         else:
-            admin_titles['AdminWithoutTitle'] = admin_titles.get(
-                'AdminWithoutTitle', []).append(get_user_name(member.user))
+            admin_titles['AdminWithoutTitle'] = admin_titles.get('AdminWithoutTitle', [])
+            admin_titles[member.custom_title].append(get_user_name(member.user))
             # This key must exceed 16 characters, which is the length of the longest title
     return admin_titles
 
 
 def print_admin_titles(chat_id):
     chat_name = kuma.get_chat(chat_id).title
-    date = datetime.now().strftime('%Y-%m-%d')
-    text = f'**{chat_name}**\n{date}\n\n'
+    date = datetime.now().strftime('%Y%m%d')
+    text = f'**{chat_name}**\n头衔列表  {date}\n\n'
 
     admin_titles = get_admin_titles(chat_id)
     for admin_title in admin_titles:
         if admin_title != 'AdminWithoutTitle':
             text += f'【{admin_title}】' + '  ' + ' '.join(admin_titles[admin_title]) + '\n'
-    text += '【无名氏】' + '  ' + ' '.join(admin_titles['AdminWithoutTitle'])
+    if 'AdminWithoutTitle' in admin_titles:
+        text += '【无名氏】' + '  ' + ' '.join(admin_titles['AdminWithoutTitle'])
     return text
 
 
@@ -125,7 +126,7 @@ def title(update, context):
         else:
             command = text[title_index+1:]
             if command.lower() in list_commands:
-                resp = update.message.reply_text(print_admin_titles(chat_id), quote=False)
+                resp = update.message.reply_text(print_admin_titles(chat_id), parse_mode='Markdown', quote=False)
             else:
                 resp = update.message.reply_text(usage, parse_mode='Markdown', disable_web_page_preview=True, quote=False)
     return resp
