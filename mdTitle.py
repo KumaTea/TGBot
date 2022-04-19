@@ -1,6 +1,7 @@
 from time import sleep
 from botInfo import self_id
 from botSession import kuma
+from datetime import datetime
 from telegram.error import BadRequest, ChatMigrated
 
 try:
@@ -11,7 +12,47 @@ except ImportError:
 
 usage = '用法\n' \
         '向对象的消息 **回复** `/title <text>` 以添加头衔\n' \
-        '字数 **16** 以内，不支持 emoji'
+        '字数 **16** 以内，不支持 emoji\n\n' \
+        '`/title list` 列出所有头衔'
+list_commands = ['list', 'print', 'dump']
+
+
+def get_user_name(user):
+    lang = user.language_code or 'zh'
+    if user.last_name:
+        if 'zh' in lang:
+            return f'{user.first_name}{user.last_name}'
+        else:
+            return f'{user.first_name} {user.last_name}'
+    else:
+        return user.first_name
+
+
+def get_admin_titles(chat_id):
+    admin_titles = {}
+    admins = kuma.get_chat_administrators(chat_id)
+    for member in admins:
+        if member.custom_title:
+            admin_titles[member.custom_title] = admin_titles.get(
+                member.custom_title, []).append(get_user_name(member.user))
+        else:
+            admin_titles['AdminWithoutTitle'] = admin_titles.get(
+                'AdminWithoutTitle', []).append(get_user_name(member.user))
+            # This key must exceed 16 characters, which is the length of the longest title
+    return admin_titles
+
+
+def print_admin_titles(chat_id):
+    chat_name = kuma.get_chat(chat_id).title
+    date = datetime.now().strftime('%Y-%m-%d')
+    text = f'**{chat_name}**\n{date}\n\n'
+
+    admin_titles = get_admin_titles(chat_id)
+    for admin_title in admin_titles:
+        if admin_title != 'AdminWithoutTitle':
+            text += f'【{admin_title}】' + '  ' + ' '.join(admin_titles[admin_title]) + '\n'
+    text += '【无名氏】' + '  ' + ' '.join(admin_titles['AdminWithoutTitle'])
+    return text
 
 
 def title(update, context):
@@ -80,8 +121,11 @@ def title(update, context):
                 else:
                     resp = update.message.reply_text('您的权限不足，我无权操作', quote=False)
             else:
-                resp = update.message.reply_text('我还不是管理员嗷', quote=False)
+                resp = update.message.reply_text('我还没有提拔群友的权限', quote=False)
         else:
-            resp = update.message.reply_text(usage, parse_mode='Markdown', disable_web_page_preview=True, quote=False)
-
+            command = text[title_index+1:]
+            if command.lower() in list_commands:
+                resp = update.message.reply_text(print_admin_titles(chat_id), quote=False)
+            else:
+                resp = update.message.reply_text(usage, parse_mode='Markdown', disable_web_page_preview=True, quote=False)
     return resp
