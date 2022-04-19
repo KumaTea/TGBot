@@ -11,8 +11,8 @@ except ImportError:
 
 
 usage = '用法\n' \
-        '向对象的消息 **回复** `/title <text>` 以添加头衔\n' \
-        '字数 **16** 以内，不支持 emoji\n\n' \
+        '向对象的消息 *回复* `/title <text>` 以添加头衔\n' \
+        '字数 *16* 以内，不支持 emoji\n\n' \
         '`/title list` 列出所有头衔'
 list_commands = ['list', 'print', 'dump']
 
@@ -45,21 +45,23 @@ def get_admin_titles(chat_id):
 def print_admin_titles(chat_id):
     chat_name = kuma.get_chat(chat_id).title
     date = datetime.now().strftime('%Y%m%d')
-    text = f'**{chat_name}**\n头衔列表  {date}\n\n'
+    text = f'*{chat_name}*\n头衔列表  {date}\n\n'
 
     admin_titles = get_admin_titles(chat_id)
     admin_titles_list = list(admin_titles.keys())
     if 'AdminWithoutTitle' in admin_titles_list:
         admin_titles_list.remove('AdminWithoutTitle')
-    max_length = max([max([len(i) for i in admin_titles_list] or [0]), len('无名氏')])
-    align_length = max_length + len('【】  ')
+    # max_length = max([max([len(i) for i in admin_titles_list] or [0]), len('无名氏')])
+    # align_length = max_length + len('【】  ')
     for admin_title in admin_titles:
         if admin_title != 'AdminWithoutTitle':
-            text += ('{:　<' + str(align_length) + '}{}\n').format(
-                f'【{admin_title}】  ', ', '.join(admin_titles[admin_title]))
+            # text += ('{:　<' + str(align_length) + '}{}\n').format(
+            #     f'【{admin_title}】  ', ', '.join(admin_titles[admin_title]))
+            text += '{}  {}\n'.format(f'【{admin_title}】', ', '.join(admin_titles[admin_title]))
     if 'AdminWithoutTitle' in admin_titles:
-        text += ('{:<' + str(align_length) + '}{}\n').format(
-            f'【无名氏】  ', ', '.join(admin_titles['AdminWithoutTitle']))
+        # text += ('{:<' + str(align_length) + '}{}\n').format(
+        #     f'【无名氏】  ', ', '.join(admin_titles['AdminWithoutTitle']))
+        text += '{}  {}\n'.format('【无名氏】', ', '.join(admin_titles['AdminWithoutTitle']))
     return text
 
 
