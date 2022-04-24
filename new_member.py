@@ -1,8 +1,8 @@
 import time
 import logging
 from session import kuma
-from localDb import welcome_chat
 from info import creator
+from localDb import welcome_chat
 from multiprocessing import Process
 
 

@@ -1,9 +1,9 @@
 from urllib import parse
-from random import choice
 from session import kuma
+from random import choice
 from screenshot import screenshot_mp
 from tools import mention_other_bot, find_url
-from data import url_blacklist, loading_image, weibo_domains
+from bot_db import url_blacklist, loading_image, weibo_domains
 
 
 def escape_md(text):

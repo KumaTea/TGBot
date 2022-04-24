@@ -1,17 +1,19 @@
 import time
 import logging
 import sqlite3
+import requests
 import subprocess
-from data import *
+from bot_db import *
+from io import BytesIO
 from urllib import parse
+from session import kuma
 from random import choice
 from idle import set_busy
-from session import kuma
-from screenshot import get_screenshot
-from multiprocessing import Process
-from session_ff import get_driver
 from session_rq import nga
+from session_ff import get_driver
 from pyrogram.errors import Timeout
+from multiprocessing import Process
+from screenshot import get_screenshot
 from pyrogram.types import InputMediaPhoto
 from tools import mention_other_bot, find_url
 from datetime import datetime, timezone, timedelta
@@ -63,10 +65,23 @@ def update_nga(chat_id, inform_id, url, post_info, link_result, error_msg='Error
     screenshot = get_screenshot(url)
     if screenshot and type(screenshot) != str:
         try:
-            edited = kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
-            image = edited.photo[0].file_id
-            kuma.edit_message_caption(chat_id, inform_id, caption=link_result, parse_mode='Markdown')
-            write_post_info(post_id, thread_id, title, date, author, author_id, forum, forum_id, image)
+            # edited = kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
+            # image = edited.photo[0].file_id
+            # kuma.edit_message_caption(chat_id, inform_id, caption=link_result, parse_mode='Markdown')
+            edited = requests.post(
+                'http://192.168.2.225:10561/api',
+                data={
+                    'chat_id': chat_id,
+                    'message_id': inform_id,
+                    'error_msg': error_msg,
+                    'parse_mode': parse_mode,
+                },
+                files={
+                    'photo': BytesIO(screenshot)
+                }
+            )
+            # image = edited.text
+            # write_post_info(post_id, thread_id, title, date, author, author_id, forum, forum_id, image)
             return True
         except Timeout:
             logging.warning(f'Telegram reported a timeout: {post_id or thread_id}')

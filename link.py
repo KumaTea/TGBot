@@ -1,11 +1,11 @@
-from random import choice
 from session import kuma
 from info import creator
+from random import choice
 from tools import find_url
-from data import loading_image
-from nga import nga_link_process
+from bot_db import loading_image
 from screenshot import screenshot_mp
-from mdWeibo import weibo_link_process
+from screen_nga import nga_link_process
+from screen_weibo import weibo_link_process
 
 try:
     from localDb import trusted_group

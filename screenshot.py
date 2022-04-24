@@ -1,8 +1,9 @@
 import os
 import logging
+import requests
 from io import BytesIO
-from idle import set_busy
 from session import kuma
+from idle import set_busy
 from time import time, sleep
 from session_ff import get_driver
 from multiprocessing import Process
@@ -46,12 +47,11 @@ def get_screenshot(url, delay=2, timeout=30):
 
         logging.info("{:.3f}s: Loaded.".format(time() - t0))
         sleep(delay)
-        filename = f'/tmp/screenshots/{int(time())}.png'
-        screenshot = driver.save_screenshot(filename)
+        screenshot = driver.get_screenshot_as_png()
         logging.info("{:.3f}s: Got: screenshot".format(time() - t0))
         driver.quit()
         logging.info("{:.3f}s: Quit".format(time() - t0))
-        return filename, True
+        return screenshot, True
     except TimeoutException as e:
         if 'driver' in locals():
             driver.quit()  # noqa
@@ -68,10 +68,20 @@ def get_screenshot(url, delay=2, timeout=30):
 def update_inform(chat_id, inform_id, url, error_msg='Error!', parse_mode='Markdown'):
     screenshot, status = get_screenshot(url)
     if status:
-        kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
-        return os.remove(screenshot)
-    return kuma.edit_message_caption(
-        chat_id, inform_id, caption=error_msg, parse_mode=parse_mode)
+        # kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
+        # return os.remove(screenshot)
+        return requests.post(
+            'http://192.168.2.225:10561/api',
+            data={
+                'chat_id': chat_id,
+                'message_id': inform_id,
+                'error_msg': error_msg,
+                'parse_mode': parse_mode,
+            },
+            files={
+                'photo': BytesIO(screenshot)
+            }
+        )
 
 
 def screenshot_mp(chat_id, inform_id, url, error_msg='Error!', parse_mode='Markdown'):

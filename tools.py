@@ -4,7 +4,7 @@ import json
 import base64
 import logging
 import sqlite3
-from data import db_dir, url_regex
+from bot_db import db_dir, url_regex
 from info import self_id, username
 
 

@@ -1,6 +1,6 @@
 import shutil
 import logging
-from data import db_dir
+from bot_db import db_dir
 from tools import mkdir, init_db
 from session import scheduler, idle_mark
 from register import register_handlers, manager
@@ -23,6 +23,6 @@ def starting():
     mkdir([db_dir, '/tmp/screenshots'])
     init_db('NGA')
 
-    # idle_mark.buf[0] = 1
+    idle_mark.buf[0] = 1
 
     return logging.info("[TGBot] Initialized.")

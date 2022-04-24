@@ -1,6 +1,5 @@
-from data import *
+from bot_db import *
 from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 
 
 options = webdriver.ChromeOptions()

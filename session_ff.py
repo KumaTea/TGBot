@@ -1,4 +1,4 @@
-from data import *
+from bot_db import *
 from selenium import webdriver
 from selenium.webdriver.firefox.firefox_profile import FirefoxProfile
 
