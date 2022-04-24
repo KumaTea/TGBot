@@ -1,3 +1,4 @@
+import shutil
 import logging
 from data import db_dir
 from tools import mkdir, init_db
@@ -15,9 +16,13 @@ def starting():
     manager()
     scheduler.start()
 
-    mkdir(db_dir)
+    try:
+        shutil.rmtree('/tmp/screenshots')
+    except FileNotFoundError:
+        pass
+    mkdir([db_dir, '/tmp/screenshots'])
     init_db('NGA')
 
-    idle_mark.buf[0] = 1
+    # idle_mark.buf[0] = 1
 
     return logging.info("[TGBot] Initialized.")

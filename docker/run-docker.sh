@@ -3,4 +3,4 @@
 set -ex
 
 cd /home/kuma/bots/TGBot
-python3 main.py
+/opt/conda/bin/python3 main.py

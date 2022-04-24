@@ -1,3 +1,4 @@
+import os
 import logging
 from io import BytesIO
 from idle import set_busy
@@ -19,6 +20,9 @@ def load_tweet_complete(driver):
 
 
 def get_screenshot(url, delay=2, timeout=30):
+    if not url.startswith('http'):
+        url = 'http://' + url
+
     t0 = time()
     try:
         logging.info("{:.3f}s: Task: {}".format(time() - t0, url))
@@ -42,28 +46,30 @@ def get_screenshot(url, delay=2, timeout=30):
 
         logging.info("{:.3f}s: Loaded.".format(time() - t0))
         sleep(delay)
-        screenshot = driver.get_screenshot_as_png()
+        filename = f'/tmp/screenshots/{int(time())}.png'
+        screenshot = driver.save_screenshot(filename)
         logging.info("{:.3f}s: Got: screenshot".format(time() - t0))
         driver.quit()
         logging.info("{:.3f}s: Quit".format(time() - t0))
-        return BytesIO(screenshot)
+        return filename, True
     except TimeoutException as e:
         if 'driver' in locals():
             driver.quit()  # noqa
         logging.error(f'Timeout: {str(e)}')
-        return f'Timeout: {str(e)}'
+        return f'Timeout: {str(e)}', False
     except Exception as e:
         if 'driver' in locals():
             driver.quit()  # noqa
         logging.error(f'Error: {str(e)}')
-        return f'Error: {str(e)}'
+        return f'Error: {str(e)}', False
 
 
 @set_busy
 def update_inform(chat_id, inform_id, url, error_msg='Error!', parse_mode='Markdown'):
-    screenshot = get_screenshot(url)
-    if screenshot and type(screenshot) != str:
-        return kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
+    screenshot, status = get_screenshot(url)
+    if status:
+        kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
+        return os.remove(screenshot)
     return kuma.edit_message_caption(
         chat_id, inform_id, caption=error_msg, parse_mode=parse_mode)
 

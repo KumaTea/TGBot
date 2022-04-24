@@ -140,7 +140,7 @@ def nga_link_process(message):
     db_result = get_post_info(pid=post_id, tid=thread_id)
     if db_result:
         pid, tid, title, date, author, author_id, forum, forum_id, image = db_result
-        link_result = f'*{title}*\n' \
+        link_result = f'**{title}**\n' \
                       f'[{author}](https://{nga_domain}/nuke.php?func=ucp&uid={author_id}) ' \
                       f'{date} ' \
                       f'[{forum}](https://{nga_domain}/thread.php?fid={forum_id})'
@@ -171,7 +171,7 @@ def nga_link_process(message):
         forum = result_data['__F']['name']
         forum_id = result_data['__T']['fid']
 
-        link_result = f'*{title}*\n' \
+        link_result = f'**{title}**\n' \
                       f'[{author}](https://{nga_domain}/nuke.php?func=ucp&uid={author_id}) ' \
                       f'{date} ' \
                       f'[{forum}](https://{nga_domain}/thread.php?fid={forum_id})'

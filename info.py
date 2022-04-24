@@ -4,6 +4,6 @@ help_message = '/start: wake me up\n/help: display this message\n' \
 
 self_id = 781791363
 creator = 345060487
-version = '5.0.0.0a0'
+version = '5.0.0.0a1'
 channel = 'local'
 username = 'KumaTea_bot'

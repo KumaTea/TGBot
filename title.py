@@ -11,8 +11,8 @@ except ImportError:
 
 
 usage = '用法\n' \
-        '向对象的消息 *回复* `/title <text>` 以添加头衔\n' \
-        '字数 *16* 以内，不支持 emoji\n\n' \
+        '向对象的消息 **回复** `/title <text>` 以添加头衔\n' \
+        '字数 **16** 以内，不支持 emoji\n\n' \
         '`/title list` 列出所有头衔'
 list_commands = ['list', 'print', 'dump']
 
@@ -30,11 +30,11 @@ def get_user_name(user):
 
 def get_admin_titles(chat_id):
     admin_titles = {}
-    admins = kuma.get_chat_administrators(chat_id)
+    admins = kuma.get_chat_members(chat_id, filter="administrators")
     for member in admins:
-        if member.custom_title:
-            admin_titles[member.custom_title] = admin_titles.get(member.custom_title, [])
-            admin_titles[member.custom_title].append(get_user_name(member.user))
+        if member.title:
+            admin_titles[member.title] = admin_titles.get(member.title, [])
+            admin_titles[member.title].append(get_user_name(member.user))
         else:
             admin_titles['AdminWithoutTitle'] = admin_titles.get('AdminWithoutTitle', [])
             admin_titles['AdminWithoutTitle'].append(get_user_name(member.user))
@@ -45,7 +45,7 @@ def get_admin_titles(chat_id):
 def print_admin_titles(chat_id):
     chat_name = kuma.get_chat(chat_id).title
     date = datetime.now().strftime('%Y%m%d')
-    text = f'*{chat_name}*\n头衔列表  {date}\n\n'
+    text = f'**{chat_name}**\n头衔列表  {date}\n\n'
 
     admin_titles = get_admin_titles(chat_id)
     admin_titles_list = list(admin_titles.keys())
@@ -107,7 +107,7 @@ def title(client, message):
                             return message.reply('权限不足，设为管理失败')
                     try:
                         title_to_set = text[title_index+1:title_index+1+16]
-                        kuma.set_chat_administrator_custom_title(chat_id, reply.from_user.id, title_to_set)
+                        kuma.set_administrator_title(chat_id, reply.from_user.id, title_to_set)
 
                         name = reply.from_user.first_name
                         if reply.from_user.last_name:

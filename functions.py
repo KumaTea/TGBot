@@ -34,7 +34,7 @@ def delay(client, message):
         status = 'ok'
     else:
         status = 'bad'
-    result = kuma.edit_message_text(f'Delay is {duration_str}.\nThe connectivity is {status}.', chat_id, second_msg_id)
+    result = kuma.edit_message_text(chat_id, second_msg_id, f'Delay is {duration_str}.\nThe connectivity is {status}.')
     return result
 
 
