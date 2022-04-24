@@ -45,7 +45,7 @@ def get_screenshot(url, delay=2, timeout=30):
             # lambda drv: drv.execute_script("return document.readyState") == "complete"
             # driver.execute_script("window.scrollTo(0, 0);")  # scroll to top
 
-        logging.info("{:.3f}s: Loaded.".format(time() - t0))
+        logging.info("{:.3f}s: Load completed.".format(time() - t0))
         sleep(delay)
         screenshot = driver.get_screenshot_as_png()
         logging.info("{:.3f}s: Got: screenshot".format(time() - t0))
@@ -68,20 +68,23 @@ def get_screenshot(url, delay=2, timeout=30):
 def update_inform(chat_id, inform_id, url, error_msg='Error!', parse_mode='Markdown'):
     screenshot, status = get_screenshot(url)
     if status:
+        logging.info('Calling relay...')
         # kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
         # return os.remove(screenshot)
-        return requests.post(
+        result = requests.post(
             'http://192.168.2.225:10561/api',
             data={
                 'chat_id': chat_id,
                 'message_id': inform_id,
                 'error_msg': error_msg,
                 'parse_mode': parse_mode,
+                'caption': ''
             },
             files={
-                'photo': BytesIO(screenshot)
+                'photo': screenshot
             }
         )
+        return logging.info(result.text)
 
 
 def screenshot_mp(chat_id, inform_id, url, error_msg='Error!', parse_mode='Markdown'):

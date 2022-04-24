@@ -24,9 +24,9 @@ def register_handlers():
     kuma.add_handler(MessageHandler(delay, filters.command(['delay', 'ping']) & ~filters.edited))
     kuma.add_handler(MessageHandler(look, filters.command(['look', 'get', 'screenshot']) & ~filters.edited))
 
-    kuma.add_handler(MessageHandler(private_get_file_id, filters.private))
+    kuma.add_handler(MessageHandler(private_get_file_id, filters.private & ~filters.edited))
 
-    # kuma.add_handler(MessageHandler(process_msg, filters.group & ~filters.edited))
+    kuma.add_handler(MessageHandler(process_msg, filters.group & ~filters.edited))
     kuma.add_handler(MessageHandler(private_unknown, filters.private & ~filters.edited))
 
     return logging.info('Registered handlers')

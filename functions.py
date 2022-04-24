@@ -99,6 +99,8 @@ def private_forward(client, message):
 
 
 def private_get_file_id(client, message):
+    if message.from_user.id == info.self_id:
+        return None
     file_id = 'Unknown type of media.'
     if message.text:
         file_id = message.text

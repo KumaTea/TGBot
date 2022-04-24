@@ -62,8 +62,8 @@ def write_post_info(pid, tid, title, date, author, author_id, forum, forum_id, i
 @set_busy
 def update_nga(chat_id, inform_id, url, post_info, link_result, error_msg='Error!', parse_mode='Markdown'):
     post_id, thread_id, title, date, author, author_id, forum, forum_id = post_info
-    screenshot = get_screenshot(url)
-    if screenshot and type(screenshot) != str:
+    screenshot, status = get_screenshot(url)
+    if status:
         try:
             # edited = kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
             # image = edited.photo[0].file_id
@@ -75,13 +75,16 @@ def update_nga(chat_id, inform_id, url, post_info, link_result, error_msg='Error
                     'message_id': inform_id,
                     'error_msg': error_msg,
                     'parse_mode': parse_mode,
+                    'caption': link_result
                 },
                 files={
-                    'photo': BytesIO(screenshot)
+                    'photo': screenshot
                 }
             )
             # image = edited.text
             # write_post_info(post_id, thread_id, title, date, author, author_id, forum, forum_id, image)
+            # return kuma.edit_message_caption(
+            #     chat_id, inform_id, caption=link_result, parse_mode=parse_mode)
             return True
         except Timeout:
             logging.warning(f'Telegram reported a timeout: {post_id or thread_id}')
