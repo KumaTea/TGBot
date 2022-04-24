@@ -2,17 +2,18 @@ import time
 import logging
 import sqlite3
 import subprocess
-from botDB import *
+from data import *
 from urllib import parse
 from random import choice
 from idle import set_busy
-from botSession import kuma
-from mdScreen import get_screenshot
+from session import kuma
+from screenshot import get_screenshot
 from multiprocessing import Process
-from telegram.error import TimedOut
-from telegram import InputMediaPhoto
-from botSessionWeb import nga, get_driver
-from botTools import mention_other_bot, find_url
+from session_ff import get_driver
+from session_rq import nga
+from pyrogram.errors import Timeout
+from pyrogram.types import InputMediaPhoto
+from tools import mention_other_bot, find_url
 from datetime import datetime, timezone, timedelta
 
 
@@ -67,7 +68,7 @@ def update_nga(chat_id, inform_id, url, post_info, link_result, error_msg='Error
             kuma.edit_message_caption(chat_id, inform_id, caption=link_result, parse_mode='Markdown')
             write_post_info(post_id, thread_id, title, date, author, author_id, forum, forum_id, image)
             return True
-        except TimedOut:
+        except Timeout:
             logging.warning(f'Telegram reported a timeout: {post_id or thread_id}')
             return None
     return kuma.edit_message_caption(
@@ -81,7 +82,7 @@ def nga_mp(chat_id, inform_id, url, post_info, link_result, error_msg='Error!', 
 
 
 def nga_link_process(message):
-    chat_id = message.chat_id
+    chat_id = message.chat.id
     text = message.text
     if not text:
         return None

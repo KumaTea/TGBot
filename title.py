@@ -1,8 +1,8 @@
 from time import sleep
-from botInfo import self_id
-from botSession import kuma
+from info import self_id
+from session import kuma
 from datetime import datetime
-from telegram.error import BadRequest, ChatMigrated
+from pyrogram.errors import BadRequest
 
 try:
     from localDb import trusted_group
@@ -65,8 +65,7 @@ def print_admin_titles(chat_id):
     return text
 
 
-def title(update, context):
-    message = update.message
+def title(client, message):
     text = message.text
     chat_id = message.chat.id
     title_index = text.find(' ')
@@ -74,7 +73,7 @@ def title(update, context):
     promoted = False
 
     if title_index == -1:
-        resp = update.message.reply_text(usage, parse_mode='Markdown', disable_web_page_preview=True, quote=False)
+        resp = message.reply(usage, parse_mode='Markdown', disable_web_page_preview=True)
     else:
         reply = message.reply_to_message
         if reply:
@@ -105,7 +104,7 @@ def title(update, context):
                             sleep(2)
                             promoted = True
                         except BadRequest:
-                            return update.message.reply_text('权限不足，设为管理失败', quote=False)
+                            return message.reply('权限不足，设为管理失败')
                     try:
                         title_to_set = text[title_index+1:title_index+1+16]
                         kuma.set_chat_administrator_custom_title(chat_id, reply.from_user.id, title_to_set)
@@ -117,25 +116,25 @@ def title(update, context):
                         if promoted:
                             has_set = '设为管理并设置了'
                         result = f'已为 {name} {has_set}「{title_to_set}」头衔。'
-                        resp = update.message.reply_text(result, quote=False)
+                        resp = message.reply(result)
                     except BadRequest:
                         if chat_id > 0:
                             error_msg = '本群还不是超级群 (supergroup)，请尝试设为公开或允许新成员查看历史记录'
                         else:
                             error_msg = '权限不足，请查看我的权限是否足够，以及对象是否为bot / 已被设为管理'
-                        resp = update.message.reply_text(error_msg, quote=False)
-                    except ChatMigrated:
-                        resp = update.message.reply_text('已升级到超级群但群ID未变，请稍后重试', quote=False)
+                        resp = message.reply(error_msg)
+                    # except ChatMigrated:
+                    #     resp = message.reply('已升级到超级群但群ID未变，请稍后重试')
                     except Exception as e:
-                        resp = update.message.reply_text(f'未知错误：\n{e}', quote=False)
+                        resp = message.reply(f'未知错误：\n{e}')
                 else:
-                    resp = update.message.reply_text('您的权限不足，我无权操作', quote=False)
+                    resp = message.reply('您的权限不足，我无权操作')
             else:
-                resp = update.message.reply_text('我还没有提拔群友的权限', quote=False)
+                resp = message.reply('我还没有提拔群友的权限')
         else:
             command = text[title_index+1:]
             if command.lower() in list_commands:
-                resp = update.message.reply_text(print_admin_titles(chat_id), parse_mode='Markdown', quote=False)
+                resp = message.reply(print_admin_titles(chat_id), parse_mode='Markdown')
             else:
-                resp = update.message.reply_text(usage, parse_mode='Markdown', disable_web_page_preview=True, quote=False)
+                resp = message.reply(usage, parse_mode='Markdown', disable_web_page_preview=True)
     return resp

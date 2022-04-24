@@ -1,6 +1,9 @@
 import os
 
 
+chrome_profile_path = '/home/kuma/data/chrome'
+chrome_driver_path = '/snap/bin/chromedriver'
+
 firefox_profile_path = '/home/kuma/data/firefox'
 
 notify_path = '/usr/local/bin/notify'

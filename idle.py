@@ -1,4 +1,4 @@
-from botSession import idle_mark
+from session import idle_mark
 
 
 def set_busy(operation):

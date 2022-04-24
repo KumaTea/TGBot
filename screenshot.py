@@ -1,11 +1,11 @@
 import logging
 from io import BytesIO
 from idle import set_busy
-from botSession import kuma
+from session import kuma
 from time import time, sleep
-from botSessionWeb import get_driver
+from session_ff import get_driver
 from multiprocessing import Process
-from telegram import InputMediaPhoto
+from pyrogram.types import InputMediaPhoto
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait
 

@@ -1,10 +1,10 @@
 from random import choice
-from botSession import kuma
-from botInfo import creator
-from botTools import find_url
-from botDB import loading_image
-from mdNGA import nga_link_process
-from mdScreen import screenshot_mp
+from session import kuma
+from info import creator
+from tools import find_url
+from data import loading_image
+from nga import nga_link_process
+from screenshot import screenshot_mp
 from mdWeibo import weibo_link_process
 
 try:
@@ -23,10 +23,8 @@ def link_process(message):
     return True
 
 
-def look(update, context):
-    message = update.message
-
-    chat_id = message.chat_id
+def look(client, message):
+    chat_id = message.chat.id
     if chat_id not in trusted_group + [creator]:
         return None
 
@@ -47,5 +45,5 @@ def look(update, context):
     inform_id = inform.message_id
 
     kuma.send_chat_action(chat_id, 'upload_photo')
-    screenshot_mp(chat_id, inform_id, url, '__截图获取失败！__', 'Markdown')
+    screenshot_mp(chat_id, inform_id, url, error_msg='__截图获取失败！__', parse_mode='Markdown')
     return True

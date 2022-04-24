@@ -3,4 +3,4 @@
 set -ex
 
 cd /home/kuma/bots/TGBot
-/opt/conda/bin/gunicorn --bind=0.0.0.0:10560 main:app
+python3 main.py

@@ -1,38 +1,34 @@
-import botSession
-import botSessionWeb
-from mdFunctions import *
-from mdNGA import check_nga_login
-from mdMessage import process_msg
-from botTools import session_update
-from telegram.ext import MessageHandler, CommandHandler, Filters
+import logging
+import session
+import session_rq
+from functions import *
+from pyrogram import filters
+from tools import session_update
+from nga import check_nga_login
+from process_msg import process_msg
 
 
 def register_handlers():
-    dp = botSession.dp
+    kuma.add_handler(MessageHandler(debug, filters.command(['debug', 'dump']) & ~filters.edited))
+    kuma.add_handler(MessageHandler(delay, filters.command(['delay', 'ping']) & ~filters.edited))
+    kuma.add_handler(MessageHandler(repeat, filters.command(['rp', 'repeat']) & filters.group & ~filters.edited))
+    kuma.add_handler(MessageHandler(title, filters.command(['title', 'entitle']) & filters.group & ~filters.edited))
 
-    # dp.add_handler(MessageHandler(Filters.status_update.new_chat_members, welcome))
+    kuma.add_handler(MessageHandler(private_start, filters.command(['start']) & filters.private & ~filters.edited))
+    kuma.add_handler(MessageHandler(private_forward, filters.command(['fw', 'forward']) & filters.private & ~filters.edited))
+    kuma.add_handler(MessageHandler(private_help, filters.command(['help']) & filters.private & ~filters.edited))
 
-    dp.add_handler(CommandHandler(['debug', 'dump'], debug))
-    dp.add_handler(CommandHandler(['delay', 'ping'], delay))
-    dp.add_handler(CommandHandler(['rp', 'repeat'], repeat, Filters.chat_type.groups))
-    dp.add_handler(CommandHandler(['title', 'entitle'], title, Filters.chat_type.groups))
+    kuma.add_handler(MessageHandler(lookup, filters.command(['look', 'get', 'screenshot']) & ~filters.edited))
 
-    dp.add_handler(CommandHandler('start', private_start, Filters.chat_type.private))
-    dp.add_handler(CommandHandler(['fw', 'forward'], private_forward, Filters.chat_type.private))
-    dp.add_handler(CommandHandler('help', private_help, Filters.chat_type.private))
+    kuma.add_handler(MessageHandler(process_msg, filters.group & ~filters.edited))
+    kuma.add_handler(MessageHandler(private_unknown, filters.private & ~filters.edited))
 
-    dp.add_handler(CommandHandler(['get', 'look', 'screenshot'], look))
-
-    dp.add_handler(MessageHandler(Filters.chat_type.groups, process_msg))
-    dp.add_handler(MessageHandler((Filters.command & Filters.chat_type.private), private_unknown))
-
-    dp.add_handler(MessageHandler(Filters.chat_type.private, private_get_file_id))
-    return True
+    kuma.add_handler(MessageHandler(private_get_file_id, filters.private))
+    return logging.info('Registered handlers')
 
 
 def manager():
-    scheduler = botSession.scheduler
-    scheduler.add_job(session_update, 'cron', [botSessionWeb.nga, botSessionWeb.nga_token], hour=4)
+    scheduler = session.scheduler
+    scheduler.add_job(session_update, 'cron', [session_rq.nga, session_rq.nga_token], hour=4)
     scheduler.add_job(check_nga_login, 'cron', minute=30)
-    # scheduler.add_job(cron_timer, 'cron', hour='*')
-    return True
+    return logging.info('Scheduler started')

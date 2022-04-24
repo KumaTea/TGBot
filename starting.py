@@ -1,7 +1,7 @@
 import logging
-from botDB import db_dir
-from botTools import mkdir, init_db
-from botSession import scheduler, idle_mark
+from data import db_dir
+from tools import mkdir, init_db
+from session import scheduler, idle_mark
 from register import register_handlers, manager
 
 
@@ -20,4 +20,4 @@ def starting():
 
     idle_mark.buf[0] = 1
 
-    return logging.info('Starting fine.')
+    return logging.info("[TGBot] Initialized.")

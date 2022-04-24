@@ -1,9 +1,9 @@
 from urllib import parse
 from random import choice
-from botSession import kuma
-from mdScreen import screenshot_mp
-from botTools import mention_other_bot, find_url
-from botDB import url_blacklist, loading_image, weibo_domains
+from session import kuma
+from screenshot import screenshot_mp
+from tools import mention_other_bot, find_url
+from data import url_blacklist, loading_image, weibo_domains
 
 
 def escape_md(text):
@@ -14,7 +14,7 @@ def escape_md(text):
 
 
 def weibo_link_process(message):
-    chat_id = message.chat_id
+    chat_id = message.chat.id
     text = message.text
     if not text:
         return None

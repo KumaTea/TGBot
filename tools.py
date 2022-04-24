@@ -4,8 +4,8 @@ import json
 import base64
 import logging
 import sqlite3
-from botDB import db_dir, url_regex
-from botInfo import self_id, username
+from data import db_dir, url_regex
+from info import self_id, username
 
 
 def read_file(filename, encrypt=False):

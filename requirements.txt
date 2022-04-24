@@ -1,6 +1,4 @@
-flask
+pyrogram
 requests
-gunicorn
 selenium
 apscheduler
-python-telegram-bot
