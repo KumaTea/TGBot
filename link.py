@@ -6,6 +6,8 @@ from bot_db import loading_image
 from screenshot import screenshot_mp
 from screen_nga import nga_link_process
 from screen_weibo import weibo_link_process
+from pyrogram.enums.parse_mode import ParseMode
+from pyrogram.enums.chat_action import ChatAction
 
 try:
     from localDb import trusted_group
@@ -40,8 +42,8 @@ def look(client, message):
         return kuma.send_message(chat_id, 'No url.')
 
     inform = kuma.send_photo(chat_id, choice(loading_image), caption='Getting screenshot...')
-    inform_id = inform.message_id
+    inform_id = inform.id
 
-    kuma.send_chat_action(chat_id, 'upload_photo')
-    screenshot_mp(chat_id, inform_id, url, error_msg='__截图获取失败！__', parse_mode='Markdown')
+    kuma.send_chat_action(chat_id, ChatAction.UPLOAD_PHOTO)
+    screenshot_mp(client, chat_id, inform_id, url, error_msg='__截图获取失败！__', parse_mode=ParseMode.MARKDOWN)
     return True

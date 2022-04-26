@@ -8,6 +8,7 @@ from time import time, sleep
 from session_ff import get_driver
 from multiprocessing import Process
 from pyrogram.types import InputMediaPhoto
+from pyrogram.enums.parse_mode import ParseMode
 from selenium.common.exceptions import TimeoutException
 from selenium.webdriver.support.wait import WebDriverWait
 
@@ -20,17 +21,20 @@ def load_tweet_complete(driver):
     return 'data-testid="tweet"' in driver.page_source
 
 
-def get_screenshot(url, delay=2, timeout=30):
+def get_screenshot(client, url, chat_id, inform_id, delay=2, timeout=30):
     if not url.startswith('http'):
         url = 'http://' + url
 
     t0 = time()
     try:
-        logging.info("{:.3f}s: Task: {}".format(time() - t0, url))
+        client.edit_message_caption(
+            chat_id, inform_id, caption="{:.3f}s: Task: {}".format(time() - t0, url))
         driver = get_driver()
-        logging.info("{:.3f}s: Got: driver".format(time() - t0))
+        client.edit_message_caption(
+            chat_id, inform_id, caption="{:.3f}s: Browser started".format(time() - t0))
         driver.get(url)
-        logging.info("{:.3f}s: Got: {}".format(time()-t0, url))
+        client.edit_message_caption(
+            chat_id, inform_id, caption="{:.3f}s: Loading page...".format(time() - t0))
         # if 'nga' in url:
         #     images = driver.find_elements_by_xpath('//button[normalize-space()="显示图片"]')
         #     for image in images:
@@ -45,12 +49,15 @@ def get_screenshot(url, delay=2, timeout=30):
             # lambda drv: drv.execute_script("return document.readyState") == "complete"
             # driver.execute_script("window.scrollTo(0, 0);")  # scroll to top
 
-        logging.info("{:.3f}s: Load completed.".format(time() - t0))
         sleep(delay)
+        client.edit_message_caption(
+            chat_id, inform_id, caption="{:.3f}s: Page loaded".format(time() - t0))
         screenshot = driver.get_screenshot_as_png()
-        logging.info("{:.3f}s: Got: screenshot".format(time() - t0))
+        client.edit_message_caption(
+            chat_id, inform_id, caption="{:.3f}s: Captured screenshot".format(time() - t0))
         driver.quit()
-        logging.info("{:.3f}s: Quit".format(time() - t0))
+        client.edit_message_caption(
+            chat_id, inform_id, caption="{:.3f}s: Browser exited".format(time() - t0))
         return screenshot, True
     except TimeoutException as e:
         if 'driver' in locals():
@@ -65,10 +72,11 @@ def get_screenshot(url, delay=2, timeout=30):
 
 
 @set_busy
-def update_inform(chat_id, inform_id, url, error_msg='Error!', parse_mode='Markdown'):
-    screenshot, status = get_screenshot(url)
+def update_inform(client, chat_id, inform_id, url, error_msg='Error!', parse_mode=ParseMode.MARKDOWN):
+    screenshot, status = get_screenshot(client, url, chat_id=chat_id, inform_id=inform_id)
     if status:
-        logging.info('Calling relay...')
+        client.edit_message_caption(
+            chat_id, inform_id, caption="Uploading image...")
         # kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
         # return os.remove(screenshot)
         result = requests.post(
@@ -87,7 +95,7 @@ def update_inform(chat_id, inform_id, url, error_msg='Error!', parse_mode='Markd
         return logging.info(result.text)
 
 
-def screenshot_mp(chat_id, inform_id, url, error_msg='Error!', parse_mode='Markdown'):
-    p = Process(target=update_inform, args=(chat_id, inform_id, url, error_msg, parse_mode))
+def screenshot_mp(client, chat_id, inform_id, url, error_msg='Error!', parse_mode=ParseMode.MARKDOWN):
+    p = Process(target=update_inform, args=(client, chat_id, inform_id, url, error_msg, parse_mode))
     p.start()
     return True

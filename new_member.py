@@ -4,11 +4,12 @@ from session import kuma
 from info import creator
 from localDb import welcome_chat
 from multiprocessing import Process
+from pyrogram.enums.parse_mode import ParseMode
 
 
 def welcome(client, message):
     chat_id = message.chat.id
-    alert_id = message.message_id
+    alert_id = message.id
     new_member = message.new_chat_members[0]
     bot_status = new_member.is_bot
     if chat_id in welcome_chat and not bot_status:
@@ -23,15 +24,15 @@ def welcome(client, message):
                     user_name = user_name[:12]
                 user_link = f'[{user_name}](tg://user?id={user_id})'
                 formatted_message = welcome_chat[chat_id]['message'].format(name=user_link)
-                welcome_message = message.reply(formatted_message, parse_mode='Markdown')
+                welcome_message = message.reply(formatted_message, parse_mode=ParseMode.MARKDOWN)
             else:
                 welcome_message = message.reply(welcome_chat[chat_id]['message'])
-            msg_id = welcome_message.message_id
+            msg_id = welcome_message.id
         else:
             msg_id = None
         if 'sticker' in welcome_chat[chat_id]:
             welcome_sticker = message.reply_sticker(welcome_chat[chat_id]['sticker'])
-            sticker_id = welcome_sticker.message_id
+            sticker_id = welcome_sticker.id
         else:
             sticker_id = None
         check = Process(target=check_member, args=(chat_id, user_id, alert_id, msg_id, sticker_id, 125))
@@ -67,5 +68,5 @@ def check_member(chat_id, user_id, alert_id, msg_id=None, sticker_id=None, wait_
             kuma.send_message(creator,
                               f'Please review new member of @{group_username} '
                               f'by [this link](https://t.me/{group_username}/{referer})',
-                              parse_mode='Markdown', disable_web_page_preview=True)
+                              parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
     return not left

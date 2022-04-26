@@ -16,6 +16,8 @@ from multiprocessing import Process
 from screenshot import get_screenshot
 from pyrogram.types import InputMediaPhoto
 from tools import mention_other_bot, find_url
+from pyrogram.enums.parse_mode import ParseMode
+from pyrogram.enums.chat_action import ChatAction
 from datetime import datetime, timezone, timedelta
 
 
@@ -60,14 +62,16 @@ def write_post_info(pid, tid, title, date, author, author_id, forum, forum_id, i
 
 
 @set_busy
-def update_nga(chat_id, inform_id, url, post_info, link_result, error_msg='Error!', parse_mode='Markdown'):
+def update_nga(chat_id, inform_id, url, post_info, link_result, error_msg='Error!', parse_mode=ParseMode.MARKDOWN):
     post_id, thread_id, title, date, author, author_id, forum, forum_id = post_info
-    screenshot, status = get_screenshot(url)
+    screenshot, status = get_screenshot(url, chat_id, inform_id)
     if status:
         try:
+            kuma.edit_message_caption(
+                chat_id, inform_id, caption="Uploading image...")
             # edited = kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
             # image = edited.photo[0].file_id
-            # kuma.edit_message_caption(chat_id, inform_id, caption=link_result, parse_mode='Markdown')
+            # kuma.edit_message_caption(chat_id, inform_id, caption=link_result, parse_mode=ParseMode.MARKDOWN)
             edited = requests.post(
                 'http://192.168.2.225:10561/api',
                 data={
@@ -93,7 +97,7 @@ def update_nga(chat_id, inform_id, url, post_info, link_result, error_msg='Error
         chat_id, inform_id, caption=f'{link_result}\n{error_msg}', parse_mode=parse_mode)
 
 
-def nga_mp(chat_id, inform_id, url, post_info, link_result, error_msg='Error!', parse_mode='Markdown'):
+def nga_mp(chat_id, inform_id, url, post_info, link_result, error_msg='Error!', parse_mode=ParseMode.MARKDOWN):
     p = Process(target=update_nga, args=(chat_id, inform_id, url, post_info, link_result, error_msg, parse_mode))
     p.start()
     return True
@@ -162,10 +166,10 @@ def nga_link_process(message):
                       f'[{author}](https://{nga_domain}/nuke.php?func=ucp&uid={author_id}) ' \
                       f'{date} ' \
                       f'[{forum}](https://{nga_domain}/thread.php?fid={forum_id})'
-        return kuma.send_photo(chat_id, image, caption=link_result, parse_mode='Markdown')
+        return kuma.send_photo(chat_id, image, caption=link_result, parse_mode=ParseMode.MARKDOWN)
 
     inform = kuma.send_photo(chat_id, choice(loading_image), caption='NGA link found. Retrieving...')
-    inform_id = inform.message_id
+    inform_id = inform.id
 
     result = nga.get(url_for_info)
     if result.status_code != 200:
@@ -198,9 +202,9 @@ def nga_link_process(message):
             time.sleep(5)
             return kuma.delete_message(chat_id, inform_id)
         else:
-            kuma.send_chat_action(chat_id, 'upload_photo')
+            kuma.send_chat_action(chat_id, ChatAction.UPLOAD_PHOTO)
             post_info = [post_id, thread_id, title, date, author, author_id, forum, forum_id]
-            nga_mp(chat_id, inform_id, url_for_screenshot, post_info, link_result, '__截图获取失败！__', 'Markdown')
+            nga_mp(chat_id, inform_id, url_for_screenshot, post_info, link_result, '__截图获取失败！__', ParseMode.MARKDOWN)
             return True
 
 

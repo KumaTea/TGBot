@@ -4,6 +4,8 @@ from session import kuma
 from datetime import datetime
 from tools import get_user_name
 from pyrogram.errors import BadRequest
+from pyrogram.enums.parse_mode import ParseMode
+from pyrogram.enums.chat_members_filter import ChatMembersFilter
 
 try:
     from localDb import trusted_group
@@ -20,11 +22,11 @@ list_commands = ['list', 'print', 'dump']
 
 def get_admin_titles(chat_id):
     admin_titles = {}
-    admins = kuma.get_chat_members(chat_id, filter="administrators")
+    admins = kuma.get_chat_members(chat_id, filter=ChatMembersFilter.ADMINISTRATORS)
     for member in admins:
-        if member.title:
-            admin_titles[member.title] = admin_titles.get(member.title, [])
-            admin_titles[member.title].append(get_user_name(member.user))
+        if member.custom_title:
+            admin_titles[member.custom_title] = admin_titles.get(member.custom_title, [])
+            admin_titles[member.custom_title].append(get_user_name(member.user))
         else:
             admin_titles['AdminWithoutTitle'] = admin_titles.get('AdminWithoutTitle', [])
             admin_titles['AdminWithoutTitle'].append(get_user_name(member.user))
@@ -63,7 +65,7 @@ def title(client, message):
     promoted = False
 
     if title_index == -1:
-        resp = message.reply(usage, parse_mode='Markdown', disable_web_page_preview=True)
+        resp = message.reply(usage, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
     else:
         reply = message.reply_to_message
         if reply:
@@ -124,7 +126,7 @@ def title(client, message):
         else:
             command = text[title_index+1:]
             if command.lower() in list_commands:
-                resp = message.reply(print_admin_titles(chat_id), parse_mode='Markdown')
+                resp = message.reply(print_admin_titles(chat_id), parse_mode=ParseMode.MARKDOWN)
             else:
-                resp = message.reply(usage, parse_mode='Markdown', disable_web_page_preview=True)
+                resp = message.reply(usage, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
     return resp

@@ -5,6 +5,7 @@ from link import look  # noqa
 from title import title  # noqa
 from session import kuma
 from tools import trimmer, trim_key
+from pyrogram.enums.parse_mode import ParseMode
 
 
 def debug(client, message):
@@ -12,7 +13,7 @@ def debug(client, message):
     if message.reply_to_message:
         debug_message = debug_message['reply_to_message']
     debug_message = trim_key(trimmer(debug_message))
-    resp = message.reply(f'`{debug_message}`', parse_mode='Markdown')
+    resp = message.reply(f'`{debug_message}`', parse_mode=ParseMode.MARKDOWN)
     return resp
 
 
@@ -23,7 +24,7 @@ def delay(client, message):
     checking_message = message.reply('Checking delay...')
 
     second_timestamp = time.perf_counter()
-    second_msg_id = checking_message.message_id
+    second_msg_id = checking_message.id
     duration = second_timestamp - first_timestamp
     duration_str = '{:.3f} ms'.format(1000 * duration)
     if duration < 0.1:

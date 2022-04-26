@@ -3,6 +3,8 @@ from session import kuma
 from random import choice
 from screenshot import screenshot_mp
 from tools import mention_other_bot, find_url
+from pyrogram.enums.parse_mode import ParseMode
+from pyrogram.enums.chat_action import ChatAction
 from bot_db import url_blacklist, loading_image, weibo_domains
 
 
@@ -47,8 +49,8 @@ def weibo_link_process(message):
 
     # inform = kuma.send_message(chat_id, 'Weibo link found. Retrieving...')
     inform = kuma.send_photo(chat_id, choice(loading_image), caption='Weibo link found. Retrieving...')
-    inform_id = inform.message_id
+    inform_id = inform.id
 
-    kuma.send_chat_action(chat_id, 'upload_photo')
-    screenshot_mp(chat_id, inform_id, url, '__截图获取失败！__', 'Markdown')
+    kuma.send_chat_action(chat_id, ChatAction.UPLOAD_PHOTO)
+    screenshot_mp(chat_id, inform_id, url, '__截图获取失败！__', ParseMode.MARKDOWN)
     return True
