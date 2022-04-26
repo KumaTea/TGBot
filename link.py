@@ -45,5 +45,5 @@ def look(client, message):
     inform_id = inform.id
 
     kuma.send_chat_action(chat_id, ChatAction.UPLOAD_PHOTO)
-    screenshot_mp(client, chat_id, inform_id, url, error_msg='__截图获取失败！__', parse_mode=ParseMode.MARKDOWN)
+    screenshot_mp(chat_id, inform_id, url, error_msg='__截图获取失败！__', parse_mode=ParseMode.MARKDOWN)
     return True

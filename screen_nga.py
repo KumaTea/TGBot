@@ -67,8 +67,8 @@ def update_nga(chat_id, inform_id, url, post_info, link_result, error_msg='Error
     screenshot, status = get_screenshot(url, chat_id, inform_id)
     if status:
         try:
-            kuma.edit_message_caption(
-                chat_id, inform_id, caption="Uploading image...")
+            # kuma.edit_message_caption(
+            #     chat_id, inform_id, caption="Uploading image...")
             # edited = kuma.edit_message_media(chat_id, inform_id, media=InputMediaPhoto(screenshot))
             # image = edited.photo[0].file_id
             # kuma.edit_message_caption(chat_id, inform_id, caption=link_result, parse_mode=ParseMode.MARKDOWN)
