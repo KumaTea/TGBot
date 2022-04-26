@@ -119,3 +119,14 @@ def find_url(text):
         if result:
             return result[0]
     return None
+
+
+def get_user_name(user):
+    lang = user.language_code or 'zh'
+    if user.last_name:
+        if 'zh' in lang:
+            return f'{user.first_name}{user.last_name}'
+        else:
+            return f'{user.first_name} {user.last_name}'
+    else:
+        return user.first_name

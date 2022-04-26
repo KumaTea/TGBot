@@ -1,6 +1,5 @@
 .idea
 admin*
-localDb.py
 token*
 __pycache__
 data
@@ -10,3 +9,4 @@ local*
 life
 tmp
 *.session
+*.log

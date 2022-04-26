@@ -18,9 +18,7 @@ def link_process(message):
     if not text:
         return None
 
-    nga_link_process(message)
-    weibo_link_process(message)
-    return True
+    return nga_link_process(message) or weibo_link_process(message)
 
 
 def look(client, message):

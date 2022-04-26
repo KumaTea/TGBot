@@ -2,6 +2,7 @@ from time import sleep
 from info import self_id
 from session import kuma
 from datetime import datetime
+from tools import get_user_name
 from pyrogram.errors import BadRequest
 
 try:
@@ -15,17 +16,6 @@ usage = '用法\n' \
         '字数 **16** 以内，不支持 emoji\n\n' \
         '`/title list` 列出所有头衔'
 list_commands = ['list', 'print', 'dump']
-
-
-def get_user_name(user):
-    lang = user.language_code or 'zh'
-    if user.last_name:
-        if 'zh' in lang:
-            return f'{user.first_name}{user.last_name}'
-        else:
-            return f'{user.first_name} {user.last_name}'
-    else:
-        return user.first_name
 
 
 def get_admin_titles(chat_id):
