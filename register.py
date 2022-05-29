@@ -1,11 +1,11 @@
 import logging
-import session
-import session_rq
+# import session
+# import session_rq
 from functions import *
 from pyrogram import filters
-from tools import session_update
+# from tools import session_update
 from process_msg import process_msg
-from screen_nga import check_nga_login
+# from screen_nga import check_nga_login
 from pyrogram.handlers import MessageHandler
 
 
@@ -22,7 +22,7 @@ def register_handlers():
     # universal commands
     kuma.add_handler(MessageHandler(debug, filters.command(['debug', 'dump'])))  # & ~filters.edited))
     kuma.add_handler(MessageHandler(delay, filters.command(['delay', 'ping'])))  # & ~filters.edited))
-    kuma.add_handler(MessageHandler(look, filters.command(['look', 'get', 'screenshot'])))  # & ~filters.edited))
+    # kuma.add_handler(MessageHandler(look, filters.command(['look', 'get', 'screenshot'])))  # & ~filters.edited))
 
     kuma.add_handler(MessageHandler(private_get_file_id, filters.private))  # & ~filters.edited))
 
@@ -32,8 +32,8 @@ def register_handlers():
     return logging.info('Registered handlers')
 
 
-def manager():
-    scheduler = session.scheduler
-    scheduler.add_job(session_update, 'cron', [session_rq.nga, session_rq.nga_token], hour=4)
-    scheduler.add_job(check_nga_login, 'cron', minute=30)
-    return logging.info('Scheduler started')
+# def manager():
+#     scheduler = session.scheduler
+#     scheduler.add_job(session_update, 'cron', [session_rq.nga, session_rq.nga_token], hour=4)
+#     scheduler.add_job(check_nga_login, 'cron', minute=30)
+#     return logging.info('Scheduler started')

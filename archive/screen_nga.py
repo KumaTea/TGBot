@@ -73,7 +73,7 @@ def update_nga(chat_id, inform_id, url, post_info, link_result, error_msg='Error
             # image = edited.photo[0].file_id
             # kuma.edit_message_caption(chat_id, inform_id, caption=link_result, parse_mode=ParseMode.MARKDOWN)
             edited = requests.post(
-                'http://192.168.2.225:10561/api',
+                'http://192.168.2.2:10561/api',
                 data={
                     'chat_id': chat_id,
                     'message_id': inform_id,
@@ -200,7 +200,7 @@ def nga_link_process(message):
         if title in text:
             kuma.edit_message_caption(chat_id, inform_id, caption='哦，已经有标题了啊，那没事了……')
             time.sleep(5)
-            return kuma.delete_message(chat_id, inform_id)
+            return kuma.delete_messages(chat_id, inform_id)
         else:
             kuma.send_chat_action(chat_id, ChatAction.UPLOAD_PHOTO)
             post_info = [post_id, thread_id, title, date, author, author_id, forum, forum_id]

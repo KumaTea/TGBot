@@ -1,4 +1,2 @@
 pyrogram
 requests
-selenium
-apscheduler

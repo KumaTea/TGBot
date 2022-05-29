@@ -2,8 +2,8 @@ import shutil
 import logging
 from bot_db import db_dir
 from tools import mkdir, init_db
-from session import scheduler, idle_mark
-from register import register_handlers, manager
+# from session import idle_mark, scheduler
+from register import register_handlers  # , manager
 
 
 def starting():
@@ -13,8 +13,8 @@ def starting():
         datefmt='%Y-%m-%d %H:%M:%S')
 
     register_handlers()
-    manager()
-    scheduler.start()
+    # manager()
+    # scheduler.start()
 
     try:
         shutil.rmtree('/tmp/screenshots')
@@ -23,6 +23,6 @@ def starting():
     mkdir([db_dir, '/tmp/screenshots'])
     init_db('NGA')
 
-    idle_mark.buf[0] = 1
+    # idle_mark.buf[0] = 1
 
     return logging.info("[TGBot] Initialized.")

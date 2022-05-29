@@ -1,7 +1,6 @@
 import info
 import json
 import time
-from link import look  # noqa
 from title import title  # noqa
 from session import kuma
 from tools import trimmer, trim_key

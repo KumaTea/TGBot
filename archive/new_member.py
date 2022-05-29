@@ -52,9 +52,9 @@ def check_member(chat_id, user_id, alert_id, msg_id=None, sticker_id=None, wait_
         left = True
 
     if left:
-        kuma.delete_message(chat_id, alert_id)
+        kuma.delete_messages(chat_id, alert_id)
         if sticker_id:
-            kuma.delete_message(chat_id, sticker_id)
+            kuma.delete_messages(chat_id, sticker_id)
         if msg_id:
             kuma.edit_message_text('验证机器人已移除一位未通过验证的用户。', chat_id, msg_id)
         logging.info(f'User {user_id} status: LEFT; NOT member.')

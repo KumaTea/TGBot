@@ -1,13 +1,12 @@
-from link import link_process
 try:
-    from local_functions import replace_brackets
+    from local_functions import local_process
 except ImportError:
-    def replace_brackets(m):
+    def local_process(m):
         return None
 
 
 def process_msg(client, message):
     if message and (message.text or message.caption):
-        return link_process(message) or replace_brackets(message)
+        return local_process(message)
     else:
         return None
