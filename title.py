@@ -4,6 +4,8 @@ from session import kuma
 from datetime import datetime
 from tools import get_user_name
 from pyrogram.errors import BadRequest
+from pyrogram.types import ChatPrivileges
+from pyrogram.enums import ChatMemberStatus
 from pyrogram.enums.parse_mode import ParseMode
 from pyrogram.enums.chat_members_filter import ChatMembersFilter
 
@@ -69,30 +71,50 @@ def title(client, message):
     else:
         reply = message.reply_to_message
         if reply:
-            can_promote = kuma.get_chat_member(chat_id, self_id).can_promote_members
+            bot_status = kuma.get_chat_member(chat_id, self_id)
+            if bot_status.privileges:
+                can_promote = bot_status.privileges.can_promote_members
+            else:
+                can_promote = False
             if can_promote:
                 authorized = False
                 if chat_id in trusted_group:
                     authorized = True
                 else:
-                    op = kuma.get_chat_member(chat_id, message.from_user.id)
-                    op_is_admin = op.can_promote_members or 'creator' in op.status
-                    if op_is_admin:
+                    operator = kuma.get_chat_member(chat_id, message.from_user.id)
+                    if operator.privileges:
+                        if operator.privileges.can_promote_members:
+                            authorized = True
+                    elif operator.status == ChatMemberStatus.OWNER:
                         authorized = True
+                    else:
+                        authorized = False
                 if authorized:
-                    target_is_admin = 'admin' in kuma.get_chat_member(chat_id, reply.from_user.id).status
+                    target_is_admin = kuma.get_chat_member(chat_id, reply.from_user.id).status == ChatMemberStatus.ADMINISTRATOR
                     if not target_is_admin:
                         try:
                             if chat_id in trusted_group:
-                                kuma.promote_chat_member(chat_id, reply.from_user.id,
-                                                         can_manage_chat=True, can_delete_messages=True,
-                                                         can_promote_members=True, can_change_info=True,
-                                                         can_invite_users=True, can_pin_messages=True)
+                                kuma.promote_chat_member(
+                                    chat_id, reply.from_user.id,
+                                    ChatPrivileges(
+                                        can_manage_chat=True, can_delete_messages=True,
+                                        can_manage_video_chats=True, can_restrict_members=True,
+                                        can_promote_members=True, can_change_info=True,
+                                        can_invite_users=True, can_pin_messages=True,
+                                        is_anonymous=False
+                                    )
+                                )
                             else:
-                                kuma.promote_chat_member(chat_id, reply.from_user.id,
-                                                         can_manage_chat=False, can_delete_messages=False,
-                                                         can_promote_members=False, can_change_info=False,
-                                                         can_invite_users=True, can_pin_messages=False)
+                                kuma.promote_chat_member(
+                                    chat_id, reply.from_user.id,
+                                    ChatPrivileges(
+                                        can_manage_chat=False, can_delete_messages=False,
+                                        can_manage_video_chats=False, can_restrict_members=False,
+                                        can_promote_members=False, can_change_info=False,
+                                        can_invite_users=True, can_pin_messages=False,
+                                        is_anonymous=False
+                                    )
+                                )
                             sleep(2)
                             promoted = True
                         except BadRequest:
@@ -113,7 +135,7 @@ def title(client, message):
                         if chat_id > 0:
                             error_msg = '本群还不是超级群 (supergroup)，请尝试设为公开或允许新成员查看历史记录'
                         else:
-                            error_msg = '权限不足，请查看我的权限是否足够，以及对象是否为bot / 已被设为管理'
+                            error_msg = '权限不足，请查看我的权限是否足够，以及对象是否为bot / 已 被设为管理'
                         resp = message.reply(error_msg)
                     # except ChatMigrated:
                     #     resp = message.reply('已升级到超级群但群ID未变，请稍后重试')
