@@ -52,28 +52,28 @@ def repeat(client, message):
                 first = reply.from_user.first_name
                 last = ' ' + reply.from_user.last_name if reply.from_user.last_name else ''
                 repeat_message = first + last + ': \n' + reply.text
-                resp = message.reply(repeat_message)
+                resp = message.reply(repeat_message, quote=False)
             else:
                 if reply.sticker:
-                    resp = message.reply_sticker(reply.sticker.file_id)
+                    resp = message.reply_sticker(reply.sticker.file_id, quote=False)
                 elif reply.photo:
-                    resp = message.reply_photo(reply.photo.file_id)
+                    resp = message.reply_photo(reply.photo.file_id, quote=False)
                 elif reply.animation:
-                    resp = message.reply_animation(reply.animation.file_id)
+                    resp = message.reply_animation(reply.animation.file_id, quote=False)
                 elif reply.video:
-                    resp = message.reply_video(reply.video.file_id)
+                    resp = message.reply_video(reply.video.file_id, quote=False)
                 elif reply.document:
-                    resp = message.reply_document(reply.document.file_id)
+                    resp = message.reply_document(reply.document.file_id, quote=False)
                 else:
                     resp = None
         else:
-            resp = message.reply(command)
+            resp = message.reply(command, quote=False)
     else:
         reply_text = command[content_index+1:]
         if reply:
             resp = kuma.send_message(chat_id, reply_text, reply_to_message_id=reply.id)
         else:
-            resp = message.reply(reply_text)
+            resp = message.reply(reply_text, quote=False)
     return resp
 
 
