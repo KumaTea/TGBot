@@ -1,8 +1,8 @@
 import os
 import time
 import logging
+from bot_db import *
 from session import kuma
-from bot_db import restart_mark
 from register import register_handlers
 
 
@@ -12,7 +12,6 @@ def starting():
         level=logging.INFO,
         datefmt='%Y-%m-%d %H:%M:%S')
 
-    register_handlers()
     # manager()
     # scheduler.start()
 
@@ -20,7 +19,7 @@ def starting():
     #     shutil.rmtree('/tmp/screenshots')
     # except FileNotFoundError:
     #     pass
-    # os.makedirs(db_dir, exist_ok=True)
+    os.makedirs(f'{pwd}/tmp', exist_ok=True)
     # init_db('NGA')
 
     # idle_mark.buf[0] = 1
@@ -32,10 +31,13 @@ def starting():
         time_cost = timestamp - restarted_time - wait_time
         with open(restart_mark, 'r') as f:
             restart_by = int(f.read())
-        kuma.send_message(
-            restart_by,
-            f'Bot has been restarted!\nTime cost: {time_cost}'
-        )
+        with kuma:
+            kuma.send_message(
+                restart_by,
+                f'Bot has been restarted!\nTime cost: {time_cost:.3f}s'
+            )
         os.remove(restart_mark)
+
+    register_handlers()
 
     return logging.info("[TGBot] Initialized.")
