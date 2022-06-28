@@ -1,7 +1,5 @@
 import configparser
 from pyrogram import Client
-# from multiprocessing import shared_memory
-# from apscheduler.schedulers.background import BackgroundScheduler
 
 
 config = configparser.ConfigParser()

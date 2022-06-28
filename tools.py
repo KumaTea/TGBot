@@ -4,7 +4,6 @@ import json
 import base64
 import logging
 import sqlite3
-from bot_db import db_dir, url_regex
 from info import self_id, username
 
 
@@ -83,19 +82,7 @@ def mention_other_bot(text, url):
     return False
 
 
-def mkdir(folder=None):
-    if folder:
-        if type(folder) == list or type(folder) == tuple:
-            for items in folder:
-                if not os.path.exists(str(items)):
-                    os.mkdir(str(items))
-        else:
-            if not os.path.exists(str(folder)):
-                os.mkdir(str(folder))
-    return True
-
-
-def init_db(table):
+def init_db(db_dir, table):
     db_path = os.path.join(db_dir, table + '.db')
     if not os.path.isfile(db_path):
         logging.info(f'Creating new database...')
@@ -113,7 +100,7 @@ def init_db(table):
     return True
 
 
-def find_url(text):
+def find_url(url_regex, text):
     if text:
         result = re.findall(url_regex, text)
         if result:

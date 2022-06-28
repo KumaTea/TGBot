@@ -1,9 +1,9 @@
-import shutil
+import os
+import time
 import logging
-from bot_db import db_dir
-from tools import mkdir, init_db
-# from session import idle_mark, scheduler
-from register import register_handlers  # , manager
+from session import kuma
+from bot_db import restart_mark
+from register import register_handlers
 
 
 def starting():
@@ -16,13 +16,26 @@ def starting():
     # manager()
     # scheduler.start()
 
-    try:
-        shutil.rmtree('/tmp/screenshots')
-    except FileNotFoundError:
-        pass
-    mkdir([db_dir, '/tmp/screenshots'])
-    init_db('NGA')
+    # try:
+    #     shutil.rmtree('/tmp/screenshots')
+    # except FileNotFoundError:
+    #     pass
+    # os.makedirs(db_dir, exist_ok=True)
+    # init_db('NGA')
 
     # idle_mark.buf[0] = 1
+
+    if os.path.isfile(restart_mark):
+        timestamp = time.time()
+        wait_time = 4  # run 'sleep 2' twice
+        restarted_time = os.path.getmtime(restart_mark)
+        time_cost = timestamp - restarted_time - wait_time
+        with open(restart_mark, 'r') as f:
+            restart_by = int(f.read())
+        kuma.send_message(
+            restart_by,
+            f'Bot has been restarted!\nTime cost: {time_cost}'
+        )
+        os.remove(restart_mark)
 
     return logging.info("[TGBot] Initialized.")

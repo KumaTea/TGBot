@@ -66,9 +66,9 @@ def title(client, message):
 
     promoted = False
 
-    if title_index == -1:
+    if title_index == -1:  # no args
         resp = message.reply(usage, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
-    else:
+    else:  # with args
         reply = message.reply_to_message
         if reply:
             bot_status = kuma.get_chat_member(chat_id, self_id)
@@ -90,7 +90,8 @@ def title(client, message):
                     else:
                         authorized = False
                 if authorized:
-                    target_is_admin = kuma.get_chat_member(chat_id, reply.from_user.id).status == ChatMemberStatus.ADMINISTRATOR
+                    target_is_admin = \
+                        kuma.get_chat_member(chat_id, reply.from_user.id).status == ChatMemberStatus.ADMINISTRATOR
                     if not target_is_admin:
                         try:
                             if chat_id in trusted_group:
@@ -145,7 +146,7 @@ def title(client, message):
                     resp = message.reply('您的权限不足，我无权操作')
             else:
                 resp = message.reply('我还没有提拔群友的权限')
-        else:
+        else:  # no reply but with args
             command = text[title_index+1:]
             if command.lower() in list_commands:
                 resp = message.reply(print_admin_titles(chat_id), parse_mode=ParseMode.MARKDOWN)

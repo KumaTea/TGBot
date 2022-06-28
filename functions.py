@@ -1,8 +1,10 @@
 import info
 import json
 import time
+import subprocess
 from title import title  # noqa
 from session import kuma
+from bot_db import restart_mark
 from tools import trimmer, trim_key
 from pyrogram.enums.parse_mode import ParseMode
 
@@ -40,10 +42,11 @@ def delay(client, message):
 
 def repeat(client, message):
     command = message.text
+    chat_id = message.chat.id
     content_index = command.find(' ')
 
+    reply = message.reply_to_message
     if content_index == -1:
-        reply = message.reply_to_message
         if reply:
             if reply.text:
                 first = reply.from_user.first_name
@@ -67,7 +70,10 @@ def repeat(client, message):
             resp = message.reply(command)
     else:
         reply_text = command[content_index+1:]
-        resp = message.reply(reply_text)
+        if reply:
+            resp = kuma.send_message(chat_id, reply_text, reply_to_message_id=reply.id)
+        else:
+            resp = message.reply(reply_text)
     return resp
 
 
@@ -118,4 +124,15 @@ def private_get_file_id(client, message):
 
 
 def private_unknown(client, message):
-    return message.reply('I can\'t understand your message or command. You may try /help.')
+    return message.reply("I can't understand your message or command. You may try /help.")
+
+
+def restart(client, message):
+    if message.from_user.id in info.administrators:
+        # Do not use subprocess.run since we can't wait for it to finish
+        subprocess.Popen('sleep 2; docker stop tgbot; sleep 2; docker start tgbot', shell=True)
+        with open(restart_mark, 'w') as f:
+            f.write(message.from_user.id)
+        return message.reply('Restarting...')
+    else:
+        return None  # 无事发生
