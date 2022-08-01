@@ -1,9 +1,7 @@
-import info
 import json
 import time
 from title import title  # noqa
 from session import kuma
-from bot_db import restart_mark
 from tools import trimmer, trim_key, get_file
 from pyrogram.enums.parse_mode import ParseMode
 
@@ -67,15 +65,3 @@ def repeat(client, message):
         else:
             resp = message.reply(reply_text, quote=False)
     return resp
-
-
-def restart(client, message):
-    if message.from_user.id in info.administrators:
-        # Do not use subprocess.run since we can't wait for it to finish
-        # subprocess.Popen('sleep 2; docker stop tgbot; sleep 2; docker start tgbot', shell=True)
-        with open(restart_mark, 'w') as f:
-            f.write(str(message.from_user.id))
-        message.reply('Restarting...')
-        return exit(0)
-    else:
-        return None  # 无事发生

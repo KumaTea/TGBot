@@ -1,6 +1,8 @@
+import sys
 import info
 from session import kuma
 from tools import get_file
+from bot_db import restart_mark
 
 
 def private_start(client, message):
@@ -42,3 +44,15 @@ def private_get_file_id(client, message):
 
 def private_unknown(client, message):
     return message.reply("I can't understand your message or command. You may try /help.")
+
+
+def restart(client, message):
+    if message.from_user.id in info.administrators:
+        # Do not use subprocess.run since we can't wait for it to finish
+        # subprocess.Popen('sleep 2; docker stop tgbot; sleep 2; docker start tgbot', shell=True)
+        with open(restart_mark, 'w') as f:
+            f.write(str(message.from_user.id))
+        message.reply('Restarting...')
+        return sys.exit(0)
+    else:
+        return None  # 无事发生

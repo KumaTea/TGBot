@@ -4,6 +4,7 @@ import json
 import base64
 import logging
 import sqlite3
+from bot_db import url_regex
 from info import self_id, username
 
 
@@ -75,13 +76,6 @@ def session_update(session, original):
     return True
 
 
-def mention_other_bot(text, url):
-    text = text.lower()
-    if ('@' in text and '@' not in url) and ('bot' in text and username.lower() not in text):
-        return True
-    return False
-
-
 def init_db(db_dir, table):
     db_path = os.path.join(db_dir, table + '.db')
     if not os.path.isfile(db_path):
@@ -100,12 +94,19 @@ def init_db(db_dir, table):
     return True
 
 
-def find_url(url_regex, text):
+def find_url(text):
     if text:
         result = re.findall(url_regex, text)
         if result:
             return result[0]
     return None
+
+
+def mention_other_bot(text):
+    text = text.lower()
+    if ('@' in text) and ('bot' in text and username.lower() not in text):
+        return True
+    return False
 
 
 def get_user_name(user):
