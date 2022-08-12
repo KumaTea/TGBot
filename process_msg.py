@@ -6,10 +6,11 @@ from localDb import trusted_group
 from tools import mention_other_bot
 
 try:
-    from local_functions import local_process
+    from local_functions import local_message
 except ImportError:
-    def local_process(m):
+    def local_message(m):
         return None
+    local_sticker = local_message
 
 
 def douban_mark(message):
@@ -28,21 +29,37 @@ def douban_mark(message):
     return None
 
 
-def public_process(message):
+def no_fake_package(message):
+    sticker = message.sticker
+    # if sticker:
+    if sticker.set_name == 'tutuneige':
+        return message.reply_text(
+            '禁止使用盗版表情包！清认准正版 [**KumaFriends**](https://t.me/addstickers/tutuneige)'
+        )
+    return None
+
+
+def public_message(message):
     return douban_mark(message)
+
+
+def public_sticker(message):
+    return no_fake_package(message)
 
 
 def process_msg(client, message):
     if message:
+        chat_id = message.chat.id
         text = message.text or message.caption
         if text:
             if message.from_user:
                 user_id = message.from_user.id
                 if user_id > 0:
                     if not mention_other_bot(text):
-                        chat_id = message.chat.id
                         if chat_id in trusted_group:
-                            return public_process(message) or local_process(message)
+                            return public_message(message) or local_message(message)
                         else:
-                            return public_process(message)
+                            return public_message(message)
+        elif message.sticker:
+            return public_sticker(message)
     return None
