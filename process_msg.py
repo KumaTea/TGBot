@@ -1,8 +1,9 @@
 import re
+import time
 import random
 import hashlib
 from session import kuma
-from localDb import trusted_group
+from localDb import trusted_group, sticker_bl
 from tools import mention_other_bot
 
 try:
@@ -29,14 +30,38 @@ def douban_mark(message):
     return None
 
 
-def no_fake_package(message):
+def no_banned_package(message):
+    chat_id = message.chat.id
     sticker = message.sticker
     # if sticker:
-    if sticker.set_name == 'tutuneige':
-        return message.reply_text(
-            '禁止使用盗版表情包！清认准正版 [**KumaFriends**](https://t.me/addstickers/tutuneige)'
+    if sticker.set_name in sticker_bl and sticker.emoji not in sticker_bl[sticker.set_name]['allowed']:
+        kuma.send_message(
+            chat_id,
+            f'发现黑名单表情 {sticker.set_name}，执行删除！'
         )
-    return None
+    else:
+        return None
+    time.sleep(1)
+    try:
+        kuma.delete_messages(
+            chat_id,
+            message.id
+            )
+    except:
+        try:
+            kuma.send_message(
+                chat_id,
+                '没有删除权限，开始刷屏！'
+                )
+            for i in range(10):
+                time.sleep(1)
+                kuma.send_message(
+                    chat_id,
+                    '禁止发送黑名单表情！'
+                    )
+        except:
+            kuma.leave_chat(chat_id)
+    return True
 
 
 def public_message(message):
@@ -44,7 +69,7 @@ def public_message(message):
 
 
 def public_sticker(message):
-    return no_fake_package(message)
+    return no_banned_package(message)
 
 
 def process_msg(client, message):

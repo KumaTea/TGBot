@@ -10,12 +10,12 @@ logging.basicConfig(
     datefmt='%Y-%m-%d %H:%M:%S')
 
 
-if os.name == 'posix':
-    import uvloop
-    uvloop.install()
-    logging.info('Accelerated using uvloop.')
-else:
-    logging.warning('Windows does not support libuv! Not accelerated.')
+# if os.name == 'posix':
+#     import uvloop
+#     uvloop.install()
+#     logging.info('Accelerated using uvloop.')
+# else:
+#     logging.warning('Windows does not support libuv! Not accelerated.')
 
 
 config = configparser.ConfigParser()
