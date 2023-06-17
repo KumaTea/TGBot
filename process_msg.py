@@ -3,8 +3,10 @@ import time
 import random
 import hashlib
 from session import kuma
-from localDb import trusted_group, sticker_bl
+from info import self_id
 from tools import mention_other_bot
+from pyrogram.enums import ParseMode
+from localDb import trusted_group, sticker_bl
 
 try:
     from local_functions import local_message
@@ -12,6 +14,25 @@ except ImportError:
     def local_message(m):
         return None
     local_sticker = local_message
+
+
+special_ids = [
+    100, 1000, 10000, 100000, 1000000
+]
+for i in special_ids.copy():
+    for j in range(1, 10):
+        special_ids.append(i*j)
+special_ids.extend([114514, 1919, 810, 1919810])
+
+
+def process_id(message):
+    chat_id = message.chat.id
+    message_id = message.id
+    if message_id in special_ids:
+        kuma.send_message(chat_id, f'祝贺本群第**{message_id}**条消息达成！ 🎉', parse_mode=ParseMode.MARKDOWN)
+        if kuma.get_chat_member(chat_id, self_id).can_pin_messages:
+            kuma.pin_chat_message(chat_id, message_id, disable_notification=True)
+    return True
 
 
 def douban_mark(message):
@@ -75,6 +96,7 @@ def public_sticker(message):
 def process_msg(client, message):
     if message:
         chat_id = message.chat.id
+        process_id(message)
         text = message.text or message.caption
         if text:
             if message.from_user:
