@@ -8,7 +8,7 @@ from pyrogram.handlers import MessageHandler
 
 def register_handlers():
     # group commands
-    kuma.add_handler(MessageHandler(repeat, filters.command(['rp', 'repeat', 'say']) & filters.group))  # & ~filters.edited))
+    kuma.add_handler(MessageHandler(repeat, filters.command(['rp', 'repeat', 'say']) & filters.group))
     kuma.add_handler(MessageHandler(title, filters.command(['title', 'entitle']) & filters.group))
 
     # private commands

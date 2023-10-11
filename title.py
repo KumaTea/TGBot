@@ -161,7 +161,8 @@ async def title(client: Client, message: Message):
         else:  # no reply but with args
             command = text[title_index+1:]
             if command.lower() in list_commands:
-                resp = await message.reply(await gen_admins_summary(chat_id), parse_mode=ParseMode.MARKDOWN, quote=False)
+                resp = await message.reply(
+                    await gen_admins_summary(chat_id), parse_mode=ParseMode.MARKDOWN, quote=False)
             else:
                 resp = await message.reply(usage, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
     return resp

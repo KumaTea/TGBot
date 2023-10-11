@@ -1,4 +1,10 @@
-pwd = '/home/kuma/bots/TGBot'
+import os
+
+
+if os.name == 'nt':
+    pwd = 'D:/GitHub/TGBot'
+else:
+    pwd = '/home/kuma/bots/TGBot'
 restart_mark = f'{pwd}/tmp/tgbot-restart-by.txt'
 
 url_regex = r'https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|' \

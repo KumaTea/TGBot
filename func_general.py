@@ -16,13 +16,11 @@ async def debug(client: Client, message: Message):
 
 
 async def delay(client: Client, message: Message):
-    chat_id = message.chat.id
     req_timestamp = time.perf_counter()
 
     resp_message = await message.reply('Checking delay...')
 
     resp_timestamp = time.perf_counter()
-    resp_msg_id = resp_message.id
     duration = resp_timestamp - req_timestamp
     duration_str = '{:.3f} ms'.format(1000 * duration)
     if duration < 0.1:
@@ -38,7 +36,6 @@ async def delay(client: Client, message: Message):
 
 async def repeat(client: Client, message: Message):
     command = message.text
-    chat_id = message.chat.id
     content_index = command.find(' ')
 
     reply = message.reply_to_message

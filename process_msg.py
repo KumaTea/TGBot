@@ -3,9 +3,9 @@ import random
 import hashlib
 import asyncio
 from pyrogram import Client
+from localDb import trusted_group  # , sticker_bl
 from pyrogram.types import Message
 from pyrogram.enums import ParseMode
-from localDb import trusted_group, sticker_bl
 from tools import mention_other_bot, run_async_funcs
 
 try:
@@ -35,7 +35,6 @@ async def process_id(message: Message):
 async def douban_mark(message: Message):
     title_re = r'《.+》'
     text = message.text or message.caption
-    chat_id = message.chat.id
     result = re.findall(title_re, text)
     if result:
         title = result[0][1:-1].strip().lower()
