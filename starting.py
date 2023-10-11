@@ -7,29 +7,19 @@ from register import register_handlers
 
 
 def starting():
-    # manager()
-    # scheduler.start()
-
-    # try:
-    #     shutil.rmtree('/tmp/screenshots')
-    # except FileNotFoundError:
-    #     pass
     os.makedirs(f'{pwd}/tmp', exist_ok=True)
-    # init_db('NGA')
-
-    # idle_mark.buf[0] = 1
 
     if os.path.isfile(restart_mark):
         timestamp = time.time()
-        wait_time = 4  # run 'sleep 2' twice
         restarted_time = os.path.getmtime(restart_mark)
-        time_cost = timestamp - restarted_time - wait_time
+        time_cost = timestamp - restarted_time
         with open(restart_mark, 'r') as f:
             restart_by = int(f.read())
         with kuma:
             kuma.send_message(
                 restart_by,
-                f'Bot has been restarted!\nTime cost: {time_cost:.3f}s'
+                f'Bot has been restarted!\n'
+                f'Time cost: {time_cost:.3f}s'
             )
         os.remove(restart_mark)
 

@@ -23,7 +23,7 @@ def link_process(message):
     return nga_link_process(message) or weibo_link_process(message)
 
 
-def look(client, message):
+def look(client: Client, message: Message):
     chat_id = message.chat.id
     if chat_id not in trusted_group + [creator]:
         return None

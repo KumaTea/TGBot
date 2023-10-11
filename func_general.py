@@ -1,29 +1,29 @@
 import json
 import time
 from title import title  # noqa
-from session import kuma
-from tools import trimmer, trim_key, get_file
+from pyrogram import Client
+from pyrogram.types import Message
 from pyrogram.enums.parse_mode import ParseMode
+from tools import trimmer, trim_key, get_file, get_user_name
 
 
-def debug(client, message):
-    debug_message = json.loads(str(message))
+async def debug(client: Client, message: Message):
     if message.reply_to_message:
-        debug_message = debug_message['reply_to_message']
+        message = message.reply_to_message
+    debug_message = json.loads(str(message))
     debug_message = trim_key(trimmer(debug_message))
-    resp = message.reply(f'`{debug_message}`', parse_mode=ParseMode.MARKDOWN)
-    return resp
+    return await message.reply(f'`{debug_message}`', parse_mode=ParseMode.MARKDOWN)
 
 
-def delay(client, message):
+async def delay(client: Client, message: Message):
     chat_id = message.chat.id
-    first_timestamp = time.perf_counter()
+    req_timestamp = time.perf_counter()
 
-    checking_message = message.reply('Checking delay...')
+    resp_message = await message.reply('Checking delay...')
 
-    second_timestamp = time.perf_counter()
-    second_msg_id = checking_message.id
-    duration = second_timestamp - first_timestamp
+    resp_timestamp = time.perf_counter()
+    resp_msg_id = resp_message.id
+    duration = resp_timestamp - req_timestamp
     duration_str = '{:.3f} ms'.format(1000 * duration)
     if duration < 0.1:
         status = 'excellent'
@@ -33,35 +33,38 @@ def delay(client, message):
         status = 'ok'
     else:
         status = 'bad'
-    result = kuma.edit_message_text(chat_id, second_msg_id, f'Delay is {duration_str}.\nThe connectivity is {status}.')
-    return result
+    return await resp_message.edit_text(f'Delay is {duration_str}.\nThe connectivity is {status}.')
 
 
-def repeat(client, message):
+async def repeat(client: Client, message: Message):
     command = message.text
     chat_id = message.chat.id
     content_index = command.find(' ')
 
     reply = message.reply_to_message
     if content_index == -1:
+        # no text
+        # /rp
         if reply:
             if reply.text:
-                first = reply.from_user.first_name
-                last = ' ' + reply.from_user.last_name if reply.from_user.last_name else ''
-                repeat_message = first + last + ': \n' + reply.text
-                resp = message.reply(repeat_message, quote=False)
+                name = get_user_name(reply.from_user)
+                repeat_message = name + ': \n' + reply.text
+                resp = await message.reply(repeat_message, quote=False)
             else:
                 file_id, file_type = get_file(reply)
                 if file_id:
-                    resp = exec(f'message.reply_{file_type}(file_id, quote=False)')
+                    resp = None  # IDEs can't detect that this will be set later
+                    exec(f'resp = await message.reply_{file_type}(file_id, quote=False)')
                 else:
                     resp = None
         else:
-            resp = message.reply(command, quote=False)
+            resp = await message.reply(command, quote=False)
     else:
+        # has text
+        # /rp example
         reply_text = command[content_index+1:]
         if reply:
-            resp = kuma.send_message(chat_id, reply_text, reply_to_message_id=reply.id)
+            resp = await reply.reply(reply_text, quote=True)
         else:
-            resp = message.reply(reply_text, quote=False)
+            resp = await message.reply(reply_text, quote=False)
     return resp

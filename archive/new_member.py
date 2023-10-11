@@ -7,7 +7,7 @@ from multiprocessing import Process
 from pyrogram.enums.parse_mode import ParseMode
 
 
-def welcome(client, message):
+def welcome(client: Client, message: Message):
     chat_id = message.chat.id
     alert_id = message.id
     new_member = message.new_chat_members[0]
