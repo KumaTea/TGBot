@@ -93,7 +93,7 @@ async def title(client: Client, message: Message):
                 return await message.reply('拒绝。')
 
             # can I promote?
-            bot_status = await kuma.get_chat_member(chat_id, self_id)
+            bot_status = await client.get_chat_member(chat_id, self_id)
             if bot_status.privileges:
                 can_promote = bot_status.privileges.can_promote_members
             else:
@@ -106,7 +106,7 @@ async def title(client: Client, message: Message):
                 if chat_id in trusted_group:
                     authorized = True
                 else:
-                    operator = await kuma.get_chat_member(chat_id, message.from_user.id)
+                    operator = await client.get_chat_member(chat_id, message.from_user.id)
                     if operator.privileges:
                         if operator.privileges.can_promote_members:
                             authorized = True
@@ -116,14 +116,14 @@ async def title(client: Client, message: Message):
                         authorized = False
 
                 if authorized:
-                    target = await kuma.get_chat_member(chat_id, reply.from_user.id)
+                    target = await client.get_chat_member(chat_id, reply.from_user.id)
                     target_is_admin = target.status == ChatMemberStatus.ADMINISTRATOR
 
                     # set as admin first
                     if not target_is_admin:
                         try:
                             if chat_id in trusted_group:
-                                await kuma.promote_chat_member(
+                                await client.promote_chat_member(
                                     chat_id, reply.from_user.id,
                                     ChatPrivileges(
                                         can_manage_chat=True, can_delete_messages=False,
@@ -134,7 +134,7 @@ async def title(client: Client, message: Message):
                                     )
                                 )
                             else:
-                                await kuma.promote_chat_member(
+                                await client.promote_chat_member(
                                     chat_id, reply.from_user.id,
                                     ChatPrivileges(
                                         can_manage_chat=False, can_delete_messages=False,
@@ -151,7 +151,7 @@ async def title(client: Client, message: Message):
                     # set title
                     try:
                         title_to_set = text[title_index+1:title_index+1+16]
-                        await kuma.set_administrator_title(chat_id, reply.from_user.id, title_to_set)
+                        await client.set_administrator_title(chat_id, reply.from_user.id, title_to_set)
 
                         name = get_user_name(reply.from_user)
                         has_set = '设置了'

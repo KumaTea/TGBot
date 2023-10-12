@@ -71,17 +71,5 @@ def sort_import(file):
         f.writelines(lines)
 
 
-# define an async function
-# accepts list of coroutines
-# run sequentially
-# return once the return value is not None
-async def run_async_funcs(funcs: list):
-    for func in funcs:
-        result = await func
-        if result:
-            return result
-    return None
-
-
 if __name__ == '__main__':
     sort_imports()

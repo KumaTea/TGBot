@@ -37,7 +37,22 @@ unknown_message = "I can't understand your message or command. You may try /help
 
 pool_groups = []
 pool_groups_file = f'{pwd}/data/pool/groups.txt'
-if os.path.isfile(pool_groups_file):
-    with open(pool_groups_file, 'r', encoding='utf-8') as file:
-        for line in file:
-            pool_groups.append(int(line.strip()))
+
+kw_reply_list = {
+    'envy': {
+        'keywords': ['xm', '羡慕', '好酸'],
+        'reply': 'xmsl 😭',
+        'quote': False
+    },
+    'want': {
+        'keywords': ['好想'],
+        'reply': '我也好想 🥺',
+        'quote': False
+    },
+    'rule': {
+        'keywords': ['不行', '不可以', '不能'],
+        'reply': '莱姆可以',
+        'skip': ['行不行', '可不可以', '可以不可以', '能不能'],
+        'quote': False
+    },
+}

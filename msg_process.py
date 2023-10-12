@@ -1,10 +1,9 @@
 import re
 import random
 import hashlib
-import asyncio
 from pyrogram import Client
+from mod_pool import kw_reply
 from local_db import trusted_group  # , sticker_bl
-from tools import run_async_funcs
 from pyrogram.types import Message
 from bot_auth import ensure_not_bl
 from pyrogram.enums import ParseMode
@@ -50,15 +49,14 @@ async def douban_mark(message: Message):
 
 
 async def public_message(message: Message):
-    return await douban_mark(message)
+    return await douban_mark(message) or await kw_reply(message)
 
 
 @ensure_not_bl
 async def process_msg(client: Client, message: Message):
-    async_tasks = []
     if message:
         chat_id = message.chat.id
-        async_tasks.append(process_id(message))
+        await process_id(message)
         text = message.text or message.caption
         if text:
             if message.from_user:
@@ -66,13 +64,10 @@ async def process_msg(client: Client, message: Message):
                 if user_id > 0:
                     if not mention_other_bot(text):
                         if chat_id in trusted_group:
-                            # return await public_message(message) or await local_message(message)
-                            async_tasks.append(run_async_funcs([public_message(message), local_message(message)]))
+                            return await public_message(message) or await local_message(message)
                         else:
-                            async_tasks.append(public_message(message))
+                            return await public_message(message)
         # elif message.sticker:
         #     if chat_id in trusted_group:
         #         return public_sticker(message: Message)
-    if async_tasks:
-        return await asyncio.gather(*async_tasks)
     return None
