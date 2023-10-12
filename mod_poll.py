@@ -94,10 +94,9 @@ poll_candidates = PollCandidates()
 
 
 async def kw_reply(message: Message):
-    chat_id = message.chat.id
-    if chat_id not in poll_groups.groups:
-        return None
-
+    # chat_id = message.chat.id
+    # if chat_id not in poll_groups.groups:
+    #     return None
     text = message.text or message.caption
     include_list = bot_db.kw_reply_dict
 
@@ -129,9 +128,9 @@ async def kw_reply(message: Message):
 
 
 async def replace_brackets(message: Message):
-    chat_id = message.chat.id
-    if chat_id not in poll_groups.groups:
-        return None
+    # chat_id = message.chat.id
+    # if chat_id not in poll_groups.groups:
+    #     return None
     candidates = list(poll_candidates.candidates.values())
     text = message.text or message.caption
     result = re.findall(bot_db.brackets_re, text)
