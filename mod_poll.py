@@ -147,6 +147,14 @@ async def replace_brackets(message: Message):
 
 async def apply_delete_from_candidates(client: Client, message: Message):
     user_id = message.from_user.id
+    reply = message.reply_to_message
+    if reply:
+        user_id = reply.from_user.id
+        if message.from_user.id not in bot_db.poll_admins:
+            return await message.reply_text(bot_db.poll_help, parse_mode=ParseMode.MARKDOWN, quote=False)
+        else:
+            poll_candidates.del_candidate(user_id)
+            return await message.reply_text('一位管理员滥权把你从池子里捞起来了！', quote=False)
     if user_id in poll_candidates.candidates:
         inform_text = (f'你的昵称：{poll_candidates.candidates[user_id]}\n'
                        f'是否确认删除？')
@@ -194,28 +202,29 @@ async def apply_add_to_candidates(client: Client, message: Message):
         )
 
     name = command[content_index + 1:].strip()
-    try:
-        if len(name.encode('gbk')) != 4:
+    if not reply:
+        try:
+            if len(name.encode('gbk')) != 4:
+                return await message.reply(
+                    '昵称必须为两个字\n'
+                    '`/help poll`',
+                    parse_mode=ParseMode.MARKDOWN,
+                    quote=False
+                )
+        except UnicodeEncodeError:
             return await message.reply(
-                '昵称必须为两个字\n'
+                '禁止使用无法被 `gbk` 编码的字符\n',
+                parse_mode=ParseMode.MARKDOWN,
+                quote=False
+            )
+
+        if not (name.endswith('比') or name.endswith('批') or name[-1] == name[-2] or name.encode().isalpha()):
+            return await message.reply(
+                '昵称必须以「比」「批」结尾或为叠词\n'
                 '`/help poll`',
                 parse_mode=ParseMode.MARKDOWN,
                 quote=False
             )
-    except UnicodeEncodeError:
-        return await message.reply(
-            '禁止使用无法被 `gbk` 编码的字符\n',
-            parse_mode=ParseMode.MARKDOWN,
-            quote=False
-        )
-
-    if not (name.endswith('比') or name.endswith('批') or name[-1] == name[-2] or name.encode().isalpha()):
-        return await message.reply(
-            '昵称必须以「比」「批」结尾或为叠词\n'
-            '`/help poll`',
-            parse_mode=ParseMode.MARKDOWN,
-            quote=False
-        )
 
     if user_id in poll_candidates.candidates:
         return await message.reply(
@@ -282,7 +291,7 @@ async def callback_invite(client: Client, callback_query: CallbackQuery):
     message = callback_query.message
     name = message.text.split('：')[1].split('\n')[0]
     async_tasks = []
-    if callback_query.from_user.id in bot_db.poll_admins and confirm == 'n':
+    if (callback_query.from_user.id in bot_db.poll_admins or callback_query.from_user.id == user_id) and confirm == 'n':
         async_tasks.append(message.edit_text('已取消添加'))
         async_tasks.append(callback_query.answer('已取消添加'))
     elif callback_query.from_user.id == user_id and confirm == 'y':
