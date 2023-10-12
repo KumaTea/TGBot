@@ -1,5 +1,8 @@
+from session import kuma
+from pyrogram import Client
 from bot_info import username
 from pyrogram.types import User, Message
+from pyrogram.enums import ChatMemberStatus
 
 
 def mention_other_bot(text: str):
@@ -46,3 +49,13 @@ def get_file(message: Message):
         file_id = ''
         file_type = 'unknown'
     return file_id, file_type
+
+
+async def is_admin(chat_id: int, user_id: int, client: Client = kuma):
+    user = await client.get_chat_member(chat_id, user_id)
+    if user.privileges:
+        return True
+    elif user.status == ChatMemberStatus.OWNER:
+        return True
+    else:
+        return False

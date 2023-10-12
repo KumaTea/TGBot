@@ -2,8 +2,8 @@ import re
 import random
 import hashlib
 from pyrogram import Client
-from mod_pool import kw_reply
-from local_db import trusted_group  # , sticker_bl
+from mod_poll import kw_reply
+from local_db import trusted_group
 from pyrogram.types import Message
 from bot_auth import ensure_not_bl
 from pyrogram.enums import ParseMode
@@ -64,7 +64,7 @@ async def process_msg(client: Client, message: Message):
                 if user_id > 0:
                     if not mention_other_bot(text):
                         if chat_id in trusted_group:
-                            return await public_message(message) or await local_message(message)
+                            return await local_message(message) or await public_message(message)
                         else:
                             return await public_message(message)
         # elif message.sticker:

@@ -1,4 +1,5 @@
 import os
+from bot_info import administrators
 
 
 if os.name == 'nt':
@@ -35,10 +36,13 @@ help_message = (
 )
 unknown_message = "I can't understand your message or command. You may try /help."
 
-pool_groups = []
-pool_groups_file = f'{pwd}/data/pool/groups.txt'
+poll_groups = []
+poll_groups_file = f'{pwd}/data/poll/groups.txt'
+poll_candidates = {}
+poll_candidates_file = f'{pwd}/data/poll/candidates.json'
+poll_admins = administrators + []
 
-kw_reply_list = {
+kw_reply_dict = {
     'envy': {
         'keywords': ['xm', '羡慕', '好酸'],
         'reply': 'xmsl 😭',
@@ -46,12 +50,12 @@ kw_reply_list = {
     },
     'want': {
         'keywords': ['好想'],
-        'reply': '我也好想 🥺',
+        'reply': 'RANDUSER也好想 🥺',
         'quote': False
     },
     'rule': {
         'keywords': ['不行', '不可以', '不能'],
-        'reply': '莱姆可以',
+        'reply': 'RANDUSER可以',
         'skip': ['行不行', '可不可以', '可以不可以', '能不能'],
         'quote': False
     },
