@@ -36,10 +36,8 @@ help_message = (
 )
 unknown_message = "I can't understand your message or command. You may try /help."
 
-poll_groups = []
 poll_groups_file = f'{pwd}/data/poll/groups.txt'
-poll_candidates = {}
-poll_candidates_file = f'{pwd}/data/poll/candidates.json'
+poll_candidates_file = f'{pwd}/data/poll/candidates.p'
 poll_admins = administrators + []
 
 kw_reply_dict = {
@@ -60,3 +58,30 @@ kw_reply_dict = {
         'quote': False
     },
 }
+
+group_help = (
+    '/rp: repeat\n'
+    '/title: manage titles\n'
+    '`/help poll`: show poll help\n'
+    '/ping: check for delay\n'
+    '/debug: display debug info\n'
+)
+
+title_help = '用法\n' \
+        '向对象的消息 **回复** `/title <text>` 以添加头衔\n' \
+        '字数 **16** 以内，不支持 emoji\n\n' \
+        '`/title list` 列出所有头衔'
+
+poll_help = (
+    '用法\n'
+    '/enroll_poll 昵称: 加入抽奖池\n'
+    '/leave_poll: 退出抽奖池\n'
+    '/enable_poll: 启用括号及关键词抽奖\n'
+    '/disable_poll: 禁用括号及关键词抽奖\n'
+    '\n'
+    '昵称注意事项\n'
+    '1. 必须以「比」「批」结尾或为叠词\n'
+    '2. 昵称必须为2字，半角字符记为0.5个字\n'
+    '3. 昵称不能重复\n'
+    '4. 原则上，g/f2d 及有恋爱史者使用「批」。'
+)

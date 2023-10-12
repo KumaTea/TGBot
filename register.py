@@ -14,6 +14,7 @@ def register_handlers():
     kuma.add_handler(MessageHandler(disable_group, filters.command(['disable_poll']) & filters.group))
     kuma.add_handler(MessageHandler(apply_add_to_candidates, filters.command(['enroll_poll']) & filters.group))
     kuma.add_handler(MessageHandler(apply_delete_from_candidates, filters.command(['leave_poll']) & filters.group))
+    kuma.add_handler(MessageHandler(group_help_cmd, filters.command(['help']) & filters.group))
 
     # private commands
     kuma.add_handler(MessageHandler(private_start, filters.command(['start']) & filters.private))

@@ -57,6 +57,7 @@ def sort_imports():
 def sort_import(file):
     with open(file, 'r', encoding='utf-8') as f:
         lines = f.readlines()
+    original_lines = lines.copy()
     imports = []
     for line in lines:
         if line.startswith('import ') or line.startswith('from '):
@@ -67,8 +68,10 @@ def sort_import(file):
     for i in range(len(lines)):
         if lines[i].startswith('import ') or lines[i].startswith('from '):
             lines[i] = imports.pop(0)
-    with open(file, 'w', encoding='utf-8') as f:
-        f.writelines(lines)
+    if lines != original_lines:
+        with open(file, 'w', encoding='utf-8') as f:
+            f.writelines(lines)
+        print(f'{file} sorted')
 
 
 if __name__ == '__main__':

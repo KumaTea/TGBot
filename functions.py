@@ -11,7 +11,8 @@ group_functions = [
     enable_group,
     disable_group,
     apply_add_to_candidates,
-    apply_delete_from_candidates
+    apply_delete_from_candidates,
+    group_help_cmd
 ]
 
 private_functions = [

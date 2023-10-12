@@ -1,5 +1,6 @@
 import json
 import time
+import bot_db
 from mod_title import title  # noqa
 from pyrogram import Client
 from bot_auth import bl_users
@@ -70,3 +71,17 @@ async def repeat(client: Client, message: Message):
         else:
             resp = await message.reply(reply_text, quote=False)
     return resp
+
+
+async def group_help_cmd(client: Client, message: Message):
+    command = message.text
+    content_index = command.find(' ')
+    section = command[content_index+1:].lower()
+    if content_index == -1:
+        return await message.reply(bot_db.group_help, quote=False)
+    elif 'title' in section:
+        return await message.reply(bot_db.title_help, quote=False)
+    elif 'poll' in section:
+        return await message.reply(bot_db.poll_help, quote=False)
+    else:
+        return await message.reply(bot_db.group_help, quote=False)

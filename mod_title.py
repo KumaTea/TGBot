@@ -2,6 +2,7 @@ import asyncio
 from session import kuma
 from pyrogram import Client
 from bot_info import self_id
+from bot_db import title_help
 from datetime import datetime
 from tools_tg import get_user_name
 from pyrogram.errors import BadRequest
@@ -16,11 +17,6 @@ except ImportError:
     trusted_group = []
     bl_users = []
 
-
-usage = '用法\n' \
-        '向对象的消息 **回复** `/title <text>` 以添加头衔\n' \
-        '字数 **16** 以内，不支持 emoji\n\n' \
-        '`/title list` 列出所有头衔'
 list_commands = ['list', 'print', 'dump']
 
 
@@ -81,7 +77,7 @@ async def title(client: Client, message: Message):
 
     if title_index == -1:
         # no args
-        resp = await message.reply(usage, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        resp = await message.reply(title_help, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
     else:
         # with args
         reply = message.reply_to_message
@@ -171,7 +167,7 @@ async def title(client: Client, message: Message):
                         resp = await message.reply(f'未知错误：\n{e}')
                 # if authorized:
                 else:
-                    resp = await message.reply('您的权限不足，我无权操作')
+                    resp = await message.reply('你的权限不足，我无权操作')
             # if can_promote:
             else:
                 resp = await message.reply('我还没有提拔群友的权限')
@@ -182,5 +178,5 @@ async def title(client: Client, message: Message):
                 resp = await message.reply(
                     await gen_admins_summary(chat_id), parse_mode=ParseMode.MARKDOWN, quote=False)
             else:
-                resp = await message.reply(usage, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+                resp = await message.reply(title_help, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
     return resp
