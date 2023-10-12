@@ -6,7 +6,7 @@ from pyrogram import Client
 from local_db import trusted_group  # , sticker_bl
 from tools import run_async_funcs
 from pyrogram.types import Message
-from bot_auth import not_bl_message
+from bot_auth import ensure_not_bl
 from pyrogram.enums import ParseMode
 from tools_tg import mention_other_bot
 
@@ -53,7 +53,7 @@ async def public_message(message: Message):
     return await douban_mark(message)
 
 
-@not_bl_message
+@ensure_not_bl
 async def process_msg(client: Client, message: Message):
     async_tasks = []
     if message:

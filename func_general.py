@@ -3,13 +3,13 @@ import time
 from title import title  # noqa
 from pyrogram import Client
 from pyrogram.types import Message
+from bot_auth import ensure_not_bl
 from tools import trimmer, trim_key
-from bot_auth import not_bl_command
 from tools_tg import get_file, get_user_name
 from pyrogram.enums.parse_mode import ParseMode
 
 
-@not_bl_command
+@ensure_not_bl
 async def debug(client: Client, message: Message):
     if message.reply_to_message:
         message = message.reply_to_message
@@ -18,7 +18,7 @@ async def debug(client: Client, message: Message):
     return await message.reply(f'`{debug_message}`', parse_mode=ParseMode.MARKDOWN)
 
 
-@not_bl_command
+@ensure_not_bl
 async def delay(client: Client, message: Message):
     req_timestamp = time.perf_counter()
 
@@ -38,7 +38,7 @@ async def delay(client: Client, message: Message):
     return await resp_message.edit_text(f'Delay is {duration_str}.\nThe connectivity is {status}.')
 
 
-@not_bl_command
+@ensure_not_bl
 async def repeat(client: Client, message: Message):
     command = message.text
     content_index = command.find(' ')
