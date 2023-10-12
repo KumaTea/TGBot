@@ -190,14 +190,21 @@ async def apply_add_to_candidates(client: Client, message: Message):
         )
 
     name = command[content_index + 1:].strip()
-    if len(name) > 2:
+    try:
+        if len(name.encode('gbk')) != 4:
+            return await message.reply(
+                '昵称必须为两个字\n'
+                '`/help poll`',
+                parse_mode=ParseMode.MARKDOWN,
+                quote=False
+            )
+    except UnicodeEncodeError:
         return await message.reply(
-            '昵称不可超过两个字\n'
-            '`/help poll`',
+            '禁止使用无法被 `gbk` 编码的字符\n',
             parse_mode=ParseMode.MARKDOWN,
             quote=False
         )
-    if not (name.endswith('比') or name.endswith('批') or name[-1] == name[-2]):
+    if not (name.endswith('比') or name.endswith('批') or name[-1] == name[-2] or name.encode().isalpha()):
         return await message.reply(
             '昵称必须以「比」「批」结尾或为叠词\n'
             '`/help poll`',
