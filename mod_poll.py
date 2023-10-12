@@ -181,6 +181,9 @@ async def apply_add_to_candidates(client: Client, message: Message):
     user_id = message.from_user.id
     command = message.text
     content_index = command.find(' ')
+    reply = message.reply_to_message
+    if reply:
+        user_id = reply.from_user.id
 
     if content_index == -1:
         return await message.reply(
@@ -205,6 +208,7 @@ async def apply_add_to_candidates(client: Client, message: Message):
             parse_mode=ParseMode.MARKDOWN,
             quote=False
         )
+
     if not (name.endswith('比') or name.endswith('批') or name[-1] == name[-2] or name.encode().isalpha()):
         return await message.reply(
             '昵称必须以「比」「批」结尾或为叠词\n'
@@ -230,12 +234,27 @@ async def apply_add_to_candidates(client: Client, message: Message):
             quote=False
         )
 
-    inform_text = (f'你的昵称：{name}\n'
-                   f'正在等待管理员确认……')
-    reply_markup = InlineKeyboardMarkup([
-        [InlineKeyboardButton('确认 (管)', callback_data=f'poll_add_{user_id}_y')],
-        [InlineKeyboardButton('取消 (自)', callback_data=f'poll_add_{user_id}_n')]
-    ])
+    if reply:
+        if message.from_user.id in bot_db.poll_admins:
+            inform_text = (
+                f'一位管理员想要为你添加昵称：{name}\n'
+                f'是否确认？'
+            )
+            reply_markup = InlineKeyboardMarkup([
+                [InlineKeyboardButton('确认 (自)', callback_data=f'poll_invite_{user_id}_y')],
+                [InlineKeyboardButton('取消 (管)', callback_data=f'poll_invite_{user_id}_n')]
+            ])
+        else:
+            return await message.reply_text(bot_db.poll_help, parse_mode=ParseMode.MARKDOWN, quote=False)
+    else:
+        inform_text = (
+            f'你的昵称：{name}\n'
+            f'正在等待管理员确认……'
+        )
+        reply_markup = InlineKeyboardMarkup([
+            [InlineKeyboardButton('确认 (管)', callback_data=f'poll_add_{user_id}_y')],
+            [InlineKeyboardButton('取消 (自)', callback_data=f'poll_add_{user_id}_n')]
+        ])
     return await message.reply_text(inform_text, reply_markup=reply_markup, quote=False)
 
 
@@ -249,6 +268,24 @@ async def callback_add(client: Client, callback_query: CallbackQuery):
         async_tasks.append(message.edit_text('已取消添加'))
         async_tasks.append(callback_query.answer('已取消添加'))
     elif callback_query.from_user.id in bot_db.poll_admins and confirm == 'y':
+        poll_candidates.add_candidate(user_id, name)
+        async_tasks.append(message.edit_text(f'你的昵称：{name}\n添加成功！'))
+        async_tasks.append(callback_query.answer('添加成功！'))
+    else:
+        async_tasks.append(callback_query.answer('不是你的别乱按！', show_alert=True))
+    return await asyncio.gather(*async_tasks)
+
+
+async def callback_invite(client: Client, callback_query: CallbackQuery):
+    task, subtask, user_id, confirm = callback_query.data.split('_')
+    user_id = int(user_id)
+    message = callback_query.message
+    name = message.text.split('：')[1].split('\n')[0]
+    async_tasks = []
+    if callback_query.from_user.id in bot_db.poll_admins and confirm == 'n':
+        async_tasks.append(message.edit_text('已取消添加'))
+        async_tasks.append(callback_query.answer('已取消添加'))
+    elif callback_query.from_user.id == user_id and confirm == 'y':
         poll_candidates.add_candidate(user_id, name)
         async_tasks.append(message.edit_text(f'你的昵称：{name}\n添加成功！'))
         async_tasks.append(callback_query.answer('添加成功！'))
@@ -280,6 +317,8 @@ async def poll_callback_handler(client, callback_query):
 
     if subtask == 'add':
         return await callback_add(client, callback_query)
+    elif subtask == 'invite':
+        return await callback_invite(client, callback_query)
     elif subtask == 'del':
         return await callback_delete(client, callback_query)
     elif subtask == 'view':
