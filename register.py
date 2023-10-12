@@ -2,7 +2,7 @@ import logging
 from functions import *
 from session import kuma
 from pyrogram import filters
-from process_msg import process_msg
+from msg_process import process_msg
 from pyrogram.handlers import MessageHandler
 
 

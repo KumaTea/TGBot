@@ -1,9 +1,9 @@
 import json
 import time
-from title import title  # noqa
+from mod_title import title  # noqa
 from pyrogram import Client
 from pyrogram.types import Message
-from bot_auth import ensure_not_bl
+from bot_auth import ensure_not_bl, bl_users
 from tools import trimmer, trim_key
 from tools_tg import get_file, get_user_name
 from pyrogram.enums.parse_mode import ParseMode
@@ -48,6 +48,8 @@ async def repeat(client: Client, message: Message):
         # no text
         # /rp
         if reply:
+            if reply.from_user.id in bl_users:
+                return await message.reply('拒绝。')
             if reply.text:
                 name = get_user_name(reply.from_user)
                 repeat_message = name + ': \n' + reply.text
