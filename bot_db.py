@@ -5,12 +5,14 @@ if os.name == 'nt':
     pwd = 'D:/GitHub/TGBot'
 else:
     pwd = '/home/kuma/bots/TGBot'
+
 restart_mark = f'{pwd}/tmp/tgbot-restart-by.txt'
 
 url_regex = r'https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|' \
             r'www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|' \
             r'https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|' \
             r'www\.[a-zA-Z0-9]+\.[^\s]{2,}'
+brackets_re = r'\([\s　]*\)|（[\s　]*）'
 
 nonsense_replies = ('咋会这样呢 对对对 好家伙 说的是啊 谁不是呢 振作点儿 真过意不去 好说好说 简直难以想象 有道理 上班不忙吗 你不上班吗 你很无聊吗 最近很闲吗 我觉得也是 wow 确实 可以的 厉害了 '
                     '我都行，看你 太棒了 蛮好的 不错 别见外 啊？这也太内个了吧 太过分了 咋能这样呢 这叫啥事啊 这人也真是 怎么回事 真有你的 原来是这样 我就知道 还是你厉害，我就不行 '
@@ -19,3 +21,23 @@ nonsense_replies = ('咋会这样呢 对对对 好家伙 说的是啊 谁不是�
                     '咋能这样啊 我也生气了 无语了 666 真行啊 都这样 咋欺负人呢 不难过了哦 会好起来的 硬着头皮上吧，慢慢来 为什么？ 怎么会？ 真的啊？ 我都不知道谀！ 那怎么办？ 后来呢？ '
                     '原来是这样！ 我辈楷模 有内味儿了 瑞思拜 大佬大佬 学到了 interesting nice fine good omg 那还挺好的 那就先这样 好像是有点儿 没事儿 美女的事你少管 '
                     '哈哈不用啦 确实，该干嘛就干嘛').split()
+
+start_message = (
+    'Thank you for using KumaTea bot!\n'
+    'You may see commands sending "/help".'
+)
+help_message = (
+    '/start: wake me up\n'
+    '/help: display this message\n'
+    '/ping: check for delay\n'
+    '/rp: repeat\n'
+    '/say: say something\n'
+)
+unknown_message = "I can't understand your message or command. You may try /help."
+
+pool_groups = []
+pool_groups_file = f'{pwd}/data/pool/groups.txt'
+if os.path.isfile(pool_groups_file):
+    with open(pool_groups_file, 'r', encoding='utf-8') as file:
+        for line in file:
+            pool_groups.append(int(line.strip()))

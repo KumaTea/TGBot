@@ -3,10 +3,12 @@ import random
 import hashlib
 import asyncio
 from pyrogram import Client
-from localDb import trusted_group  # , sticker_bl
+from local_db import trusted_group  # , sticker_bl
+from tools import run_async_funcs
 from pyrogram.types import Message
+from bot_auth import not_bl_message
 from pyrogram.enums import ParseMode
-from tools import mention_other_bot, run_async_funcs
+from tools_tg import mention_other_bot
 
 try:
     from local_functions import local_message
@@ -51,6 +53,7 @@ async def public_message(message: Message):
     return await douban_mark(message)
 
 
+@not_bl_message
 async def process_msg(client: Client, message: Message):
     async_tasks = []
     if message:

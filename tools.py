@@ -2,8 +2,6 @@ import os
 import re
 from typing import Union
 from bot_db import url_regex
-from bot_info import username
-from pyrogram.types import User, Message
 
 
 def trimmer(data: Union[dict, list]):
@@ -48,52 +46,6 @@ def find_url(text: str):
     return None
 
 
-def mention_other_bot(text: str):
-    text = text.lower()
-    if ('@' in text) and ('bot' in text and username.lower() not in text):
-        return True
-    return False
-
-
-def get_user_name(user: User):
-    lang = user.language_code or 'zh'
-    if user.last_name:
-        if user.last_name.encode().isalpha() and user.first_name.encode().isalpha():
-            space = ' '
-        else:
-            space = ''
-        if 'zh' in lang:
-            return f'{user.first_name}{space}{user.last_name}'
-        else:
-            return f'{user.first_name}{space}{user.last_name}'
-    else:
-        return user.first_name
-
-
-def get_file(message: Message):
-    file_id = None
-    file_type = None
-    file_types = [
-        'audio', 'document',
-        'photo', 'sticker',
-        'animation', 'video',
-        'voice', 'video_note'
-    ]
-
-    if message.text:
-        file_id = message.text
-        file_type = 'text'
-    for i in file_types:
-        if getattr(message, i):
-            file_id = getattr(message, i).file_id
-            file_type = i
-            break
-    if not any([file_id, file_type]):
-        file_id = ''
-        file_type = 'unknown'
-    return file_id, file_type
-
-
 # run this before commit
 # for aesthetic purpose
 def sort_imports():
@@ -129,3 +81,7 @@ async def run_async_funcs(funcs: list):
         if result:
             return result
     return None
+
+
+if __name__ == '__main__':
+    sort_imports()

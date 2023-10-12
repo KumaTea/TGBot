@@ -3,7 +3,7 @@ from session import kuma
 from pyrogram import Client
 from bot_info import self_id
 from datetime import datetime
-from tools import get_user_name
+from tools_tg import get_user_name
 from pyrogram.errors import BadRequest
 from pyrogram.enums import ChatMemberStatus
 from pyrogram.enums.parse_mode import ParseMode
@@ -11,9 +11,10 @@ from pyrogram.types import ChatPrivileges, Message
 from pyrogram.enums.chat_members_filter import ChatMembersFilter
 
 try:
-    from localDb import trusted_group
+    from local_db import trusted_group, bl_users
 except ImportError:
     trusted_group = []
+    bl_users = []
 
 
 usage = '用法\n' \
@@ -29,24 +30,21 @@ async def get_admin_titles(chat_id):
     # no await
     # it's a generator
     async for member in admins:
-        if member.custom_title:
-            admin_titles[member.custom_title] = admin_titles.get(member.custom_title, [])
-            admin_titles[member.custom_title].append(get_user_name(member.user))
-        else:
-            admin_titles['AdminWithoutTitle'] = admin_titles.get('AdminWithoutTitle', [])
-            admin_titles['AdminWithoutTitle'].append(get_user_name(member.user))
-            # This key must exceed 16 characters, which is the length of the longest title
+        if member.user.id not in bl_users and get_user_name(member.user):
+            if member.custom_title:
+                admin_titles[member.custom_title] = admin_titles.get(member.custom_title, [])
+                admin_titles[member.custom_title].append(get_user_name(member.user))
+            else:
+                admin_titles['AdminWithoutTitle'] = admin_titles.get('AdminWithoutTitle', [])
+                admin_titles['AdminWithoutTitle'].append(get_user_name(member.user))
+                # This key must exceed 16 characters, which is the length of the longest title
     return admin_titles
 
 
 async def gen_admins_summary(chat_id):
     # chat_name = await kuma.get_chat(chat_id).title
     # admin_titles = await get_admin_titles(chat_id)
-    async_tasks = [
-        kuma.get_chat(chat_id),
-        get_admin_titles(chat_id)
-    ]
-    chat, admin_titles = await asyncio.gather(*async_tasks)
+    chat, admin_titles = await asyncio.gather(kuma.get_chat(chat_id), get_admin_titles(chat_id))
     chat_name = chat.title
     date = datetime.now().strftime('%Y%m%d')
     text = f'**{chat_name}**\n头衔列表  {date}\n\n'
@@ -81,17 +79,29 @@ async def title(client: Client, message: Message):
 
     promoted = False
 
-    if title_index == -1:  # no args
+    if title_index == -1:
+        # no args
         resp = await message.reply(usage, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
-    else:  # with args
+    else:
+        # with args
         reply = message.reply_to_message
         if reply:
+            # detect replied user
+            if reply.from_user.id == self_id:
+                return await message.reply('我无法给自己添加头衔！')
+            elif reply.from_user.id in bl_users:
+                return await message.reply('拒绝。')
+
+            # can I promote?
             bot_status = await kuma.get_chat_member(chat_id, self_id)
             if bot_status.privileges:
                 can_promote = bot_status.privileges.can_promote_members
             else:
                 can_promote = False
+
             if can_promote:
+                # Is this a trusted group?
+                # Or is the requested user an admin?
                 authorized = False
                 if chat_id in trusted_group:
                     authorized = True
@@ -104,9 +114,12 @@ async def title(client: Client, message: Message):
                         authorized = True
                     else:
                         authorized = False
+
                 if authorized:
                     target = await kuma.get_chat_member(chat_id, reply.from_user.id)
                     target_is_admin = target.status == ChatMemberStatus.ADMINISTRATOR
+
+                    # set as admin first
                     if not target_is_admin:
                         try:
                             if chat_id in trusted_group:
@@ -134,6 +147,8 @@ async def title(client: Client, message: Message):
                             promoted = True
                         except BadRequest:
                             return await message.reply('权限不足，设为管理失败')
+
+                    # set title
                     try:
                         title_to_set = text[title_index+1:title_index+1+16]
                         await kuma.set_administrator_title(chat_id, reply.from_user.id, title_to_set)
@@ -154,10 +169,13 @@ async def title(client: Client, message: Message):
                     #     resp = message.reply('已升级到超级群但群ID未变，请稍后重试')
                     except Exception as e:
                         resp = await message.reply(f'未知错误：\n{e}')
+                # if authorized:
                 else:
                     resp = await message.reply('您的权限不足，我无权操作')
+            # if can_promote:
             else:
                 resp = await message.reply('我还没有提拔群友的权限')
+        # if reply:
         else:  # no reply but with args
             command = text[title_index+1:]
             if command.lower() in list_commands:

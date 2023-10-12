@@ -3,10 +3,13 @@ import time
 from title import title  # noqa
 from pyrogram import Client
 from pyrogram.types import Message
+from tools import trimmer, trim_key
+from bot_auth import not_bl_command
+from tools_tg import get_file, get_user_name
 from pyrogram.enums.parse_mode import ParseMode
-from tools import trimmer, trim_key, get_file, get_user_name
 
 
+@not_bl_command
 async def debug(client: Client, message: Message):
     if message.reply_to_message:
         message = message.reply_to_message
@@ -15,6 +18,7 @@ async def debug(client: Client, message: Message):
     return await message.reply(f'`{debug_message}`', parse_mode=ParseMode.MARKDOWN)
 
 
+@not_bl_command
 async def delay(client: Client, message: Message):
     req_timestamp = time.perf_counter()
 
@@ -34,6 +38,7 @@ async def delay(client: Client, message: Message):
     return await resp_message.edit_text(f'Delay is {duration_str}.\nThe connectivity is {status}.')
 
 
+@not_bl_command
 async def repeat(client: Client, message: Message):
     command = message.text
     content_index = command.find(' ')
@@ -50,8 +55,9 @@ async def repeat(client: Client, message: Message):
             else:
                 file_id, file_type = get_file(reply)
                 if file_id:
-                    resp = None  # IDEs can't detect that this will be set later
-                    exec(f'resp = await message.reply_{file_type}(file_id, quote=False)')
+                    # credit: https://t.me/echoesofdream/7709
+                    reply_method = getattr(message, f'reply_{file_type}')
+                    resp = await reply_method(file_id, quote=False)
                 else:
                     resp = None
         else:

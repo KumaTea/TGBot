@@ -1,4 +1,3 @@
-import os
 import time
 import logging
 from bot_db import *
@@ -8,6 +7,7 @@ from register import register_handlers
 
 def starting():
     os.makedirs(f'{pwd}/tmp', exist_ok=True)
+    os.makedirs(f'{pwd}/data/pool', exist_ok=True)
 
     if os.path.isfile(restart_mark):
         timestamp = time.time()
