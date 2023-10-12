@@ -29,9 +29,12 @@ async def get_blocked_user_ids(client: Client, offset: int = 0, limit: int = 100
 
 def ensure_not_bl(func):
     async def wrapper(client: Client, message: Message):
-        user_id = message.from_user.id
-        if user_id in bl_users:
-            return None
+        if message.from_user:
+            user_id = message.from_user.id
+            if user_id in bl_users:
+                return None
+            else:
+                return await func(client, message)
         else:
             return await func(client, message)
     return wrapper
