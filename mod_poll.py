@@ -13,6 +13,7 @@ from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, 
 class PollGroups:
     def __init__(self):
         self.groups = []
+        self.read_poll_groups()
 
     def read_poll_groups(self):
         if os.path.isfile(bot_db.poll_groups_file):
@@ -128,9 +129,9 @@ async def kw_reply(message: Message):
 
 
 async def replace_brackets(message: Message):
-    # pool_candidates = {
-    #    id: 'name',
-    # }
+    chat_id = message.chat.id
+    if chat_id not in poll_groups.groups:
+        return None
     candidates = list(poll_candidates.candidates.values())
     text = message.text or message.caption
     result = re.findall(bot_db.brackets_re, text)
@@ -256,6 +257,24 @@ async def callback_add(client: Client, callback_query: CallbackQuery):
     return await asyncio.gather(*async_tasks)
 
 
+async def view_candidates(client: Client, message: Message):
+    inform_text = '按下面按钮查看'
+    reply_markup = InlineKeyboardMarkup([
+        [InlineKeyboardButton('查看', callback_data='poll_view')]
+    ])
+    return await message.reply_text(inform_text, reply_markup=reply_markup, quote=False)
+
+
+async def callback_view(client: Client, callback_query: CallbackQuery):
+    candidates = poll_candidates.candidates
+    if candidates:
+        text = '抽奖池：\n'
+        text += ', '.join(list(poll_candidates.candidates.values()))
+    else:
+        text = '抽奖池为空'
+    return await callback_query.answer(text, show_alert=True)
+
+
 async def poll_callback_handler(client, callback_query):
     subtask = callback_query.data.split('_')[1]
 
@@ -263,4 +282,6 @@ async def poll_callback_handler(client, callback_query):
         return await callback_add(client, callback_query)
     elif subtask == 'del':
         return await callback_delete(client, callback_query)
+    elif subtask == 'view':
+        return await callback_view(client, callback_query)
     return None

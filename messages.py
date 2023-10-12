@@ -2,12 +2,12 @@ import re
 import random
 import hashlib
 from pyrogram import Client
-from mod_poll import kw_reply
 from local_db import trusted_group
 from pyrogram.types import Message
 from bot_auth import ensure_not_bl
 from pyrogram.enums import ParseMode
 from tools_tg import mention_other_bot
+from mod_poll import kw_reply, replace_brackets
 
 try:
     from local_functions import local_message
@@ -49,7 +49,7 @@ async def douban_mark(message: Message):
 
 
 async def public_message(message: Message):
-    return await douban_mark(message) or await kw_reply(message)
+    return await douban_mark(message) or await kw_reply(message) or await replace_brackets(message)
 
 
 @ensure_not_bl

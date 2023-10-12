@@ -12,6 +12,7 @@ group_functions = [
     disable_group,
     apply_add_to_candidates,
     apply_delete_from_candidates,
+    view_candidates,
     group_help_cmd
 ]
 
