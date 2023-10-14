@@ -6,8 +6,8 @@ from local_db import trusted_group
 from pyrogram.types import Message
 from bot_auth import ensure_not_bl
 from pyrogram.enums import ParseMode
-from tools_tg import mention_other_bot
 from mod_poll import kw_reply, replace_brackets
+from tools_tg import mention_other_bot, code_in_message
 
 try:
     from local_functions import local_message
@@ -48,6 +48,17 @@ async def douban_mark(message: Message):
     return None
 
 
+def need_to_process(message: Message):
+    text = message.text or message.caption
+    if text:
+        if message.from_user:
+            user_id = message.from_user.id
+            if user_id > 0:
+                if not mention_other_bot(text) and not code_in_message(message):
+                    return True
+    return False
+
+
 async def public_message(message: Message):
     return await douban_mark(message) or await kw_reply(message) or await replace_brackets(message)
 
@@ -57,16 +68,11 @@ async def process_msg(client: Client, message: Message):
     if message:
         chat_id = message.chat.id
         await process_id(message)
-        text = message.text or message.caption
-        if text:
-            if message.from_user:
-                user_id = message.from_user.id
-                if user_id > 0:
-                    if not mention_other_bot(text):
-                        if chat_id in trusted_group:
-                            return await local_message(message) or await public_message(message)
-                        else:
-                            return await public_message(message)
+        if need_to_process(message):
+            if chat_id in trusted_group:
+                return await local_message(message) or await public_message(message)
+            else:
+                return await public_message(message)
         # elif message.sticker:
         #     if chat_id in trusted_group:
         #         return public_sticker(message: Message)

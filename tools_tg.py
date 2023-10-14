@@ -2,7 +2,7 @@ from session import kuma
 from pyrogram import Client
 from bot_info import username
 from pyrogram.types import User, Message
-from pyrogram.enums import ChatMemberStatus
+from pyrogram.enums import ChatMemberStatus, MessageEntityType
 
 
 def mention_other_bot(text: str):
@@ -59,3 +59,12 @@ async def is_admin(chat_id: int, user_id: int, client: Client = kuma):
         return True
     else:
         return False
+
+
+def code_in_message(message: Message):
+    if message.text:
+        if message.entities:
+            for i in message.entities:
+                if i.type == MessageEntityType.CODE:
+                    return True
+    return False
