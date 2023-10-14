@@ -121,8 +121,9 @@ async def kw_reply(message: Message):
                         # break
                         return None
     if text_to_reply:
+        candidates = list(poll_candidates.candidates.values()) + ['我']
         if 'RANDUSER' in text_to_reply:
-            text_to_reply = text_to_reply.replace('RANDUSER', choice(list(poll_candidates.candidates.values())))
+            text_to_reply = text_to_reply.replace('RANDUSER', choice(list(candidates)))
         return await message.reply_text(text_to_reply, quote=include_list[match_item]['quote'])
     return None
 
@@ -131,7 +132,7 @@ async def replace_brackets(message: Message):
     # chat_id = message.chat.id
     # if chat_id not in poll_groups.groups:
     #     return None
-    candidates = list(poll_candidates.candidates.values())
+    candidates = list(poll_candidates.candidates.values()) + ['我']
     text = message.text or message.caption
     result = re.findall(bot_db.brackets_re, text)
     if len(result) == 0:
