@@ -6,6 +6,7 @@ import asyncio
 from random import choice
 from pyrogram import Client
 from tools_tg import is_admin
+from bot_auth import ensure_not_bl
 from pyrogram.enums.parse_mode import ParseMode
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
@@ -40,6 +41,7 @@ class PollGroups:
 poll_groups = PollGroups()
 
 
+@ensure_not_bl
 async def enable_group(client: Client, message: Message):
     chat_id = message.chat.id
     if chat_id in poll_groups.groups:
@@ -52,6 +54,7 @@ async def enable_group(client: Client, message: Message):
             return await message.reply_text('仅管理员可操作', quote=False)
 
 
+@ensure_not_bl
 async def disable_group(client: Client, message: Message):
     chat_id = message.chat.id
     if chat_id in poll_groups.groups:
@@ -145,6 +148,7 @@ async def replace_brackets(message: Message):
         return await message.reply_text(text, quote=False)
 
 
+@ensure_not_bl
 async def apply_delete_from_candidates(client: Client, message: Message):
     user_id = message.from_user.id
     reply = message.reply_to_message
@@ -185,6 +189,7 @@ async def callback_delete(client: Client, callback_query: CallbackQuery):
     return await asyncio.gather(*async_tasks)
 
 
+@ensure_not_bl
 async def apply_add_to_candidates(client: Client, message: Message):
     user_id = message.from_user.id
     command = message.text
@@ -303,6 +308,7 @@ async def callback_invite(client: Client, callback_query: CallbackQuery):
     return await asyncio.gather(*async_tasks)
 
 
+@ensure_not_bl
 async def view_candidates(client: Client, message: Message):
     inform_text = '按下面按钮查看'
     reply_markup = InlineKeyboardMarkup([

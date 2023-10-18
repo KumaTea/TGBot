@@ -4,14 +4,17 @@ from bot_db import *
 from bot_info import *
 from pyrogram import Client
 from pyrogram.types import Message
+from bot_auth import ensure_not_bl
 from tools_tg import get_file, get_user_name
 from bot_db import restart_mark, nonsense_replies
 
 
+@ensure_not_bl
 async def private_start(client: Client, message: Message):
     return await message.reply(start_message)
 
 
+@ensure_not_bl
 async def private_help(client: Client, message: Message):
     help_msg = (f'{help_message}\n'
                 f'\n'
@@ -19,6 +22,7 @@ async def private_help(client: Client, message: Message):
     return await message.reply(help_msg)
 
 
+@ensure_not_bl
 async def private_forward(client: Client, message: Message):
     command = message.text
     content_index = command.find(' ')
@@ -43,6 +47,7 @@ def rand_reply():
     return random.choice(nonsense_replies)
 
 
+@ensure_not_bl
 async def private_get_file_id(client: Client, message: Message):
     if message.from_user.id == self_id:
         return None
@@ -55,6 +60,7 @@ async def private_get_file_id(client: Client, message: Message):
         return await message.reply('Unknown type of media.')
 
 
+@ensure_not_bl
 async def private_unknown(client: Client, message: Message):
     return await message.reply(unknown_message)
 

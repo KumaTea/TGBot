@@ -1,3 +1,4 @@
+import logging
 from pyrogram import Client
 from pyrogram.types import Message
 from pyrogram.raw.functions.contacts.get_blocked import GetBlocked
@@ -32,6 +33,7 @@ def ensure_not_bl(func):
         if message.from_user:
             user_id = message.from_user.id
             if user_id in bl_users:
+                logging.warning(f'User {user_id} is in blacklist! Ignoring message.')
                 return None
             else:
                 return await func(client, message)

@@ -5,6 +5,7 @@ from bot_info import self_id
 from bot_db import title_help
 from datetime import datetime
 from tools_tg import get_user_name
+from bot_auth import ensure_not_bl
 from pyrogram.errors import BadRequest
 from pyrogram.enums import ChatMemberStatus
 from pyrogram.enums.parse_mode import ParseMode
@@ -68,6 +69,7 @@ async def gen_admins_summary(chat_id):
     return text
 
 
+@ensure_not_bl
 async def title(client: Client, message: Message):
     text = message.text
     chat_id = message.chat.id

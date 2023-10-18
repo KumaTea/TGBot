@@ -73,7 +73,4 @@ async def process_msg(client: Client, message: Message):
                 return await local_message(message) or await public_message(message)
             else:
                 return await public_message(message)
-        # elif message.sticker:
-        #     if chat_id in trusted_group:
-        #         return public_sticker(message: Message)
     return None
