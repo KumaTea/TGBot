@@ -1,54 +1,28 @@
-import os
 import re
-import pickle
-import bot_db
 import asyncio
+from bot_db import *
 from random import choice
 from pyrogram import Client
 from tools_tg import is_admin
 from bot_auth import ensure_not_bl
+from bot_store import IntListStore, DictStore
 from pyrogram.enums.parse_mode import ParseMode
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 
-class PollGroups:
-    def __init__(self):
-        self.groups = []
-        self.read_poll_groups()
-
-    def read_poll_groups(self):
-        if os.path.isfile(bot_db.poll_groups_file):
-            with open(bot_db.poll_groups_file, 'r', encoding='utf-8') as file:
-                for line in file:
-                    self.groups.append(int(line.strip()))
-        return self.groups
-
-    def write_poll_groups(self):
-        with open(bot_db.poll_groups_file, 'w', encoding='utf-8') as file:
-            file.write('\n'.join([str(group) for group in self.groups]))
-
-    def add_poll_group(self, group_id: int):
-        # if group_id not in poll_groups.groups:
-        self.groups.append(group_id)
-        self.write_poll_groups()
-
-    def del_poll_group(self, group_id: int):
-        # if group_id in poll_groups.groups:
-        self.groups.remove(group_id)
-        self.write_poll_groups()
-
-
-poll_groups = PollGroups()
+brackets_pattern = re.compile(brackets_re)
+poll_groups = IntListStore(poll_groups_file)
+poll_candidates = DictStore(poll_candidates_file)
 
 
 @ensure_not_bl
 async def enable_group(client: Client, message: Message):
     chat_id = message.chat.id
-    if chat_id in poll_groups.groups:
+    if chat_id in poll_groups.data:
         return await message.reply_text('本群已经启用抽奖了', quote=False)
     else:
         if await is_admin(chat_id, message.from_user.id, client):
-            poll_groups.add_poll_group(chat_id)
+            poll_groups.add_item(chat_id)
             return await message.reply_text('本群成功启用抽奖！', quote=False)
         else:
             return await message.reply_text('仅管理员可操作', quote=False)
@@ -57,9 +31,9 @@ async def enable_group(client: Client, message: Message):
 @ensure_not_bl
 async def disable_group(client: Client, message: Message):
     chat_id = message.chat.id
-    if chat_id in poll_groups.groups:
+    if chat_id in poll_groups.data:
         if await is_admin(chat_id, message.from_user.id, client):
-            poll_groups.del_poll_group(chat_id)
+            poll_groups.del_item(chat_id)
             return await message.reply_text('本群成功禁用抽奖！', quote=False)
         else:
             return await message.reply_text('仅管理员可操作', quote=False)
@@ -67,41 +41,12 @@ async def disable_group(client: Client, message: Message):
         return await message.reply_text('本群没有启用抽奖', quote=False)
 
 
-class PollCandidates:
-    def __init__(self):
-        self.candidates = {}
-        self.read_candidates()
-        if not self.candidates:
-            self.candidates = {5273618487: 'Kuma'}
-
-    def read_candidates(self):
-        if os.path.isfile(bot_db.poll_candidates_file):
-            with open(bot_db.poll_candidates_file, 'rb') as file:
-                self.candidates = pickle.load(file)
-        return self.candidates
-
-    def write_candidates(self):
-        with open(bot_db.poll_candidates_file, 'wb') as file:
-            pickle.dump(self.candidates, file)
-
-    def add_candidate(self, user_id: int, name: str):
-        self.candidates[user_id] = name
-        self.write_candidates()
-
-    def del_candidate(self, user_id: int):
-        del self.candidates[user_id]
-        self.write_candidates()
-
-
-poll_candidates = PollCandidates()
-
-
 async def kw_reply(message: Message):
     # chat_id = message.chat.id
-    # if chat_id not in poll_groups.groups:
+    # if chat_id not in poll_groups.data:
     #     return None
     text = message.text or message.caption
-    include_list = bot_db.kw_reply_dict
+    include_list = kw_reply_dict
 
     text_to_reply = ''
     match_item = ''
@@ -124,7 +69,7 @@ async def kw_reply(message: Message):
                         # break
                         return None
     if text_to_reply:
-        candidates = list(poll_candidates.candidates.values()) + ['我']
+        candidates = list(poll_candidates.data.values()) + ['我']
         if 'RANDUSER' in text_to_reply:
             text_to_reply = text_to_reply.replace('RANDUSER', choice(list(candidates)))
         return await message.reply_text(text_to_reply, quote=include_list[match_item]['quote'])
@@ -133,11 +78,11 @@ async def kw_reply(message: Message):
 
 async def replace_brackets(message: Message):
     # chat_id = message.chat.id
-    # if chat_id not in poll_groups.groups:
+    # if chat_id not in poll_groups.data:
     #     return None
-    candidates = list(poll_candidates.candidates.values()) + ['我']
+    candidates = list(poll_candidates.data.values()) + ['我']
     text = message.text or message.caption
-    result = re.findall(bot_db.brackets_re, text)
+    result = brackets_pattern.findall(text)
     if len(result) == 0:
         return None
     elif len(result) == 1 and text.endswith(result[0]):
@@ -154,13 +99,13 @@ async def apply_delete_from_candidates(client: Client, message: Message):
     reply = message.reply_to_message
     if reply:
         user_id = reply.from_user.id
-        if message.from_user.id not in bot_db.poll_admins:
-            return await message.reply_text(bot_db.poll_help, parse_mode=ParseMode.MARKDOWN, quote=False)
+        if message.from_user.id not in poll_admins:
+            return await message.reply_text(poll_help, parse_mode=ParseMode.MARKDOWN, quote=False)
         else:
-            poll_candidates.del_candidate(user_id)
+            poll_candidates.del_item(user_id)
             return await message.reply_text('一位管理员滥权把你从池子里捞起来了！', quote=False)
-    if user_id in poll_candidates.candidates:
-        inform_text = (f'你的昵称：{poll_candidates.candidates[user_id]}\n'
+    if user_id in poll_candidates.data:
+        inform_text = (f'你的昵称：{poll_candidates.data[user_id]}\n'
                        f'是否确认删除？')
         reply_markup = InlineKeyboardMarkup([
             [InlineKeyboardButton('确认', callback_data=f'poll_del_{user_id}_y')],
@@ -178,7 +123,7 @@ async def callback_delete(client: Client, callback_query: CallbackQuery):
     async_tasks = []
     if callback_query.from_user.id == user_id:
         if confirm == 'y':
-            poll_candidates.del_candidate(user_id)
+            poll_candidates.del_item(user_id)
             async_tasks.append(message.edit_text('删除成功！'))
             async_tasks.append(callback_query.answer('删除成功！'))
         else:
@@ -231,16 +176,16 @@ async def apply_add_to_candidates(client: Client, message: Message):
                 quote=False
             )
 
-    if user_id in poll_candidates.candidates:
+    if user_id in poll_candidates.data:
         return await message.reply(
-            f'你已经有昵称 {poll_candidates.candidates[user_id]} 了\n'
+            f'你已经有昵称 {poll_candidates.data[user_id]} 了\n'
             f'如需更改请先删除\n'
             f'`/help poll`',
             parse_mode=ParseMode.MARKDOWN,
             quote=False
         )
 
-    if name in poll_candidates.candidates.values():
+    if name in poll_candidates.data.values():
         return await message.reply(
             f'昵称 {name} 已被使用\n'
             f'`/help poll`',
@@ -249,7 +194,7 @@ async def apply_add_to_candidates(client: Client, message: Message):
         )
 
     if reply:
-        if message.from_user.id in bot_db.poll_admins:
+        if message.from_user.id in poll_admins:
             inform_text = (
                 f'一位管理员想要为你添加昵称：{name}\n'
                 f'是否确认？'
@@ -259,7 +204,7 @@ async def apply_add_to_candidates(client: Client, message: Message):
                 [InlineKeyboardButton('取消 (管)', callback_data=f'poll_invite_{user_id}_n')]
             ])
         else:
-            return await message.reply_text(bot_db.poll_help, parse_mode=ParseMode.MARKDOWN, quote=False)
+            return await message.reply_text(poll_help, parse_mode=ParseMode.MARKDOWN, quote=False)
     else:
         inform_text = (
             f'你的昵称：{name}\n'
@@ -281,8 +226,8 @@ async def callback_add(client: Client, callback_query: CallbackQuery):
     if callback_query.from_user.id == user_id and confirm == 'n':
         async_tasks.append(message.edit_text('已取消添加'))
         async_tasks.append(callback_query.answer('已取消添加'))
-    elif callback_query.from_user.id in bot_db.poll_admins and confirm == 'y':
-        poll_candidates.add_candidate(user_id, name)
+    elif callback_query.from_user.id in poll_admins and confirm == 'y':
+        poll_candidates.add_item(user_id, name)
         async_tasks.append(message.edit_text(f'你的昵称：{name}\n添加成功！'))
         async_tasks.append(callback_query.answer('添加成功！'))
     else:
@@ -296,11 +241,11 @@ async def callback_invite(client: Client, callback_query: CallbackQuery):
     message = callback_query.message
     name = message.text.split('：')[1].split('\n')[0]
     async_tasks = []
-    if (callback_query.from_user.id in bot_db.poll_admins or callback_query.from_user.id == user_id) and confirm == 'n':
+    if (callback_query.from_user.id in poll_admins or callback_query.from_user.id == user_id) and confirm == 'n':
         async_tasks.append(message.edit_text('已取消添加'))
         async_tasks.append(callback_query.answer('已取消添加'))
     elif callback_query.from_user.id == user_id and confirm == 'y':
-        poll_candidates.add_candidate(user_id, name)
+        poll_candidates.add_item(user_id, name)
         async_tasks.append(message.edit_text(f'你的昵称：{name}\n添加成功！'))
         async_tasks.append(callback_query.answer('添加成功！'))
     else:
@@ -318,10 +263,10 @@ async def view_candidates(client: Client, message: Message):
 
 
 async def callback_view(client: Client, callback_query: CallbackQuery):
-    candidates = poll_candidates.candidates
+    candidates = poll_candidates.data
     if candidates:
         text = '抽奖池：\n'
-        text += ', '.join(list(poll_candidates.candidates.values()))
+        text += ', '.join(list(poll_candidates.data.values()))
     else:
         text = '抽奖池为空'
     return await callback_query.answer(text, show_alert=True)

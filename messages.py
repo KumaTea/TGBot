@@ -1,6 +1,7 @@
 import re
 import random
 import hashlib
+from bot_db import title_re
 from pyrogram import Client
 from local_db import trusted_group
 from pyrogram.types import Message
@@ -25,6 +26,8 @@ for i in special_ids.copy():
         special_ids.append(i*j)
 special_ids.extend([114514, 1919, 810, 1919810])
 
+title_pattern = re.compile(title_re)
+
 
 async def process_id(message: Message):
     message_id = message.id
@@ -34,9 +37,8 @@ async def process_id(message: Message):
 
 
 async def douban_mark(message: Message):
-    title_re = r'《.+》'
     text = message.text or message.caption
-    result = re.findall(title_re, text)
+    result = title_pattern.findall(text)
     if result:
         title = result[0][1:-1].strip().lower()
         title_hash = int(hashlib.md5(title.encode("utf-8")).hexdigest(), 16)
