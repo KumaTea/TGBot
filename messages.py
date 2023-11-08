@@ -9,6 +9,7 @@ from bot_auth import ensure_not_bl
 from pyrogram.enums import ParseMode
 from mod_poll import kw_reply, replace_brackets
 from tools_tg import mention_other_bot, code_in_message
+from msg_general import process_id, douban_mark, unpin_channel_post
 
 try:
     from local_functions import local_message
@@ -18,36 +19,8 @@ except ImportError:
     local_sticker = local_message
 
 
-special_ids = [
-    100, 1000, 10000, 100000, 1000000
-]
-for i in special_ids.copy():
-    for j in range(1, 10):
-        special_ids.append(i*j)
-special_ids.extend([114514, 1919, 810, 1919810])
-
-title_pattern = re.compile(title_re)
-
-
-async def process_id(message: Message):
-    message_id = message.id
-    if message_id in special_ids:
-        await message.reply_text(f'祝贺本群第**{message_id}**条消息达成！ 🎉', parse_mode=ParseMode.MARKDOWN, quote=False)
-    return True
-
-
-async def douban_mark(message: Message):
-    text = message.text or message.caption
-    result = title_pattern.findall(text)
-    if result:
-        title = result[0][1:-1].strip().lower()
-        title_hash = int(hashlib.md5(title.encode("utf-8")).hexdigest(), 16)
-        random.seed(title_hash)
-        mark = random.randint(10, 100)
-        mark_str = str(mark)[:-1] + '.' + str(mark)[-1:]
-        text = f'豆瓣评分：{mark_str}'
-        return await message.reply_text(text, quote=False)
-    return None
+def is_channel_post(message: Message):
+    return message.sender_chat and message.forward_from_chat and message.sender_chat.id == message.forward_from_chat.id
 
 
 def need_to_process(message: Message):
@@ -75,4 +48,6 @@ async def process_msg(client: Client, message: Message):
                 return await local_message(message) or await public_message(message)
             else:
                 return await public_message(message)
+        elif is_channel_post(message):
+            return await unpin_channel_post(client, message)
     return None
