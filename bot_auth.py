@@ -9,6 +9,8 @@ except ImportError:
     trusted_group = []
     bl_users = []
 
+# from session import config
+#
 # me = Client(
 #     'me',
 #     api_id=config['kuma']['api_id'],

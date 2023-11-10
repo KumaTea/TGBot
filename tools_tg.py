@@ -67,4 +67,6 @@ def code_in_message(message: Message):
             for i in message.entities:
                 if i.type == MessageEntityType.CODE:
                     return True
+                elif i.type == MessageEntityType.PRE:
+                    return True
     return False

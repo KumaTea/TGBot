@@ -1,12 +1,7 @@
-import re
-import random
-import hashlib
-from bot_db import title_re
 from pyrogram import Client
 from local_db import trusted_group
 from pyrogram.types import Message
 from bot_auth import ensure_not_bl
-from pyrogram.enums import ParseMode
 from mod_poll import kw_reply, replace_brackets
 from tools_tg import mention_other_bot, code_in_message
 from msg_general import process_id, douban_mark, unpin_channel_post
