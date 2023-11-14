@@ -27,6 +27,7 @@ def register_handlers():
     # universal commands
     kuma.add_handler(MessageHandler(debug, filters.command(['debug', 'dump'])))
     kuma.add_handler(MessageHandler(delay, filters.command(['delay', 'ping'])))
+    kuma.add_handler(MessageHandler(mbti,  filters.command(['mbti'])))
 
     # private messages
     kuma.add_handler(MessageHandler(private_get_file_id, filters.private))

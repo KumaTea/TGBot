@@ -1,7 +1,7 @@
 import os
 import re
 from typing import Union
-from bot_db import url_regex
+from bot_db import url_regex, pwd
 
 
 def trimmer(data: Union[dict, list]):
@@ -49,9 +49,11 @@ def find_url(text: str):
 # run this before commit
 # for aesthetic purpose
 def sort_imports():
-    python_files = [i for i in os.listdir() if i.endswith('.py')]
-    for file in python_files:
-        sort_import(file)
+    # python_files = [i for i in os.listdir() if i.endswith('.py')]
+    for root, dirs, files in os.walk(pwd):
+        for file in files:
+            if file.endswith('.py'):
+                sort_import(os.path.join(root, file))
 
 
 def sort_import(file):

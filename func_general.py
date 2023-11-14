@@ -3,6 +3,7 @@ import time
 import bot_db
 from mod_title import title  # noqa
 from pyrogram import Client
+from mods.mbti import get_mbti  # noqa
 from pyrogram.types import Message
 from tools import trimmer, trim_key
 from bot_auth import bl_users, ensure_not_bl
@@ -89,3 +90,8 @@ async def group_help_cmd(client: Client, message: Message):
         return await message.reply(bot_db.poll_help, quote=False)
     else:
         return await message.reply(bot_db.group_help, quote=False)
+
+
+@ensure_not_bl
+async def mbti(client: Client, message: Message):
+    return await get_mbti(message)
