@@ -9,14 +9,6 @@ except ImportError:
     trusted_group = []
     bl_users = []
 
-# from session import config
-#
-# me = Client(
-#     'me',
-#     api_id=config['kuma']['api_id'],
-#     api_hash=config['kuma']['api_hash']
-# )
-
 
 async def get_blocked_users(client: Client, offset: int = 0, limit: int = 100):
     result = await client.invoke(GetBlocked(offset=offset, limit=limit))
@@ -42,3 +34,25 @@ def ensure_not_bl(func):
         else:
             return await func(client, message)
     return wrapper
+
+
+if __name__ == '__main__':
+    print('Listing blocked users')
+
+    import asyncio
+    from session import config
+
+    me = Client(
+        'me',
+        api_id=config['kuma']['api_id'],
+        api_hash=config['kuma']['api_hash']
+    )
+
+    async def main():
+        async with me:
+            blocked_users = await get_blocked_user_ids(me)
+
+        for i in blocked_users:
+            print(i.id, '\t', i.first_name)
+
+    asyncio.run(main())
