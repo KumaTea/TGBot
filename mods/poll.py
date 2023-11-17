@@ -9,6 +9,11 @@ from bot.store import IntListStore, DictStore
 from pyrogram.enums.parse_mode import ParseMode
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
+try:
+    from local_db import trusted_group
+except ImportError:
+    trusted_group = []
+
 
 brackets_pattern = re.compile(brackets_re)
 poll_groups = IntListStore(poll_groups_file)
@@ -19,13 +24,15 @@ poll_candidates = DictStore(poll_candidates_file)
 async def enable_group(client: Client, message: Message):
     chat_id = message.chat.id
     if chat_id in poll_groups.data:
-        return await message.reply_text('本群已经启用抽奖了', quote=False)
+        return await message.reply_text('本群已经启用扩展功能了。', quote=False)
+    elif chat_id in trusted_group:
+        return await message.reply_text('本群为受信群，默认启用扩展功能。注意某些彩蛋亦已启用。', quote=False)
     else:
         if await is_admin(chat_id, message.from_user.id, client):
             poll_groups.add_item(chat_id)
-            return await message.reply_text('本群成功启用抽奖！', quote=False)
+            return await message.reply_text('本群成功启用扩展功能！豆瓣评分、关键词回复、群员抽奖等功能现已生效。', quote=False)
         else:
-            return await message.reply_text('仅管理员可操作', quote=False)
+            return await message.reply_text('仅管理员可操作！', quote=False)
 
 
 @ensure_not_bl
@@ -34,11 +41,13 @@ async def disable_group(client: Client, message: Message):
     if chat_id in poll_groups.data:
         if await is_admin(chat_id, message.from_user.id, client):
             poll_groups.del_item(chat_id)
-            return await message.reply_text('本群成功禁用抽奖！', quote=False)
+            return await message.reply_text('本群成功禁用扩展功能。', quote=False)
         else:
-            return await message.reply_text('仅管理员可操作', quote=False)
+            return await message.reply_text('仅管理员可操作！', quote=False)
+    elif chat_id in trusted_group:
+        return await message.reply_text('我看你是想太多？', quote=False)
     else:
-        return await message.reply_text('本群没有启用抽奖', quote=False)
+        return await message.reply_text('本群尚未启用扩展功能。', quote=False)
 
 
 async def kw_reply(message: Message):

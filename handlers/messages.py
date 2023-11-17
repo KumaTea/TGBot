@@ -1,14 +1,18 @@
 from pyrogram import Client
 from mods.mark import douban_mark
-from local_db import trusted_group
 from pyrogram.types import Message
 from bot.auth import ensure_not_bl
-from mods.poll import kw_reply, replace_brackets
+from mods.poll import kw_reply, replace_brackets, poll_groups
 from handlers.msg.general import process_id, unpin_channel_post
 from bot.tools import mention_other_bot, code_in_message
 
 try:
-    from local_functions import local_message
+    from local_db import trusted_group
+except ImportError:
+    trusted_group = []
+
+try:
+    from local_functions import local_message, local_sticker
 except ImportError:
     async def local_message(m):
         return None
@@ -38,12 +42,13 @@ async def public_message(message: Message):
 async def process_msg(client: Client, message: Message):
     if message:
         chat_id = message.chat.id
-        await process_id(message)
-        if need_to_process(message):
-            if chat_id in trusted_group:
-                return await local_message(message) or await public_message(message)
-            else:
-                return await public_message(message)
-        elif is_channel_post(message):
-            return await unpin_channel_post(client, message)
+        if chat_id in poll_groups.data or chat_id in trusted_group:
+            await process_id(message)
+            if need_to_process(message):
+                if chat_id in trusted_group:
+                    return await local_message(message) or await public_message(message)
+                else:
+                    return await public_message(message)
+            elif is_channel_post(message):
+                return await unpin_channel_post(client, message)
     return None

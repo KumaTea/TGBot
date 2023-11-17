@@ -11,8 +11,8 @@ def register_handlers():
     # group commands
     kuma.add_handler(MessageHandler(repeat, filters.command(['rp', 'repeat', 'say']) & filters.group))
     kuma.add_handler(MessageHandler(title, filters.command(['title', 'entitle']) & filters.group))
-    kuma.add_handler(MessageHandler(enable_group, filters.command(['enable_poll']) & filters.group))
-    kuma.add_handler(MessageHandler(disable_group, filters.command(['disable_poll']) & filters.group))
+    kuma.add_handler(MessageHandler(enable_group, filters.command(['enable_group']) & filters.group))
+    kuma.add_handler(MessageHandler(disable_group, filters.command(['disable_group']) & filters.group))
     kuma.add_handler(MessageHandler(apply_add_to_candidates, filters.command(['enroll_poll']) & filters.group))
     kuma.add_handler(MessageHandler(apply_delete_from_candidates, filters.command(['leave_poll']) & filters.group))
     kuma.add_handler(MessageHandler(view_candidates, filters.command(['view_poll']) & filters.group))
