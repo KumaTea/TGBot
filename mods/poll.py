@@ -1,11 +1,11 @@
 import re
 import asyncio
-from bot_db import *
+from common.data import *
 from random import choice
 from pyrogram import Client
-from tools_tg import is_admin
-from bot_auth import ensure_not_bl
-from bot_store import IntListStore, DictStore
+from bot.tools import is_admin
+from bot.auth import ensure_not_bl
+from bot.store import IntListStore, DictStore
 from pyrogram.enums.parse_mode import ParseMode
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 

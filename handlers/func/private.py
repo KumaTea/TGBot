@@ -1,12 +1,12 @@
 import sys
 import random
-from bot_db import *
-from bot_info import *
+from common.data import *
+from common.info import *
 from pyrogram import Client
 from pyrogram.types import Message
-from bot_auth import ensure_not_bl
-from tools_tg import get_file, get_user_name
-from bot_db import restart_mark, nonsense_replies
+from bot.auth import ensure_not_bl
+from bot.tools import get_file, get_user_name
+from common.data import restart_mark, nonsense_replies
 
 
 @ensure_not_bl

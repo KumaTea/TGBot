@@ -8,6 +8,6 @@ local*
 *.ini
 life
 tmp
-*.session
+*.session*
 *.log
 patches

@@ -1,7 +1,7 @@
 import os
 import re
 from typing import Union
-from bot_db import url_regex, pwd
+from common.data import url_regex, pwd
 
 
 def trimmer(data: Union[dict, list]):

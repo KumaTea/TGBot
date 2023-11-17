@@ -1,9 +1,9 @@
 import logging
-from functions import *
-from session import kuma
+from handlers.functions import *
+from bot.session import kuma
 from pyrogram import filters
-from messages import process_msg
-from callbacks import process_callback
+from handlers.messages import process_msg
+from handlers.callbacks import process_callback
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 
 

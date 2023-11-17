@@ -1,8 +1,8 @@
 import time
 import logging
-from bot_db import *
-from session import kuma
-from register import register_handlers
+from common.data import *
+from bot.session import kuma
+from handlers.register import register_handlers
 
 
 def starting():

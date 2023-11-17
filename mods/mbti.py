@@ -1,7 +1,5 @@
-import re
 import random
 import hashlib
-from bot_db import title_re
 from datetime import datetime
 from pyrogram.types import Message
 from pyrogram.enums import ParseMode

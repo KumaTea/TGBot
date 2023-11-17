@@ -5,8 +5,8 @@ if os.name == 'posix':
     uvloop.install()
 
 
-from session import kuma
-from starting import starting
+from bot.session import kuma
+from bot.starting import starting
 
 
 starting()

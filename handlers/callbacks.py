@@ -1,6 +1,6 @@
 from pyrogram import Client
 from pyrogram.types import CallbackQuery
-from mod_poll import poll_callback_handler
+from mods.poll import poll_callback_handler
 
 
 async def process_callback(client: Client, callback_query: CallbackQuery):

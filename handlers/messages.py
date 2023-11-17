@@ -2,10 +2,10 @@ from pyrogram import Client
 from mods.mark import douban_mark
 from local_db import trusted_group
 from pyrogram.types import Message
-from bot_auth import ensure_not_bl
-from mod_poll import kw_reply, replace_brackets
-from msg_general import process_id, unpin_channel_post
-from tools_tg import mention_other_bot, code_in_message
+from bot.auth import ensure_not_bl
+from mods.poll import kw_reply, replace_brackets
+from handlers.msg.general import process_id, unpin_channel_post
+from bot.tools import mention_other_bot, code_in_message
 
 try:
     from local_functions import local_message

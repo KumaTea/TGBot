@@ -1,7 +1,7 @@
 import re
 import random
 import hashlib
-from bot_db import title_re
+from common.data import title_re
 from pyrogram.types import Message
 
 

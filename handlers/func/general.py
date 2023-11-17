@@ -1,13 +1,13 @@
 import json
 import time
-import bot_db
-from mod_title import title  # noqa
+from common.data import *
+from mods.title import title
 from pyrogram import Client
-from mods.mbti import get_mbti  # noqa
+from mods.mbti import get_mbti
 from pyrogram.types import Message
-from tools import trimmer, trim_key
-from bot_auth import bl_users, ensure_not_bl
-from tools_tg import get_file, get_user_name
+from common.tools import trimmer, trim_key
+from bot.auth import bl_users, ensure_not_bl
+from bot.tools import get_file, get_user_name
 from pyrogram.enums.parse_mode import ParseMode
 
 
@@ -83,13 +83,13 @@ async def group_help_cmd(client: Client, message: Message):
     content_index = command.find(' ')
     section = command[content_index+1:].lower()
     if content_index == -1:
-        return await message.reply(bot_db.group_help, quote=False)
+        return await message.reply(group_help, quote=False)
     elif 'title' in section:
-        return await message.reply(bot_db.title_help, quote=False)
+        return await message.reply(title_help, quote=False)
     elif 'poll' in section:
-        return await message.reply(bot_db.poll_help, quote=False)
+        return await message.reply(poll_help, quote=False)
     else:
-        return await message.reply(bot_db.group_help, quote=False)
+        return await message.reply(group_help, quote=False)
 
 
 @ensure_not_bl

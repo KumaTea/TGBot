@@ -1,6 +1,6 @@
-from session import kuma
+from bot.session import kuma
 from pyrogram import Client
-from bot_info import username
+from common.info import username
 from pyrogram.types import User, Message
 from pyrogram.enums import ChatMemberStatus, MessageEntityType
 

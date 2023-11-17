@@ -1,5 +1,5 @@
 import os
-from bot_info import administrators
+from common.info import administrators
 
 
 if os.name == 'nt':
