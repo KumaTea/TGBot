@@ -3,6 +3,8 @@ from pyrogram import Client
 from common.info import username
 from pyrogram.types import User, Message
 from pyrogram.enums import ChatMemberStatus, MessageEntityType
+from pyrogram.raw.functions.contacts.get_blocked import GetBlocked
+from pyrogram.raw.functions.bots.set_bot_info import SetBotInfo
 
 
 def mention_other_bot(text: str):
@@ -70,3 +72,34 @@ def code_in_message(message: Message):
                 elif i.type == MessageEntityType.PRE:
                     return True
     return False
+
+
+async def get_blocked_users(client: Client, offset: int = 0, limit: int = 100):
+    result = await client.invoke(GetBlocked(offset=offset, limit=limit))
+    return result.users
+
+
+async def get_blocked_user_ids(client: Client, offset: int = 0, limit: int = 100):
+    result = await get_blocked_users(client, offset, limit)
+    # for i in result:
+    #     yield i.id
+    return [i.id for i in result]
+
+
+def set_bot_info(
+    client: Client,
+    lang_code: str = 'en',
+    name: str = None,
+    about: str = None,
+    description: str = None
+):
+    with client:
+        result = client.invoke(
+            SetBotInfo(
+                lang_code=lang_code,
+                name=name,
+                about=about,
+                description=description
+            )
+        )
+    return result

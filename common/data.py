@@ -1,8 +1,7 @@
-import os
-from common.info import administrators
+from common.info import *
 
 
-if os.name == 'nt':
+if debug_mode:
     pwd = 'D:/GitHub/TGBot'
 else:
     pwd = '/home/kuma/bots/TGBot'

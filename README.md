@@ -11,3 +11,4 @@ Telegram Bot in Python
 * 4.0 [`7e80386`](https://github.com/KumaTea/KumaTea-bot/commit/7e803860e64a20ec594927427a8d595d2ed4cd6e): add screenshot function (now removed)
 * 5.0 [`3339a95`](https://github.com/KumaTea/KumaTea-bot/commit/3339a9587adf947539cc6f2cb1eef2b1287c3ac3): switch to [Pyrogram](https://docs.pyrogram.org)
 * 6.0 [`fb49d8d`](https://github.com/KumaTea/KumaTea-bot/commit/fb49d8d2877afce3819aa6d9a18146877870177b): switch to async
+* 7.0 [`e8bd2db`](https://github.com/KumaTea/KumaTea-bot/commit/e8bd2db8b69ead99e073ae7d10af9679a972c591): modularization

@@ -1,6 +1,6 @@
-import os
+from common.data import debug_mode
 
-if os.name == 'posix':
+if not debug_mode:
     import uvloop
     uvloop.install()
 
