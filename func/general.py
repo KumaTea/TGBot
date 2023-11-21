@@ -77,11 +77,17 @@ async def repeat(client: Client, message: Message):
     else:
         # has text
         # /rp example
-        reply_text = command[content_index+1:]
-        if reply:
-            resp = await reply.reply(reply_text, quote=True)
+        if message.entities:
+            text = unparse_markdown(message)
+            parse_mode = ParseMode.MARKDOWN
         else:
-            resp = await message.reply(reply_text, quote=False)
+            text = command
+            parse_mode = None
+        reply_text = text[content_index+1:]
+        if reply:
+            resp = await reply.reply(reply_text, parse_mode=parse_mode, quote=True)
+        else:
+            resp = await message.reply(reply_text, parse_mode=parse_mode, quote=False)
     return resp
 
 
