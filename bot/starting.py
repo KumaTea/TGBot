@@ -4,6 +4,7 @@ from common.data import *
 from bot.session import kuma
 from bot.tools import set_bot_info
 from handlers.register import register_handlers
+from pyrogram.errors.exceptions.flood_420 import FloodWait
 
 
 def report_restart():
@@ -24,10 +25,13 @@ def report_restart():
 
 
 def set_debug_tag():
-    if debug_mode:
-        set_bot_info(client=kuma, name='KumaBot (Debug)')
-    else:
-        set_bot_info(client=kuma, name=self_name)
+    try:
+        if debug_mode:
+            set_bot_info(client=kuma, name='KumaBot (Debug)')
+        else:
+            set_bot_info(client=kuma, name=self_name)
+    except FloodWait:
+        return False
 
 
 def starting():

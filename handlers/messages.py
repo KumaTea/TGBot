@@ -2,14 +2,10 @@ from pyrogram import Client
 from mods.mark import douban_mark
 from pyrogram.types import Message
 from bot.auth import ensure_not_bl
+from common.data import trusted_group
 from bot.tools import mention_other_bot, code_in_message
 from mods.poll import kw_reply, replace_brackets, poll_groups
 from handlers.msg.general import process_id, unpin_channel_post
-
-try:
-    from local_db import trusted_group
-except ImportError:
-    trusted_group = []
 
 try:
     from local_functions import local_message, local_sticker

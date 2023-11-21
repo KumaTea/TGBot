@@ -10,6 +10,7 @@ from common.tools import trimmer, trim_key
 from bot.auth import bl_users, ensure_not_bl
 from bot.tools import get_file, get_user_name
 from pyrogram.enums.parse_mode import ParseMode
+from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 
 
 @ensure_not_bl
@@ -102,3 +103,19 @@ async def group_help_cmd(client: Client, message: Message):
 @ensure_not_bl
 async def mbti(client: Client, message: Message):
     return await get_mbti(message)
+
+
+@ensure_not_bl
+async def view_bl(client: Client, message: Message):
+    inform_text = '当前全域黑名单如下。所有封禁均有充足理由，可私聊管理员获取原因。'
+    reply_markup = InlineKeyboardMarkup([
+        [InlineKeyboardButton('查看', callback_data='bl_view')]
+    ])
+    return await message.reply_text(inform_text, reply_markup=reply_markup, quote=False)
+
+
+async def cb_bl_view(client: Client, callback_query: CallbackQuery):
+    text = '当前封禁 ID 如下：\n\n'
+    for user_id in bl_users:
+        text += str(user_id) + '\n'
+    return await callback_query.answer(text, show_alert=True)

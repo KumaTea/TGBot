@@ -1,14 +1,9 @@
 import logging
 from typing import Union
 from pyrogram import Client
+from common.data import bl_users
 from bot.tools import get_blocked_user_ids
 from pyrogram.types import Message, CallbackQuery
-
-try:
-    from local_db import trusted_group, bl_users
-except ImportError:
-    trusted_group = []
-    bl_users = []
 
 
 def ensure_not_bl(func):

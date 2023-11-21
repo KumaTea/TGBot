@@ -10,14 +10,10 @@ from bot.tools import get_user_name
 from pyrogram.errors import BadRequest
 from pyrogram.enums import ChatMemberStatus
 from pyrogram.enums.parse_mode import ParseMode
+from common.data import trusted_group, bl_users
 from pyrogram.types import ChatPrivileges, Message
 from pyrogram.enums.chat_members_filter import ChatMembersFilter
 
-try:
-    from local_db import trusted_group, bl_users
-except ImportError:
-    trusted_group = []
-    bl_users = []
 
 list_commands = ['list', 'print', 'dump']
 
