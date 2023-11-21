@@ -1,3 +1,4 @@
+import logging
 from pyrogram import Client
 from mods.mark import douban_mark
 from pyrogram.types import Message
@@ -8,11 +9,12 @@ from mods.poll import kw_reply, replace_brackets, poll_groups
 from handlers.msg.general import process_id, unpin_channel_post
 
 try:
-    from local_functions import local_message, local_sticker
+    from local_functions import local_message
 except ImportError:
+    logging.warning('No local functions found. Using default.')
+
     async def local_message(m):
         return None
-    local_sticker = local_message
 
 
 def is_channel_post(message: Message):

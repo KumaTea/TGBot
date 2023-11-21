@@ -46,46 +46,49 @@ async def disable_group(client: Client, message: Message):
         return await message.reply_text('本群尚未启用扩展功能。', quote=False)
 
 
-async def kw_reply(message: Message):
+async def kw_reply(message: Message, include_dict: dict = None, candidates: list = None):
     # chat_id = message.chat.id
     # if chat_id not in poll_groups.data:
     #     return None
     text = message.text or message.caption
-    include_list = kw_reply_dict
+    if not include_dict:
+        include_dict = kw_reply_dict
 
     text_to_reply = ''
     match_item = ''
-    for item in include_list:
-        keywords = include_list[item]['keywords']
+    for item in include_dict:
+        keywords = include_dict[item]['keywords']
         for keyword in keywords:
             if keyword in text.lower():
-                if include_list[item]['reply']:
-                    text_to_reply = include_list[item]['reply']
+                if include_dict[item]['reply']:
+                    text_to_reply = include_dict[item]['reply']
                 else:
                     text_to_reply = text
                 match_item = item
                 break
         if text_to_reply:
-            if 'skip' in include_list[match_item]:
-                keywords = include_list[match_item]['skip']
+            if 'skip' in include_dict[match_item]:
+                keywords = include_dict[match_item]['skip']
                 for keyword in keywords:
                     if keyword in text.lower():
                         # text_to_reply = ''
                         # break
                         return None
     if text_to_reply:
-        candidates = list(poll_candidates.data.values()) + ['我']
+        if not candidates:
+            candidates = list(poll_candidates.data.values()) + ['我']
         if 'RANDUSER' in text_to_reply:
-            text_to_reply = text_to_reply.replace('RANDUSER', choice(list(candidates)))
-        return await message.reply_text(text_to_reply, quote=include_list[match_item]['quote'])
+            text_to_reply = text_to_reply.replace('RANDUSER', choice(candidates))
+        return await message.reply_text(text_to_reply, quote=include_dict[match_item]['quote'])
     return None
 
 
-async def replace_brackets(message: Message):
+async def replace_brackets(message: Message, candidates: list = None):
     # chat_id = message.chat.id
     # if chat_id not in poll_groups.data:
     #     return None
-    candidates = list(poll_candidates.data.values()) + ['我']
+    if not candidates:
+        candidates = list(poll_candidates.data.values()) + ['我']
     text = message.text or message.caption
     result = brackets_pattern.findall(text)
     if len(result) == 0:
