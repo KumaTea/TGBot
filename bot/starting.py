@@ -2,8 +2,8 @@ import time
 import logging
 from common.data import *
 from bot.session import kuma
-from handlers.register import register_handlers
 from bot.tools import set_bot_info
+from handlers.register import register_handlers
 
 
 def report_restart():

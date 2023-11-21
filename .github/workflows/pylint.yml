@@ -25,4 +25,4 @@ jobs:
         pip install -r requirements.txt || :
     - name: Analysing the code with pylint
       run: |
-        pylint $(find . -not -path "./archive/*" -not -path "./archive/*" -not -path "*__pycache__*" | grep '\.py') || pylint-exit $?
+        pylint $(find . -not -path "./archive/*" -not -path "*__pycache__*" | grep '\.py') || pylint-exit $?

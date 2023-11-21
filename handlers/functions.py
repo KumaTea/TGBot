@@ -1,3 +1,3 @@
 from mods.poll import *
-from handlers.func.general import *
-from handlers.func.private import *
+from func.general import *
+from func.private import *

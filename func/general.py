@@ -1,10 +1,11 @@
 import json
 import time
 from common.data import *
-from mods.title import title
 from pyrogram import Client
+from mods.title import title
 from mods.mbti import get_mbti
 from pyrogram.types import Message
+from bot.tools import unparse_markdown
 from common.tools import trimmer, trim_key
 from bot.auth import bl_users, ensure_not_bl
 from bot.tools import get_file, get_user_name
@@ -54,8 +55,14 @@ async def repeat(client: Client, message: Message):
                 return await message.reply('拒绝。')
             if reply.text:
                 name = get_user_name(reply.from_user)
-                repeat_message = name + ': \n' + reply.text
-                resp = await message.reply(repeat_message, quote=False)
+                if reply.entities:
+                    text = unparse_markdown(reply)
+                    parse_mode = ParseMode.MARKDOWN
+                else:
+                    text = reply.text
+                    parse_mode = None
+                repeat_message = name + ': \n' + text
+                resp = await message.reply(repeat_message, parse_mode=parse_mode, quote=False)
             else:
                 file_id, file_type = get_file(reply)
                 if file_id:

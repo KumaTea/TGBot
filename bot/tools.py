@@ -1,10 +1,11 @@
-from bot.session import kuma
 from pyrogram import Client
+from bot.session import kuma
 from common.info import username
 from pyrogram.types import User, Message
+from pyrogram.parser.parser import Parser
 from pyrogram.enums import ChatMemberStatus, MessageEntityType
-from pyrogram.raw.functions.contacts.get_blocked import GetBlocked
 from pyrogram.raw.functions.bots.set_bot_info import SetBotInfo
+from pyrogram.raw.functions.contacts.get_blocked import GetBlocked
 
 
 def mention_other_bot(text: str):
@@ -102,4 +103,14 @@ def set_bot_info(
                 description=description
             )
         )
+    return result
+
+
+def unparse_markdown(message: Message) -> str:
+    p = Parser(client=None)
+    result = p.unparse(
+        text=message.text,
+        entities=message.entities,
+        is_html=False
+    )
     return result

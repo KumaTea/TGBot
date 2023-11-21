@@ -62,9 +62,12 @@ kw_reply_dict = {
 group_help = (
     '/rp: repeat\n'
     '/title: manage titles\n'
-    '`/help poll`: show poll help\n'
     '/ping: check for delay\n'
     '/debug: display debug info\n'
+    '\n'
+    '可用子帮助：\n'
+    'title: `help title`\n'
+    'poll: `help poll`'
 )
 
 title_help = '用法\n' \
