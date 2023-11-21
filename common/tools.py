@@ -64,12 +64,18 @@ def sort_import(file):
     for line in lines:
         if line.startswith('import ') or line.startswith('from '):
             imports.append(line)
+        else:
+            break
+    if not imports:
+        return None
     imports.sort(key=lambda x: len(x.split('  #')[0]))
     for i in range(len(imports)):
         imports[i] = imports[i].rstrip() + '\n'
     for i in range(len(lines)):
         if lines[i].startswith('import ') or lines[i].startswith('from '):
             lines[i] = imports.pop(0)
+        if not imports:
+            break
     if lines != original_lines:
         with open(file, 'w', encoding='utf-8') as f:
             f.writelines(lines)
