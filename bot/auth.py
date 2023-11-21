@@ -1,7 +1,8 @@
 import logging
+from typing import Union
 from pyrogram import Client
-from pyrogram.types import Message
 from bot.tools import get_blocked_user_ids
+from pyrogram.types import Message, CallbackQuery
 
 try:
     from local_db import trusted_group, bl_users
@@ -11,16 +12,13 @@ except ImportError:
 
 
 def ensure_not_bl(func):
-    async def wrapper(client: Client, message: Message):
-        if message.from_user:
-            user_id = message.from_user.id
+    async def wrapper(client: Client, obj: Union[Message, CallbackQuery]):
+        if obj.from_user:
+            user_id = obj.from_user.id
             if user_id in bl_users:
                 logging.warning(f'User {user_id} is in blacklist! Ignoring message.')
                 return None
-            else:
-                return await func(client, message)
-        else:
-            return await func(client, message)
+        return await func(client, obj)
     return wrapper
 
 
