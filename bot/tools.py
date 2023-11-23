@@ -106,8 +106,8 @@ def set_bot_info(
     return result
 
 
-def unparse_markdown(message: Message) -> str:
-    p = Parser(client=None)
+def unparse_markdown(message: Message, client: Client = None) -> str:
+    p = Parser(client=client)
     result = p.unparse(
         text=message.text,
         entities=message.entities,

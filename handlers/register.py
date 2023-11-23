@@ -29,6 +29,8 @@ def register_handlers():
     kuma.add_handler(MessageHandler(debug, filters.command(['debug', 'dump'])))
     kuma.add_handler(MessageHandler(delay, filters.command(['delay', 'ping'])))
     kuma.add_handler(MessageHandler(mbti,  filters.command(['mbti'])))
+    kuma.add_handler(MessageHandler(unparse, filters.command(['unparse'])))
+    kuma.add_handler(MessageHandler(get_chat_id, filters.command(['chat_id', 'chatid'])))
 
     # private messages
     kuma.add_handler(MessageHandler(private_get_file_id, filters.private))
