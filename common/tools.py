@@ -48,7 +48,7 @@ def find_url(text: str):
 
 # run this before commit
 # for aesthetic purpose
-def sort_imports():
+def sort_imports(pwd):
     # python_files = [i for i in os.listdir() if i.endswith('.py')]
     for root, dirs, files in os.walk(pwd):
         for file in files:
@@ -83,4 +83,4 @@ def sort_import(file):
 
 
 if __name__ == '__main__':
-    sort_imports()
+    sort_imports(r'D:\GitHub\TGBot')

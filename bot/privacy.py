@@ -1,15 +1,12 @@
-# forbid profile photo to those who don't show theirs
-
-import asyncio
-from bot.session import config
+from typing import List
 from pyrogram import Client
+from bot.session import config
 from pyrogram.types import User
 from pyrogram.raw.types.user import User as RawUser
+from pyrogram.raw.functions.contacts import GetBlocked
+from pyrogram.raw.functions.account import GetPrivacy, SetPrivacy
 from pyrogram.raw.types import InputPrivacyKeyProfilePhoto, InputUser
 from pyrogram.raw.types import InputPrivacyValueAllowAll, InputPrivacyValueDisallowUsers
-from pyrogram.raw.functions.account import GetPrivacy, SetPrivacy
-from pyrogram.raw.functions.contacts import GetBlocked
-from typing import List
 
 
 me = Client(
@@ -93,5 +90,5 @@ async def main(client: Client):
 
 
 if __name__ == '__main__':
-    with me:
+    async with me:
         me.run(main(me))
