@@ -157,7 +157,7 @@ async def get_mbti(message: Message):
     mbti_today = rng.choice(MBTI_list)
 
     text = (
-        '你今天的MBTI类型是：**{type}**\n'
+        '你今天的 #MBTI 类型是：**{type}**\n'
         '特点是：{summary}\n`/mbti {type}`\n\n'
         '尽力扮演好今天的角色吧！'
     )

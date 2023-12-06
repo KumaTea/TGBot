@@ -1,4 +1,3 @@
-import time
 from common.data import *
 from pyrogram import Client
 from mods.title import title  # noqa
@@ -8,28 +7,8 @@ from bot.tools import unparse_markdown
 from bot.auth import bl_users, ensure_not_bl
 from bot.tools import get_file, get_user_name
 from pyrogram.enums.parse_mode import ParseMode
-from func.debugs import debug, unparse, get_chat_id  # noqa
+from func.debugs import debug, unparse, get_chat_id, delay  # noqa
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
-
-
-@ensure_not_bl
-async def delay(client: Client, message: Message):
-    req_timestamp = time.perf_counter()
-
-    resp_message = await message.reply('Checking delay...')
-
-    resp_timestamp = time.perf_counter()
-    duration = resp_timestamp - req_timestamp
-    duration_str = '{:.3f} ms'.format(1000 * duration)
-    if duration < 0.1:
-        status = 'excellent'
-    elif duration < 0.5:
-        status = 'good'
-    elif duration < 1:
-        status = 'ok'
-    else:
-        status = 'bad'
-    return await resp_message.edit_text(f'Delay is {duration_str}.\nThe connectivity is {status}.')
 
 
 @ensure_not_bl

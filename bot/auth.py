@@ -21,7 +21,7 @@ if __name__ == '__main__':
     print('Listing blocked users')
 
     import asyncio
-    from session import config
+    from bot.session import config
 
     me = Client(
         'me',
