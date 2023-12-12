@@ -9,13 +9,6 @@ from pyrogram.raw.types import InputPrivacyKeyProfilePhoto, InputUser
 from pyrogram.raw.types import InputPrivacyValueAllowAll, InputPrivacyValueDisallowUsers
 
 
-me = Client(
-    'me',
-    api_id=config['kuma']['api_id'],
-    api_hash=config['kuma']['api_hash']
-)
-
-
 async def get_current_restricted(client: Client) -> List[RawUser]:
     result = await client.invoke(GetPrivacy(key=InputPrivacyKeyProfilePhoto()))
     return result.users
@@ -40,7 +33,7 @@ def get_input_user(user: RawUser) -> InputUser:
 
 
 async def get_blocked(client: Client) -> List[User]:
-    result = await me.invoke(GetBlocked(offset=0, limit=0))
+    result = await client.invoke(GetBlocked(offset=0, limit=0))
     for u in result.users:
         if not hasattr(u, 'access_hash') or not u.access_hash:
             print(f'User {u.id=} has no access_hash')
@@ -61,15 +54,19 @@ async def update_restrictions(client: Client, users: List[User]):
 async def handler(client: Client, chat_id: int):
     print('Getting current restrictions')
     current_restricted = await get_current_restricted(client)
-    print('Getting group members')
-    no_profile = await check_group(client, chat_id)
     print('Getting blocked users')
     blocked = await get_blocked(client)
     blocked_ids = [u.id for u in blocked]
 
     print('Now block all users without profile photo')
-    for u in no_profile:
-        await client.block_user(u.id)
+    if chat_id:
+        print('Getting group members')
+        no_profile = await check_group(client, chat_id)
+        for u in no_profile:
+            await client.block_user(u.id)
+            print(f'Blocked {u.id} {u.first_name}')
+    else:
+        input('Please block all users without profile photo and press Enter')
     print('Updating new blocked')
     new_blocked = await get_blocked(client)
     diff = [u for u in new_blocked if u.id not in blocked_ids]
@@ -79,6 +76,13 @@ async def handler(client: Client, chat_id: int):
     print('Unblocking users')
     for u in diff:
         await client.unblock_user(u.id)
+        print(f'Unblocked {u.id} {u.first_name}')
+    new_blocked = await get_blocked(client)
+    diff = [u for u in new_blocked if u.id not in blocked_ids]
+    if diff:
+        print('Failed to unblock:')
+        for u in diff:
+            print(f'{u.id} {u.first_name}')
     print('Done')
 
 
@@ -90,5 +94,12 @@ async def main(client: Client):
 
 
 if __name__ == '__main__':
-    async with me:
-        me.run(main(me))
+    me = Client(
+        'me',
+        api_id=config['kuma']['api_id'],
+        api_hash=config['kuma']['api_hash']
+    )
+
+    me.start()
+    me.run(main(me))
+    me.stop()

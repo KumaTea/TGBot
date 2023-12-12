@@ -5,7 +5,7 @@ from random import choice
 from pyrogram import Client
 from bot.tools import is_admin
 from bot.auth import ensure_not_bl
-from common.data import trusted_group
+from common.local import trusted_group
 from bot.store import IntListStore, DictStore
 from pyrogram.enums.parse_mode import ParseMode
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery

@@ -1,11 +1,4 @@
-from common.info import *
-
-
-try:
-    from local_db import trusted_group, bl_users
-except ImportError:
-    trusted_group = []
-    bl_users = []
+from common.info import debug_mode, administrators
 
 
 if debug_mode:

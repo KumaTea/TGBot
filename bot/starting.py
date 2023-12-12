@@ -1,8 +1,10 @@
+import os
 import time
 import logging
-from common.data import *
 from bot.session import kuma
 from bot.tools import set_bot_info
+from common.data import pwd, restart_mark
+from common.info import self_name, debug_mode
 from handlers.register import register_handlers
 from pyrogram.errors.exceptions.flood_420 import FloodWait
 
