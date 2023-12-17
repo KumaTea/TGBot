@@ -41,7 +41,7 @@ def starting():
     os.makedirs(f'{pwd}/data/poll', exist_ok=True)
 
     report_restart()
-    set_debug_tag()
+    # set_debug_tag()
 
     register_handlers()
 
