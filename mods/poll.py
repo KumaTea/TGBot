@@ -1,32 +1,42 @@
 import re
 import asyncio
-from common.data import *
 from random import choice
 from pyrogram import Client
 from bot.tools import is_admin
-from bot.auth import ensure_not_bl
+from common.info import self_id
 from common.local import trusted_group
-from bot.store import IntListStore, DictStore
 from pyrogram.enums.parse_mode import ParseMode
+from bot.auth import ensure_not_bl, enabled_groups, poll_candidates
+from common.data import poll_help, poll_admins, kw_reply_dict, brackets_re
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 
 
 brackets_pattern = re.compile(brackets_re)
-poll_groups = IntListStore(poll_groups_file)
-poll_candidates = DictStore(poll_candidates_file)
+
+
+async def am_i_admin(client: Client, chat_id: int):
+    me = await client.get_chat_member(chat_id, self_id)
+    return all([
+        me.privileges.can_delete_messages,
+        me.privileges.can_restrict_members,
+        me.privileges.can_promote_members,
+    ])
 
 
 @ensure_not_bl
 async def enable_group(client: Client, message: Message):
     chat_id = message.chat.id
-    if chat_id in poll_groups.data:
+    if chat_id in enabled_groups.data:
         return await message.reply_text('本群已经启用扩展功能了。', quote=False)
     elif chat_id in trusted_group:
         return await message.reply_text('本群为受信群，默认启用扩展功能。注意某些彩蛋亦已启用。', quote=False)
     else:
         if await is_admin(chat_id, message.from_user.id, client):
-            poll_groups.add_item(chat_id)
-            return await message.reply_text('本群成功启用扩展功能！豆瓣评分、关键词回复、群员抽奖等功能现已生效。', quote=False)
+            if await am_i_admin(client, chat_id):
+                enabled_groups.add_item(chat_id)
+                return await message.reply_text('本群成功启用扩展功能！豆瓣评分、关键词回复、群员抽奖等功能现已生效。', quote=False)
+            else:
+                return await message.reply_text('我还没有获得删除消息、封禁用户及提拔用户权限，设置失败。', quote=False)
         else:
             return await message.reply_text('仅管理员可操作！', quote=False)
 
@@ -34,9 +44,9 @@ async def enable_group(client: Client, message: Message):
 @ensure_not_bl
 async def disable_group(client: Client, message: Message):
     chat_id = message.chat.id
-    if chat_id in poll_groups.data:
+    if chat_id in enabled_groups.data:
         if await is_admin(chat_id, message.from_user.id, client):
-            poll_groups.del_item(chat_id)
+            enabled_groups.del_item(chat_id)
             return await message.reply_text('本群成功禁用扩展功能。', quote=False)
         else:
             return await message.reply_text('仅管理员可操作！', quote=False)
@@ -47,9 +57,6 @@ async def disable_group(client: Client, message: Message):
 
 
 async def kw_reply(message: Message, include_dict: dict = None, candidates: list = None):
-    # chat_id = message.chat.id
-    # if chat_id not in poll_groups.data:
-    #     return None
     text = message.text or message.caption
     if not include_dict:
         include_dict = kw_reply_dict
@@ -84,9 +91,6 @@ async def kw_reply(message: Message, include_dict: dict = None, candidates: list
 
 
 async def replace_brackets(message: Message, candidates: list = None):
-    # chat_id = message.chat.id
-    # if chat_id not in poll_groups.data:
-    #     return None
     if not candidates:
         candidates = list(poll_candidates.data.values()) + ['我']
     text = message.text or message.caption

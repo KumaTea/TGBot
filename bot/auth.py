@@ -2,8 +2,10 @@ from typing import Union
 from pyrogram import Client
 from bot.session import logging
 from bot.tools import get_blocked_user_ids
+from bot.store import IntListStore, DictStore
 from common.local import bl_users, known_group
 from pyrogram.types import Message, CallbackQuery
+from common.data import poll_groups_file, poll_candidates_file
 
 
 def ensure_not_bl(func):
@@ -32,6 +34,10 @@ def ensure_not_bl(func):
             return None
         return await func(client, obj)
     return wrapper
+
+
+enabled_groups = IntListStore(poll_groups_file)
+poll_candidates = DictStore(poll_candidates_file)
 
 
 if __name__ == '__main__':

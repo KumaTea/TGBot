@@ -5,7 +5,7 @@ import pickle
 class IntListStore:
     def __init__(self, file_path: str):
         self.file_path = file_path
-        self.data = []
+        self.data: list[int] = []
         self.read_data()
 
     def read_data(self):
@@ -32,7 +32,7 @@ class IntListStore:
 class DictStore:
     def __init__(self, file_path: str):
         self.file_path = file_path
-        self.data = {}
+        self.data: dict[int, str] = {}
         self.read_data()
 
     def read_data(self):

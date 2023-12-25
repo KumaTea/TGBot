@@ -4,9 +4,9 @@ from mods.mark import douban_mark
 from pyrogram.types import Message
 from bot.auth import ensure_not_bl
 from common.local import trusted_group
+from msg.general import process_id, unpin_channel_post
 from bot.tools import mention_other_bot, code_in_message
-from mods.poll import kw_reply, replace_brackets, poll_groups
-from handlers.msg.general import process_id, unpin_channel_post
+from mods.poll import kw_reply, replace_brackets, enabled_groups
 
 try:
     from local_functions import local_message
@@ -40,7 +40,7 @@ async def public_message(message: Message):
 async def process_msg(client: Client, message: Message):
     if message:
         chat_id = message.chat.id
-        if chat_id in poll_groups.data or chat_id in trusted_group:
+        if chat_id in enabled_groups.data or chat_id in trusted_group:
             await process_id(message)
             if need_to_process(message):
                 if chat_id in trusted_group:
