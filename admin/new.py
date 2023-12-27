@@ -14,7 +14,7 @@ async def welcome(user: User, message: Message) -> Message:
 
 def is_spam_user(user: User) -> bool:
     name = get_user_name(user)
-    if len(name.replace(' ', '')) > 20:
+    if len(name.replace(' ', '')) > 16:
         return True
     return False
 
