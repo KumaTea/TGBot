@@ -41,9 +41,11 @@ async def new_group_member(client: Client, message: Message) -> Optional[Message
     for member in new_members:
         if member.id != auth_user.id:
             # invited
-            return await welcome(member, message)
+            # return await welcome(member, message)
+            return None
         else:
             if is_spam_user(member):
                 return await ban_spam_user(member, message)
             else:
-                return await welcome(member, message)
+                # return await welcome(member, message)
+                return None
