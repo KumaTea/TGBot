@@ -4,9 +4,9 @@ from mods.mark import douban_mark
 from pyrogram.types import Message
 from bot.auth import ensure_not_bl
 from common.local import trusted_group
-from msg.general import process_id, unpin_channel_post
 from bot.tools import mention_other_bot, code_in_message
 from mods.poll import kw_reply, replace_brackets, enabled_groups
+from msg.general import process_id, unpin_channel_post, mention_all
 
 try:
     from local_functions import local_message
@@ -32,8 +32,13 @@ def need_to_process(message: Message):
     return False
 
 
-async def public_message(message: Message):
-    return await douban_mark(message) or await kw_reply(message) or await replace_brackets(message)
+async def public_message(client: Client, message: Message):
+    return (
+        await douban_mark(message) or
+        await kw_reply(message) or
+        await replace_brackets(message) or
+        await mention_all(client, message)
+    )
 
 
 @ensure_not_bl
@@ -44,9 +49,9 @@ async def process_msg(client: Client, message: Message):
             await process_id(message)
             if need_to_process(message):
                 if chat_id in trusted_group:
-                    return await local_message(message) or await public_message(message)
+                    return await local_message(message) or await public_message(client, message)
                 else:
-                    return await public_message(message)
+                    return await public_message(client, message)
             elif is_channel_post(message):
                 return await unpin_channel_post(client, message)
     return None
