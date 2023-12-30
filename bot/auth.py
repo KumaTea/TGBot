@@ -13,7 +13,7 @@ def ensure_not_bl(func):
             msg = obj.message
         else:
             msg = obj
-        if msg.chat and msg.chat.id not in known_group:
+        if msg.chat and msg.chat.id < 0 and msg.chat.id not in known_group:
             logging.warning(f'Chat id={msg.chat.id} name={msg.chat.title} not known!')
             known_group.append(msg.chat.id)
         if msg.from_user:

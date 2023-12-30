@@ -3,8 +3,8 @@ from bot.session import kuma
 from pyrogram import filters
 from handlers.functions import *
 from admin.new import new_group_member
-from handlers.messages import process_msg
 from handlers.callbacks import process_callback
+from handlers.messages import process_msg, private_msg
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 
 
@@ -25,6 +25,8 @@ def register_handlers():
     kuma.add_handler(MessageHandler(private_forward, filters.command(['fw', 'forward']) & filters.private))
     kuma.add_handler(MessageHandler(private_help, filters.command(['help']) & filters.private))
     kuma.add_handler(MessageHandler(restart, filters.command(['restart', 'reboot']) & filters.private))
+    kuma.add_handler(MessageHandler(command_get_known, filters.command(['get_known']) & filters.private))
+    kuma.add_handler(MessageHandler(command_red_bag, filters.command(['red_bag', 'redbag', 'rb']) & filters.private))
 
     # universal commands
     kuma.add_handler(MessageHandler(debug, filters.command(['debug', 'dump'])))
@@ -34,7 +36,7 @@ def register_handlers():
     kuma.add_handler(MessageHandler(get_chat_id, filters.command(['chat_id', 'chatid'])))
 
     # private messages
-    kuma.add_handler(MessageHandler(private_get_file_id, filters.private))
+    kuma.add_handler(MessageHandler(private_msg, filters.private))
 
     # group messages
     kuma.add_handler(MessageHandler(new_group_member, filters.group & filters.new_chat_members))
@@ -42,9 +44,6 @@ def register_handlers():
 
     # callbacks
     kuma.add_handler(CallbackQueryHandler(process_callback))
-
-    # fallback
-    kuma.add_handler(MessageHandler(private_unknown, filters.private))
 
     return logging.info('Registered handlers')
 

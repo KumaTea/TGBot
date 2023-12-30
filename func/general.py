@@ -1,4 +1,3 @@
-from common.data import *
 from pyrogram import Client
 from mods.title import title  # noqa
 from mods.mbti import get_mbti
@@ -7,6 +6,7 @@ from bot.tools import unparse_markdown
 from bot.auth import bl_users, ensure_not_bl
 from bot.tools import get_file, get_user_name
 from pyrogram.enums.parse_mode import ParseMode
+from common.data import group_help, title_help, poll_help
 from func.debugs import debug, unparse, get_chat_id, delay  # noqa
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 

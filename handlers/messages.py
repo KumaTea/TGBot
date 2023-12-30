@@ -1,10 +1,13 @@
 import logging
 from pyrogram import Client
+from common.info import self_id
 from mods.mark import douban_mark
 from pyrogram.types import Message
 from bot.auth import ensure_not_bl
 from common.local import trusted_group
+from common.data import administrators
 from bot.tools import mention_other_bot, code_in_message
+from func.private import private_get_file_id, private_unknown
 from mods.poll import kw_reply, replace_brackets, enabled_groups
 from msg.general import process_id, unpin_channel_post, mention_all
 
@@ -55,3 +58,14 @@ async def process_msg(client: Client, message: Message):
             elif is_channel_post(message):
                 return await unpin_channel_post(client, message)
     return None
+
+
+@ensure_not_bl
+async def private_msg(client: Client, message: Message):
+    user_id = message.from_user.id
+    if user_id == self_id:
+        return None
+    if user_id in administrators:
+        return await private_get_file_id(client, message)
+    else:
+        return await private_unknown(client, message)

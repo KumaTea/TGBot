@@ -1,12 +1,13 @@
 import sys
 import random
-from common.data import *
-from common.info import *
 from pyrogram import Client
 from pyrogram.types import Message
 from bot.auth import ensure_not_bl
 from bot.tools import get_file, get_user_name
+from common.info import creator, version, channel
 from common.data import restart_mark, nonsense_replies
+from mods.redbag import command_get_known, command_red_bag  # noqa
+from common.data import start_message, help_message, unknown_message, administrators
 
 
 @ensure_not_bl
@@ -49,11 +50,9 @@ def rand_reply():
 
 @ensure_not_bl
 async def private_get_file_id(client: Client, message: Message):
-    if message.from_user.id == self_id:
-        return None
     file_id, file_type = get_file(message)
     if file_type == 'text':
-        return await message.reply(rand_reply())
+        return await message.reply(message.text)
     if file_id:
         return await message.reply(file_id)
     else:
@@ -62,7 +61,11 @@ async def private_get_file_id(client: Client, message: Message):
 
 @ensure_not_bl
 async def private_unknown(client: Client, message: Message):
-    return await message.reply(unknown_message)
+    if message.text:
+        if message.text.startswith('/'):
+            return await message.reply(unknown_message)
+        else:
+            return await message.reply(rand_reply())
 
 
 # @ensure_not_bl
