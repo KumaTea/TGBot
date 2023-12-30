@@ -10,6 +10,8 @@ title_pattern = re.compile(title_re)
 
 async def douban_mark(message: Message):
     text = message.text or message.caption
+    if not text:
+        return None
     result = title_pattern.findall(text)
     if result:
         title = result[0][1:-1].strip().lower()

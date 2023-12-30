@@ -33,10 +33,16 @@ async def unpin_channel_post(client: Client, message: Message):
 
 
 async def mention_all(client: Client, message: Message):
+    text = message.text or message.caption
+    if not text:
+        return None
     if not any(match in message.text for match in MENTION_ALL_MSG):
         return False
     if not await is_admin(message.chat.id, message.from_user.id, client):
         return False
+
+    if message.reply_to_message:
+        message = message.reply_to_message
     try:
         await message.pin(disable_notification=False)
     except Exception as e:

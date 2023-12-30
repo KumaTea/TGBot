@@ -58,6 +58,8 @@ async def disable_group(client: Client, message: Message):
 
 async def kw_reply(message: Message, include_dict: dict = None, candidates: list = None):
     text = message.text or message.caption
+    if not text:
+        return None
     if not include_dict:
         include_dict = kw_reply_dict
 
@@ -94,6 +96,8 @@ async def replace_brackets(message: Message, candidates: list = None):
     if not candidates:
         candidates = list(poll_candidates.data.values()) + ['我']
     text = message.text or message.caption
+    if not text:
+        return None
     result = brackets_pattern.findall(text)
     if len(result) == 0:
         return None
