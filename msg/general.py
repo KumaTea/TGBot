@@ -36,7 +36,7 @@ async def mention_all(client: Client, message: Message):
     text = message.text or message.caption
     if not text:
         return None
-    if not any(match in message.text for match in MENTION_ALL_MSG):
+    if not any(match in text for match in MENTION_ALL_MSG):
         return False
     if not await is_admin(message.chat.id, message.from_user.id, client):
         return False
