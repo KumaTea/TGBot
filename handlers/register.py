@@ -25,8 +25,8 @@ def register_handlers():
     kuma.add_handler(MessageHandler(private_forward, filters.command(['fw', 'forward']) & filters.private))
     kuma.add_handler(MessageHandler(private_help, filters.command(['help']) & filters.private))
     kuma.add_handler(MessageHandler(restart, filters.command(['restart', 'reboot']) & filters.private))
-    kuma.add_handler(MessageHandler(command_get_known, filters.command(['get_known']) & filters.private))
-    kuma.add_handler(MessageHandler(command_red_bag, filters.command(['red_bag', 'redbag', 'rb']) & filters.private))
+    # kuma.add_handler(MessageHandler(command_get_known, filters.command(['get_known']) & filters.private))
+    # kuma.add_handler(MessageHandler(command_red_bag, filters.command(['red_bag', 'redbag', 'rb']) & filters.private))
 
     # universal commands
     kuma.add_handler(MessageHandler(debug, filters.command(['debug', 'dump'])))

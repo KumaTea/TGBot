@@ -6,7 +6,7 @@ from bot.auth import ensure_not_bl
 from bot.tools import get_file, get_user_name
 from common.info import creator, version, channel
 from common.data import restart_mark, nonsense_replies
-from mods.redbag import command_get_known, command_red_bag  # noqa
+# from mods.redbag import command_get_known, command_red_bag  # noqa
 from common.data import start_message, help_message, unknown_message, administrators
 
 
