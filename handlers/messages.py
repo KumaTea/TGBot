@@ -9,7 +9,7 @@ from common.data import administrators
 from bot.tools import mention_other_bot, code_in_message
 from func.private import private_get_file_id, private_unknown
 from mods.poll import kw_reply, replace_brackets, enabled_groups
-from msg.general import process_id, unpin_channel_post, mention_all
+from msg.general import process_id, unpin_channel_post, mention_all, cue_remind
 
 try:
     from local_functions import local_message
@@ -48,14 +48,16 @@ async def public_message(client: Client, message: Message):
 async def process_msg(client: Client, message: Message):
     if message:
         chat_id = message.chat.id
-        if chat_id in enabled_groups.data or chat_id in trusted_group:
+        if chat_id not in trusted_group:
+            await cue_remind(client, message)
+        if chat_id in enabled_groups.data + trusted_group:
             await process_id(message)
             if need_to_process(message):
                 if chat_id in trusted_group:
                     return await local_message(message) or await public_message(client, message)
                 else:
                     return await public_message(client, message)
-            elif is_channel_post(message):
+            if is_channel_post(message):
                 return await unpin_channel_post(client, message)
     return None
 

@@ -2,8 +2,10 @@ import asyncio
 import logging
 from pyrogram import Client
 from bot.tools import is_admin
+from common.info import creator
 from pyrogram.types import Message
 from pyrogram.enums import ParseMode
+from common.local import trusted_group
 
 
 special_ids = [
@@ -48,3 +50,29 @@ async def mention_all(client: Client, message: Message):
     except Exception as e:
         logging.warning(f'Failed to pin message: {e}')
         return False
+
+
+async def cue_remind(client: Client, message: Message):
+    chat_id = message.chat.id
+    if chat_id in trusted_group:
+        # no need to remind
+        return None
+    if chat_id > 0:
+        # do not remind private chat
+        return None
+
+    text = message.text or message.caption
+    if not text:
+        return None
+
+    if 'kuma' not in text.lower():
+        return None
+
+    if message.chat.username:
+        msg_link = f'https://t.me/{message.chat.username}/{message.id}'
+    else:
+        link_chat_id = str(message.chat.id)[4:]
+        msg_link = f'https://t.me/c/{link_chat_id}/{message.id}'
+
+    text = '有人 cue 你被我听见了！\n' + msg_link
+    await client.send_message(creator, text)
