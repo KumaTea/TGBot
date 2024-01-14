@@ -2,7 +2,7 @@ import logging
 from common.tools import get_url_int_list  # , get_url_str_list
 
 
-LOCAL_URL = 'https://us.lan.kmtea.eu'
+LOCAL_URL = 'https://hm.lan.kmtea.eu'
 
 
 logging.warning('Loading local data...')

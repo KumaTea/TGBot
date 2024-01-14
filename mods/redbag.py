@@ -4,39 +4,21 @@ from pyrogram import Client
 from datetime import datetime
 from common.info import creator
 from bot.session import logging
+from bot.store import DictStore
 from pyrogram.types import Message
-from bot.auth import ensure_not_bl
 from common.local import LOCAL_URL
-from bot.tools import get_user_name
 from common.tools import get_url_str
 from common.data import pwd, administrators
-from bot.store import IntListStore, DictStore
+from bot.auth import ensure_not_bl, known_user_ids
+from bot.tools import get_user_name, get_chat_member_ids
 
 
-known_user_ids = IntListStore(f'{pwd}/data/ku.p')
 red_bag_users = DictStore(f'{pwd}/data/rb.p')
 
 RED_BAG_IMG_ID = get_url_str(f'{LOCAL_URL}/rbi.txt')
 logging.warning(f'RB_IMG_ID: {RED_BAG_IMG_ID}')
 RED_BAG_MSG = get_url_str(f'{LOCAL_URL}/rbm.txt')
 logging.warning(f'RB_MSG: {RED_BAG_MSG}')
-
-
-async def get_chat_member_ids(client: Client, chat_id: int):
-    chat_members = client.get_chat_members(chat_id)
-    return [i.user.id async for i in chat_members]
-
-
-async def command_get_known(client: Client, message: Message) -> Optional[Message]:
-    if message.from_user.id not in administrators:
-        return None
-    if known_user_ids.data:
-        return await message.reply_text('Already known.')
-    else:
-        chat_id = -1001932978232  # Dic
-        known_user_ids.data = await get_chat_member_ids(client, chat_id)
-        known_user_ids.write_data()
-        return await message.reply_text('Data: ' + str(known_user_ids.data))
 
 
 @ensure_not_bl

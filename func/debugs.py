@@ -2,11 +2,13 @@ import json
 import time
 import pprint
 from pyrogram import Client
+from typing import Optional
 from pyrogram.types import Message
-from bot.auth import ensure_not_bl
-from bot.tools import unparse_markdown
+from common.data import administrators
 from common.tools import trimmer, trim_key
 from pyrogram.enums.parse_mode import ParseMode
+from bot.auth import ensure_not_bl, known_user_ids
+from bot.tools import unparse_markdown, get_chat_member_ids
 
 
 @ensure_not_bl
@@ -62,3 +64,16 @@ async def delay(client: Client, message: Message) -> Message:
         f'Status: {status}'
     )
     return await resp_message.edit_text(response)
+
+
+# @ensure_not_bl
+async def command_get_known(client: Client, message: Message) -> Optional[Message]:
+    if message.from_user.id not in administrators:
+        return None
+    # if known_user_ids.data:
+    #     return await message.reply_text('Already known.')
+    # else:
+    chat_id = -1001932978232  # Dic
+    known_user_ids.data = await get_chat_member_ids(client, chat_id)
+    known_user_ids.write_data()
+    return await message.reply_text(f'Data: `{str(known_user_ids.data)}`')

@@ -114,3 +114,8 @@ def unparse_markdown(message: Message, client: Client = None) -> str:
         is_html=False
     )
     return result
+
+
+async def get_chat_member_ids(client: Client, chat_id: int):
+    chat_members = client.get_chat_members(chat_id)
+    return [i.user.id async for i in chat_members]
