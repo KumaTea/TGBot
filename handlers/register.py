@@ -4,7 +4,7 @@ from pyrogram import filters
 from handlers.functions import *
 from admin.new import new_group_member
 from handlers.callbacks import process_callback
-from handlers.messages import process_msg, private_msg
+from handlers.messages import group_msg, private_msg
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 
 
@@ -40,7 +40,7 @@ def register_handlers():
 
     # group messages
     kuma.add_handler(MessageHandler(new_group_member, filters.group & filters.new_chat_members))
-    kuma.add_handler(MessageHandler(process_msg, filters.group))
+    kuma.add_handler(MessageHandler(group_msg, filters.group))
 
     # callbacks
     kuma.add_handler(CallbackQueryHandler(process_callback))

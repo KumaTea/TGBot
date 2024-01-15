@@ -48,8 +48,6 @@ async def public_message(client: Client, message: Message):
 async def process_msg(client: Client, message: Message):
     if message:
         chat_id = message.chat.id
-        if chat_id not in trusted_group:
-            await cue_remind(client, message)
         if chat_id in enabled_groups.data + trusted_group:
             await process_id(message)
             if need_to_process(message):
@@ -62,6 +60,14 @@ async def process_msg(client: Client, message: Message):
     return None
 
 
+async def detect_msg(client: Client, message: Message):
+    if message:
+        chat_id = message.chat.id
+        if chat_id not in trusted_group:
+            return await cue_remind(client, message)
+    return None
+
+
 @ensure_not_bl
 async def private_msg(client: Client, message: Message):
     user_id = message.from_user.id
@@ -71,3 +77,8 @@ async def private_msg(client: Client, message: Message):
         return await private_get_file_id(client, message)
     else:
         return await private_unknown(client, message)
+
+
+async def group_msg(client: Client, message: Message):
+    await process_msg(client, message)
+    await detect_msg(client, message)
