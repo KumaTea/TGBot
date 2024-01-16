@@ -74,6 +74,6 @@ async def command_get_known(client: Client, message: Message) -> Optional[Messag
     #     return await message.reply_text('Already known.')
     # else:
     chat_id = -1001932978232  # Dic
-    known_user_ids.data = await get_chat_member_ids(client, chat_id)
-    known_user_ids.write_data()
-    return await message.reply_text(f'Data: `{str(known_user_ids.data)}`')
+    user_ids = await get_chat_member_ids(client, chat_id)
+    user_ids_str = '\n'.join([str(user_id) for user_id in user_ids])
+    return await message.reply_text(f'Data: ```\n{user_ids_str}\n```')
