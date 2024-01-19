@@ -76,4 +76,4 @@ async def command_get_known(client: Client, message: Message) -> Optional[Messag
     chat_id = -1001932978232  # Dic
     user_ids = await get_chat_member_ids(client, chat_id)
     user_ids_str = '\n'.join([str(user_id) for user_id in user_ids])
-    return await message.reply_text(f'Data: ```\n{user_ids_str}\n```')
+    return await message.reply_text(f'Data: ```{user_ids_str}\n```')
