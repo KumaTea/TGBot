@@ -1,6 +1,7 @@
 import asyncio
 from typing import Optional
 from pyrogram import Client
+from common.data import pwd
 from datetime import datetime
 from common.info import creator
 from bot.session import logging
@@ -8,7 +9,6 @@ from bot.store import DictStore
 from pyrogram.types import Message
 from common.local import LOCAL_URL
 from common.tools import get_url_str
-from common.data import pwd, administrators
 from bot.auth import ensure_not_bl, known_user_ids
 from bot.tools import get_user_name, get_chat_member_ids
 

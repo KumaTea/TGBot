@@ -4,10 +4,10 @@ import pprint
 from pyrogram import Client
 from typing import Optional
 from pyrogram.types import Message
+from bot.auth import ensure_not_bl
 from common.data import administrators
 from common.tools import trimmer, trim_key
 from pyrogram.enums.parse_mode import ParseMode
-from bot.auth import ensure_not_bl, known_user_ids
 from bot.tools import unparse_markdown, get_chat_member_ids
 
 

@@ -2,7 +2,7 @@ import asyncio
 from pyrogram import Client
 from typing import Optional
 from bot.tools import get_user_name
-from bot.auth import enabled_groups
+from bot.trust import enabled_groups
 from common.local import trusted_group
 from pyrogram.types import Message, User
 

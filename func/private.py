@@ -3,7 +3,7 @@ import random
 from pyrogram import Client
 from pyrogram.types import Message
 from bot.auth import ensure_not_bl
-from func.debugs import command_get_known
+from func.debugs import command_get_known  # noqa
 from bot.tools import get_file, get_user_name
 from common.info import creator, version, channel
 from common.data import restart_mark, nonsense_replies

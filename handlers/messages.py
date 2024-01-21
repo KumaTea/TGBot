@@ -4,11 +4,12 @@ from common.info import self_id
 from mods.mark import douban_mark
 from pyrogram.types import Message
 from bot.auth import ensure_not_bl
+from bot.trust import enabled_groups
 from common.local import trusted_group
 from common.data import administrators
+from mods.poll import kw_reply, replace_brackets
 from bot.tools import mention_other_bot, code_in_message
 from func.private import private_get_file_id, private_unknown
-from mods.poll import kw_reply, replace_brackets, enabled_groups
 from msg.general import process_id, unpin_channel_post, mention_all, cue_remind
 
 try:

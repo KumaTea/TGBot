@@ -4,9 +4,10 @@ from random import choice
 from pyrogram import Client
 from bot.tools import is_admin
 from common.info import self_id
+from bot.auth import ensure_not_bl
 from common.local import trusted_group
 from pyrogram.enums.parse_mode import ParseMode
-from bot.auth import ensure_not_bl, enabled_groups, poll_candidates
+from bot.trust import enabled_groups, poll_candidates
 from common.data import poll_help, poll_admins, kw_reply_dict, brackets_re
 from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
 

@@ -1,14 +1,8 @@
 from typing import Union
 from pyrogram import Client
 from bot.session import logging
-from bot.store import IntListStore, DictStore
 from pyrogram.types import Message, CallbackQuery
 from common.local import bl_users, known_group, known_user_ids
-from common.data import poll_groups_file, poll_candidates_file
-
-
-enabled_groups = IntListStore(poll_groups_file)
-poll_candidates = DictStore(poll_candidates_file)
 
 
 def ensure_not_bl(func):
