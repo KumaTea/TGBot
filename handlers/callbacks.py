@@ -1,11 +1,11 @@
 from pyrogram import Client
-from bot.auth import ensure_not_bl
+from bot.auth import ensure_auth
 from func.general import cb_bl_view
 from pyrogram.types import CallbackQuery
 from mods.poll import poll_callback_handler
 
 
-@ensure_not_bl
+@ensure_auth
 async def process_callback(client: Client, callback_query: CallbackQuery):
     task = callback_query.data.split('_')[0]
     if task == 'poll':

@@ -3,7 +3,7 @@ from mods.title import title  # noqa
 from mods.mbti import get_mbti
 from pyrogram.types import Message
 from bot.tools import unparse_markdown
-from bot.auth import bl_users, ensure_not_bl
+from bot.auth import bl_users, ensure_auth
 from bot.tools import get_file, get_user_name
 from pyrogram.enums.parse_mode import ParseMode
 from common.data import group_help, title_help, poll_help
@@ -11,7 +11,7 @@ from func.debugs import debug, unparse, get_chat_id, delay  # noqa
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 
 
-@ensure_not_bl
+@ensure_auth
 async def repeat(client: Client, message: Message):
     command = message.text
     content_index = command.find(' ')
@@ -60,7 +60,7 @@ async def repeat(client: Client, message: Message):
     return resp
 
 
-@ensure_not_bl
+@ensure_auth
 async def group_help_cmd(client: Client, message: Message):
     command = message.text
     content_index = command.find(' ')
@@ -75,12 +75,12 @@ async def group_help_cmd(client: Client, message: Message):
         return await message.reply(group_help, quote=False)
 
 
-@ensure_not_bl
+@ensure_auth
 async def mbti(client: Client, message: Message):
     return await get_mbti(message)
 
 
-@ensure_not_bl
+@ensure_auth
 async def view_bl(client: Client, message: Message):
     inform_text = '当前全域黑名单如下。所有封禁均有充足理由，可私聊管理员获取原因。'
     reply_markup = InlineKeyboardMarkup([

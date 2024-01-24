@@ -9,7 +9,7 @@ from bot.store import DictStore
 from pyrogram.types import Message
 from common.local import LOCAL_URL
 from common.tools import get_url_str
-from bot.auth import ensure_not_bl, known_user_ids
+from bot.auth import ensure_auth, known_user_ids
 from bot.tools import get_user_name, get_chat_member_ids
 
 
@@ -21,7 +21,7 @@ RED_BAG_MSG = get_url_str(f'{LOCAL_URL}/rbm.txt')
 logging.warning(f'RB_MSG: {RED_BAG_MSG}')
 
 
-@ensure_not_bl
+@ensure_auth
 async def command_red_bag(client: Client, message: Message) -> Optional[Message]:
     if not known_user_ids.data:
         chat_id = -1001932978232  # Dic

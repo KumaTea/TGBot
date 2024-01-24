@@ -5,7 +5,7 @@ from bot.session import kuma
 from datetime import datetime
 from common.info import self_id
 from common.data import title_help
-from bot.auth import ensure_not_bl
+from bot.auth import ensure_auth
 from bot.tools import get_user_name
 from pyrogram.errors import BadRequest
 from pyrogram.enums import ChatMemberStatus
@@ -76,7 +76,7 @@ async def _is_authorized(client: Client, message: Message) -> bool:
     )
 
 
-@ensure_not_bl
+@ensure_auth
 async def title(client: Client, message: Message) -> Optional[Message]:
     """Set the title of a user as an admin in a chat.
 

@@ -3,7 +3,7 @@ from pyrogram import Client
 from common.info import self_id
 from mods.mark import douban_mark
 from pyrogram.types import Message
-from bot.auth import ensure_not_bl
+from bot.auth import ensure_auth
 from bot.trust import enabled_groups
 from common.local import trusted_group
 from common.data import administrators
@@ -45,7 +45,7 @@ async def public_message(client: Client, message: Message):
     )
 
 
-@ensure_not_bl
+@ensure_auth
 async def process_msg(client: Client, message: Message):
     if message:
         chat_id = message.chat.id
@@ -69,7 +69,7 @@ async def detect_msg(client: Client, message: Message):
     return None
 
 
-@ensure_not_bl
+@ensure_auth
 async def private_msg(client: Client, message: Message):
     user_id = message.from_user.id
     if user_id == self_id:
