@@ -6,6 +6,7 @@ from common.info import creator
 from pyrogram.types import Message
 from pyrogram.enums import ParseMode
 from common.local import trusted_group
+from common.data import cue_prob, cue_exact
 
 
 special_ids = [
@@ -65,7 +66,19 @@ async def cue_remind(client: Client, message: Message):
     if not text:
         return None
 
-    if 'kuma' not in text.lower():
+    exact_match = False
+    prob_match = False
+    maybe = ''
+    if cue_exact in text.lower():
+        exact_match = True
+    else:
+        for word in cue_prob:
+            if word in text.lower():
+                prob_match = True
+                maybe = '好像'
+                break
+
+    if not any([exact_match, prob_match]):
         return None
 
     if message.chat.username:
@@ -74,5 +87,5 @@ async def cue_remind(client: Client, message: Message):
         link_chat_id = str(message.chat.id)[4:]
         msg_link = f'https://t.me/c/{link_chat_id}/{message.id}'
 
-    text = '有人 cue 你被我听见了！\n' + msg_link
+    text = f'{maybe}有人 cue 你被我听见了！\n{msg_link}'
     await client.send_message(creator, text)
