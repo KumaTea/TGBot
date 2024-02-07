@@ -1,9 +1,10 @@
+import asyncio
 import logging
 from pyrogram import Client
 from common.info import self_id
+from bot.auth import ensure_auth
 from mods.mark import douban_mark
 from pyrogram.types import Message
-from bot.auth import ensure_auth
 from bot.trust import enabled_groups
 from common.local import trusted_group
 from common.data import administrators
@@ -81,5 +82,8 @@ async def private_msg(client: Client, message: Message):
 
 
 async def group_msg(client: Client, message: Message):
-    await process_msg(client, message)
-    await detect_msg(client, message)
+    tasks = [
+        process_msg(client, message),
+        detect_msg(client, message)
+    ]
+    return await asyncio.gather(*tasks)

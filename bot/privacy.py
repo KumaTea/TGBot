@@ -88,7 +88,7 @@ async def handler(client: Client, chat_id: int):
 
 async def main(client: Client):
     print('Start')
-    while chat_id := input('Chat ID: '):
+    while chat_id := input('Chat ID:\n0 to skip, empty to exit\n>'):
         chat_id = int(chat_id)
         await handler(client, chat_id)
 

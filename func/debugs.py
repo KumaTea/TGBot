@@ -3,8 +3,9 @@ import time
 import pprint
 from pyrogram import Client
 from typing import Optional
-from pyrogram.types import Message
 from bot.auth import ensure_auth
+from pyrogram.types import Message
+from common.local import known_group
 from common.data import administrators
 from common.tools import trimmer, trim_key
 from pyrogram.enums.parse_mode import ParseMode
@@ -67,7 +68,7 @@ async def delay(client: Client, message: Message) -> Message:
 
 
 # @ensure_auth
-async def command_get_known(client: Client, message: Message) -> Optional[Message]:
+async def command_get_users(client: Client, message: Message) -> Optional[Message]:
     if message.from_user.id not in administrators:
         return None
     # if known_user_ids.data:
@@ -77,3 +78,11 @@ async def command_get_known(client: Client, message: Message) -> Optional[Messag
     user_ids = await get_chat_member_ids(client, chat_id)
     user_ids_str = '\n'.join([str(user_id) for user_id in user_ids])
     return await message.reply_text(f'Data: ```log\n{user_ids_str}\n```')
+
+
+# @ensure_auth
+async def command_get_groups(client: Client, message: Message) -> Optional[Message]:
+    if message.from_user.id not in administrators:
+        return None
+    group_ids_str = '\n'.join([str(group_id) for group_id in known_group])
+    return await message.reply_text(f'Data: ```log\n{group_ids_str}\n```')
