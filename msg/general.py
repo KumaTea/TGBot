@@ -68,14 +68,19 @@ async def cue_remind(client: Client, message: Message):
 
     exact_match = False
     prob_match = False
-    maybe = ''
-    if cue_exact in text.lower():
-        exact_match = True
-    else:
+
+    for word in cue_exact:
+        if word in text.lower():
+            exact_match = True
+            break
+    # else:
+    # use for else is more elegant
+    # but here for better readability
+    # we use if
+    if not exact_match:
         for word in cue_prob:
             if word in text.lower():
                 prob_match = True
-                maybe = '好像'
                 break
 
     if not any([exact_match, prob_match]):
@@ -87,5 +92,6 @@ async def cue_remind(client: Client, message: Message):
         link_chat_id = str(message.chat.id)[4:]
         msg_link = f'https://t.me/c/{link_chat_id}/{message.id}'
 
+    maybe = '好像' if prob_match else ''
     text = f'{maybe}有人 cue 你被我听见了！\n{msg_link}'
     await client.send_message(creator, text)

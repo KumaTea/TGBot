@@ -88,5 +88,5 @@ poll_help = (
     '4. 原则上，g/f2d 及有恋爱史者使用「批」'
 )
 
-cue_exact = 'kuma'
+cue_exact = ['kuma', '库玛']
 cue_prob = ['kmt', '蓝毛']
