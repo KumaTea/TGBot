@@ -3,6 +3,7 @@ from bot.session import kuma
 from common.info import username
 from pyrogram.types import User, Message
 from pyrogram.parser.parser import Parser
+from pyrogram.raw.types import User as RawUser
 from pyrogram.enums import ChatMemberStatus, MessageEntityType
 from pyrogram.raw.functions.bots.set_bot_info import SetBotInfo
 from pyrogram.raw.functions.contacts.get_blocked import GetBlocked
@@ -75,12 +76,12 @@ def code_in_message(message: Message):
     return False
 
 
-async def get_blocked_users(client: Client, offset: int = 0, limit: int = 100):
+async def get_blocked_users(client: Client, offset: int = 0, limit: int = 100) -> list[RawUser]:
     result = await client.invoke(GetBlocked(offset=offset, limit=limit))
     return result.users
 
 
-async def get_blocked_user_ids(client: Client, offset: int = 0, limit: int = 100):
+async def get_blocked_user_ids(client: Client, offset: int = 0, limit: int = 100) -> list[int]:
     result = await get_blocked_users(client, offset, limit)
     # for i in result:
     #     yield i.id
