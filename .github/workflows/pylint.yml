@@ -23,6 +23,7 @@ jobs:
         python -m pip install --upgrade pip
         pip install pylint pylint-exit
         pip install -r requirements.txt || :
+        pip install -r req-extra.txt || :
     - name: Analysing the code with pylint
       run: |
         pylint $(find . -not -path "./archive/*" -not -path "*__pycache__*" | grep '\.py') || pylint-exit $?
