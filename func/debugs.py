@@ -4,11 +4,12 @@ import pprint
 from pyrogram import Client
 from typing import Optional
 from bot.auth import ensure_auth
+from func.tools import get_content
 from pyrogram.types import Message
 from common.local import known_group
-from common.data import administrators
 from common.tools import trimmer, trim_key
 from pyrogram.enums.parse_mode import ParseMode
+from common.data import administrators, REFUSE_STICKER
 from bot.tools import unparse_markdown, get_chat_member_ids
 
 
@@ -86,3 +87,47 @@ async def command_get_groups(client: Client, message: Message) -> Optional[Messa
         return None
     group_ids_str = '\n'.join([str(group_id) for group_id in known_group])
     return await message.reply_text(f'Data: ```log\n{group_ids_str}\n```')
+
+
+async def eval_code_core(client: Client, message: Message, output=True) -> Optional[tuple[str, int]]:
+    # return: result, success_code
+    content = get_content(message)
+    if not content:
+        return str(client), 0
+    else:
+        attr_splitter = ['(', '.', '[']
+        attr = content
+        for splitter in attr_splitter:
+            attr = attr.split(splitter)[0]
+        if not hasattr(client, attr):
+            return f'No attribute named {attr}.', 1
+
+        is_callable = callable(getattr(client, attr))
+        if not is_callable:
+            # return getattr(client, content), 0
+            return eval(f'client.{content}'), 0
+
+        try:
+            # func = eval(f'client.{content}')  # async or result of sync
+            # is_async = hasattr(func, '__await__')
+            result = await eval(f'client.{content}')
+            if output:
+                return result, 0
+            return 'Done.', 0
+        except Exception as e:
+            return str(e), 1
+
+
+@ensure_auth
+async def eval_code(client: Client, message: Message) -> Optional[Message]:
+    if message.from_user.id not in administrators:
+        return await message.reply_sticker(REFUSE_STICKER, quote=False)
+    result, success_code = await eval_code_core(client, message)
+    result = str(result)
+    status_icon = '✅' if success_code == 0 else '❌'
+    text = f'{status_icon}\n\n'
+    if len(result) > 100:
+        text += f'```log\n{result}```'
+    else:
+        text += f'`{result}`'
+    return await message.reply(text, quote=False)

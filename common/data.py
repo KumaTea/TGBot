@@ -97,3 +97,5 @@ USER_AGENT = (
     'Chrome/122.0.0.0 '
     'Safari/537.36'
 )
+
+REFUSE_STICKER = 'CAACAgIAAxkBAAIfbGXhYdn67j4-3hpsMSddd24BSltgAAKSOwACo-wIS-Sd1NbsOlHnHgQ'

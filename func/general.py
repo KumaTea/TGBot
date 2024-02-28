@@ -7,7 +7,7 @@ from bot.auth import bl_users, ensure_auth
 from bot.tools import get_file, get_user_name
 from pyrogram.enums.parse_mode import ParseMode
 from common.data import group_help, title_help, poll_help
-from func.debugs import debug, unparse, get_chat_id, delay  # noqa
+from func.debugs import debug, unparse, get_chat_id, delay, eval_code  # noqa
 from pyrogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 
 
