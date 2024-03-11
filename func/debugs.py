@@ -9,7 +9,7 @@ from pyrogram.types import Message
 from common.local import known_group
 from common.tools import trimmer, trim_key
 from pyrogram.enums.parse_mode import ParseMode
-from common.data import administrators, REFUSE_STICKER
+from common.data import REFUSE_STICKER, administrators
 from bot.tools import unparse_markdown, get_chat_member_ids
 
 
@@ -118,10 +118,11 @@ async def eval_code_core(client: Client, message: Message, output=True) -> Optio
             return str(e), 1
 
 
-@ensure_auth
+# @ensure_auth
 async def eval_code(client: Client, message: Message) -> Optional[Message]:
     if message.from_user.id not in administrators:
-        return await message.reply_sticker(REFUSE_STICKER, quote=False)
+        # return await message.reply_sticker(REFUSE_STICKER, quote=False)
+        return None
     result, success_code = await eval_code_core(client, message)
     result = str(result)
     status_icon = '✅' if success_code == 0 else '❌'

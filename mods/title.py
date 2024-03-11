@@ -10,8 +10,8 @@ from bot.tools import get_user_name
 from pyrogram.errors import BadRequest
 from pyrogram.enums import ChatMemberStatus
 from pyrogram.enums.parse_mode import ParseMode
-from common.local import trusted_group, bl_users
-from pyrogram.types import ChatPrivileges, Message
+from common.local import bl_users, trusted_group
+from pyrogram.types import Message, ChatPrivileges
 from pyrogram.enums.chat_members_filter import ChatMembersFilter
 
 

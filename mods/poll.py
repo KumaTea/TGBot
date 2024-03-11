@@ -8,8 +8,8 @@ from bot.auth import ensure_auth
 from common.local import trusted_group
 from pyrogram.enums.parse_mode import ParseMode
 from bot.trust import enabled_groups, poll_candidates
-from common.data import poll_help, poll_admins, kw_reply_dict, brackets_re
-from pyrogram.types import Message, InlineKeyboardMarkup, InlineKeyboardButton, CallbackQuery
+from common.data import poll_help, brackets_re, poll_admins, kw_reply_dict
+from pyrogram.types import Message, CallbackQuery, InlineKeyboardButton, InlineKeyboardMarkup
 
 
 brackets_pattern = re.compile(brackets_re)

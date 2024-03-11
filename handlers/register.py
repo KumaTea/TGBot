@@ -35,7 +35,7 @@ def register_handlers():
     kuma.add_handler(MessageHandler(mbti,  filters.command(['mbti'])))
     kuma.add_handler(MessageHandler(unparse, filters.command(['unparse'])))
     kuma.add_handler(MessageHandler(get_chat_id, filters.command(['chat_id', 'chatid'])))
-    kuma.add_handler(MessageHandler(eval_code, filters.command(['eval', 'raw', 'exec'])))
+    kuma.add_handler(MessageHandler(eval_code, filters.command(['raw', 'exec'])))
 
     # private messages
     kuma.add_handler(MessageHandler(private_msg, filters.private))

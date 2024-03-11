@@ -1,4 +1,4 @@
-from bot.store import IntListStore, DictStore
+from bot.store import DictStore, IntListStore
 from common.data import poll_groups_file, poll_candidates_file
 
 

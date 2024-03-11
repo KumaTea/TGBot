@@ -4,7 +4,7 @@ from typing import Optional
 from bot.tools import get_user_name
 from bot.trust import enabled_groups
 from common.local import trusted_group
-from pyrogram.types import Message, User
+from pyrogram.types import User, Message
 
 
 async def welcome(user: User, message: Message) -> Message:

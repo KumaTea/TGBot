@@ -5,7 +5,7 @@ from pyrogram.types import User
 from pyrogram.raw.types.user import User as RawUser
 from pyrogram.raw.functions.contacts import GetBlocked
 from pyrogram.raw.functions.account import GetPrivacy, SetPrivacy
-from pyrogram.raw.types import InputPrivacyKeyProfilePhoto, InputUser
+from pyrogram.raw.types import InputUser, InputPrivacyKeyProfilePhoto
 from pyrogram.raw.types import InputPrivacyValueAllowAll, InputPrivacyValueDisallowUsers
 
 
