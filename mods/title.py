@@ -130,7 +130,7 @@ async def title(client: Client, message: Message) -> Optional[Message]:
             await client.promote_chat_member(
                 chat_id, reply.from_user.id,
                 ChatPrivileges(
-                    can_manage_chat=trusted, can_delete_messages=False,
+                    can_manage_chat=trusted, can_delete_messages=trusted,
                     can_manage_video_chats=trusted, can_restrict_members=trusted,
                     can_promote_members=trusted, can_change_info=trusted,
                     can_invite_users=True, can_pin_messages=trusted,

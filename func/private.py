@@ -1,5 +1,6 @@
 import sys
 import random
+import logging
 from pyrogram import Client
 from bot.auth import ensure_auth
 from pyrogram.types import Message
@@ -7,17 +8,39 @@ from bot.tools import get_file, get_user_name
 from common.info import channel, creator, version
 from common.data import restart_mark, nonsense_replies
 from func.debugs import command_get_users, command_get_groups  # noqa
-from common.data import help_message, start_message, administrators, unknown_message
+from common.local import a55h01e, soft_block, class_enemies, bl_users
+from common.data import greet_message, administrators, unknown_message, pwd
 
 
 @ensure_auth
 async def private_start(client: Client, message: Message):
-    return await message.reply(start_message)
+    # from func.tools import get_content
+    if message.command and len(message.command) > 1:
+        data = message.command[1]
+        if data and data.split('_')[0] == 'r':
+            user = message.from_user
+            class_enemies.append(user.id)
+            bl_users.reload(list(set(a55h01e + soft_block + class_enemies)))
+            logging.warning(f'User {user.id} added to class enemies.')
+            text = (
+                '依据条款，本 bot 现在开始永久拒绝对你服务。'
+                '其他 Kuma 系 bot 也会在最快1天内同步黑名单。'
+            )
+
+            if data == 'r_q':
+                with open(f'{pwd}/jjdr.tmp.txt', 'a', encoding='utf-8') as f:
+                    f.write(f'{user.id}  # q: {user.first_name}\n')
+                return await message.reply(f'你已登记自己为 qljj。{text}')
+            elif data == 'r_f':
+                with open(f'{pwd}/jjdr.tmp.txt', 'a', encoding='utf-8') as f:
+                    f.write(f'{user.id}  # f: {user.first_name}\n')
+                return await message.reply(f'你已登记自己为 g/f2d。{text}')
+    return await message.reply(greet_message, disable_web_page_preview=True)
 
 
 @ensure_auth
 async def private_help(client: Client, message: Message):
-    help_msg = (f'{help_message}\n'
+    help_msg = (f'{greet_message}\n'
                 f'\n'
                 f'Version: {version} ({channel})')
     return await message.reply(help_msg)

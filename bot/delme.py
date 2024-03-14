@@ -48,4 +48,3 @@ if __name__ == '__main__':
     t = int(input('Total messages to delete: ') or 0)
     with me:
         me.run(main(c_id, u_id, t))
-

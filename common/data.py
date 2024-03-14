@@ -23,16 +23,18 @@ nonsense_replies = ('咋会这样呢 对对对 好家伙 说的是啊 谁不是�
                     '原来是这样！ 我辈楷模 有内味儿了 瑞思拜 大佬大佬 学到了 interesting nice fine good omg 那还挺好的 那就先这样 好像是有点儿 没事儿 美女的事你少管 '
                     '哈哈不用啦 确实，该干嘛就干嘛').split()
 
-start_message = (
-    'Thank you for using KumaTea bot!\n'
-    'You may see commands sending "/help".'
-)
-help_message = (
-    '/start: wake me up\n'
-    '/help: display this message\n'
-    '/ping: check for delay\n'
-    '/rp: repeat\n'
-    '/say: say something\n'
+greet_message = (
+    '/start: 发送这条消息\n'
+    '/help: 也是发送这条消息\n'
+    '/ping: 检测延迟\n'
+    '/rp: 复读\n'
+    '\n'
+    '本 bot 还有更多功能静待发现：\n'
+    '/title /enable_group /mbti 等\n'
+    '\n'
+    '如果你是 qljj (情侣阶级 / 有恋爱史)，请 [点击此链接](https://t.me/kumatea_bot?start=r_q) 告诉我。\n'
+    '如果你是 g/f2d (官 / 富二代)，请 [点击此链接](https://t.me/kumatea_bot?start=r_f) 告诉我。\n'
+    '点击后，你可能需要再点击一次下方的 start 按钮。'
 )
 unknown_message = "I can't understand your message or command. You may try /help."
 
