@@ -8,8 +8,8 @@ from bot.tools import get_file, get_user_name
 from common.info import channel, creator, version
 from common.data import restart_mark, nonsense_replies
 from func.debugs import command_get_users, command_get_groups  # noqa
-from common.local import a55h01e, soft_block, class_enemies, bl_users
-from common.data import greet_message, administrators, unknown_message, pwd
+from common.local import a55h01e, bl_users, soft_block, class_enemies
+from common.data import pwd, greet_message, administrators, unknown_message
 
 
 @ensure_auth

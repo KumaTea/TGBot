@@ -9,14 +9,14 @@ from common.local import trusted_group
 from common.data import cue_prob, cue_exact
 
 
-special_ids = [
+special_ids = {
     100, 1000, 10000, 100000, 1000000
-]
+}
 for i in special_ids.copy():
     for j in range(1, 10):
-        special_ids.append(i*j)
-special_ids.extend([114514, 1919, 810, 1919810])
-MENTION_ALL_MSG = ['@all', '@全体成员']
+        special_ids.add(i*j)
+special_ids.update({114514, 1919, 810, 1919810})
+MENTION_ALL_MSG = {'@all', '@全体成员'}
 
 
 async def process_id(message: Message):

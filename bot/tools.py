@@ -34,12 +34,12 @@ def get_user_name(user: User):
 def get_file(message: Message):
     file_id = None
     file_type = None
-    file_types = [
+    file_types = {
         'audio', 'document',
         'photo', 'sticker',
         'animation', 'video',
         'voice', 'video_note'
-    ]
+    }
 
     if message.text:
         file_id = message.text

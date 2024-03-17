@@ -40,7 +40,7 @@ unknown_message = "I can't understand your message or command. You may try /help
 
 poll_groups_file = f'{pwd}/data/poll/groups.txt'
 poll_candidates_file = f'{pwd}/data/poll/candidates.p'
-poll_admins = administrators + []
+poll_admins = administrators  # .copy()
 
 kw_reply_dict = {
     'envy': {

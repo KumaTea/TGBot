@@ -50,7 +50,7 @@ async def public_message(client: Client, message: Message):
 async def process_msg(client: Client, message: Message):
     if message:
         chat_id = message.chat.id
-        if chat_id in enabled_groups.data + trusted_group:
+        if chat_id in enabled_groups.data | trusted_group:
             await process_id(message)
             if need_to_process(message):
                 if chat_id in trusted_group:

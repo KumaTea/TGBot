@@ -15,16 +15,16 @@ me = Client(
     api_hash=config['kuma']['api_hash']
 )
 
-PROJECTS = [
+PROJECTS = {
     -1001454145827,  # MetaKuma
     -1001525690242,  # Space
     -1001476670457,  # Cloud
     -1002051677176,  # FQ
     -1001713500645,  # Logs
     -1001581552395,  # zhfnl
-]
+}
 
-GROUPS = [
+GROUPS = {
     -1001688959697,  # z?fdq
     -1001214803045,  # Bot Test
     -1001836884943,  # 4th
@@ -32,7 +32,7 @@ GROUPS = [
     -1001932978232,  # teasps
     -1001883734921,  # 2y
     -1001923350797,  # 3y
-]
+}
 
 
 def get_new_block(blocked_users: list[RawUser]):
@@ -85,7 +85,7 @@ async def check_blocked(user_ids: list[int]) -> list[User]:
 
 
 async def apply_block(blocked_users: list[RawUser]):
-    chat_ids = PROJECTS + GROUPS
+    chat_ids = PROJECTS | GROUPS
     blocked_user_ids = [i.id for i in blocked_users]
     more = get_more()
     pbar = tqdm(chat_ids)

@@ -2,17 +2,17 @@ import os
 import pickle
 
 
-class IntListStore:
+class IntSetStore:
     def __init__(self, file_path: str):
         self.file_path = file_path
-        self.data: list[int] = []
+        self.data: set[int] = set()
         self.read_data()
 
     def read_data(self):
         if os.path.isfile(self.file_path):
             with open(self.file_path, 'r', encoding='utf-8') as file:
                 for line in file:
-                    self.data.append(int(line.strip()))
+                    self.data.add(int(line.strip()))
         return self.data
 
     def write_data(self):
@@ -20,7 +20,7 @@ class IntListStore:
             file.write('\n'.join([str(group) for group in self.data]))
 
     def add_item(self, item: int):
-        self.data.append(item)
+        self.data.add(item)
         self.write_data()
 
     def del_item(self, item: int):

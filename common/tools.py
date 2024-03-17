@@ -130,27 +130,25 @@ def process_text(text: str) -> str:
     return text
 
 
-def get_url_int_list(url: str) -> list[int]:
-    int_list = []
+def get_url_int_set(url: str) -> set[int]:
+    int_set = set()
     text = get_url_text(url)
     for line in text.splitlines():
         num_text = process_text(line)
         if num_text:
             num = int(num_text)
-            int_list.append(num)
+            int_set.add(num)
+    return int_set
 
-    return int_list
 
-
-def get_url_str_list(url: str) -> list[str]:
-    str_list = []
+def get_url_str_set(url: str) -> set[str]:
+    str_set = set()
     text = get_url_text(url)
     for line in text.splitlines():
         str_text = process_text(line)
         if str_text:
-            str_list.append(str_text)
-
-    return str_list
+            str_set.add(str_text)
+    return str_set
 
 
 def get_url_str(url: str) -> str:

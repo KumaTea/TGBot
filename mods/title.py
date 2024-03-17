@@ -15,7 +15,7 @@ from pyrogram.types import Message, ChatPrivileges
 from pyrogram.enums.chat_members_filter import ChatMembersFilter
 
 
-list_commands = ['list', 'print', 'dump']
+list_commands = {'list', 'print', 'dump'}
 
 
 async def get_admin_titles(chat_id):

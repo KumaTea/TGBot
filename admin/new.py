@@ -30,7 +30,7 @@ async def ban_spam_user(user: User, message: Message) -> Message:
 
 
 async def new_group_member(client: Client, message: Message) -> Optional[Message]:
-    if message.chat.id not in enabled_groups.data + trusted_group:
+    if message.chat.id not in enabled_groups.data | trusted_group:
         return None
     if not message.from_user and message.new_chat_members:
         return None
