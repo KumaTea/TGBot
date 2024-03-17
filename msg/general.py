@@ -5,7 +5,7 @@ from bot.tools import is_admin
 from common.info import creator
 from pyrogram.types import Message
 from pyrogram.enums import ParseMode
-from common.local import trusted_group
+from share.local import trusted_group
 from common.data import cue_prob, cue_exact
 
 

@@ -4,13 +4,13 @@ from pyrogram import Client
 from bot.session import kuma
 from datetime import datetime
 from common.info import self_id
-from bot.auth import ensure_auth
 from common.data import title_help
+from share.auth import ensure_auth
 from bot.tools import get_user_name
 from pyrogram.errors import BadRequest
 from pyrogram.enums import ChatMemberStatus
 from pyrogram.enums.parse_mode import ParseMode
-from common.local import bl_users, trusted_group
+from share.local import bl_users, trusted_group
 from pyrogram.types import Message, ChatPrivileges
 from pyrogram.enums.chat_members_filter import ChatMembersFilter
 

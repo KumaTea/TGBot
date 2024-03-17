@@ -2,7 +2,7 @@ from tqdm import tqdm
 from pyrogram import Client
 from bot.session import config
 from pyrogram.types import User
-from common.local import bl_users
+from share.local import bl_users
 from bot.tools import get_blocked_users
 from pyrogram.raw.types import User as RawUser
 from pyrogram.enums.user_status import UserStatus
@@ -41,7 +41,7 @@ def get_new_block(blocked_users: list[RawUser]):
     print('\n')
 
     blocked_user_ids = [i.id for i in blocked_users]
-    new_id = set(blocked_user_ids) - set(bl_users)
+    new_id = set(blocked_user_ids) - bl_users.data
     if new_id:
         print('New blocked users:')
         for i in new_id:
@@ -104,7 +104,7 @@ async def main():
     blocked_users = await get_blocked_users(me)
     blocked_users = [u for u in blocked_users if not u.bot]
     new_block = get_new_block(blocked_users)
-    new_blocked_by = await check_blocked(list(set(bl_users) - set([u.id for u in blocked_users])))
+    new_blocked_by = await check_blocked(list(bl_users.data - set([u.id for u in blocked_users])))
     await apply_block(new_block + new_blocked_by)
 
 
@@ -112,4 +112,4 @@ if __name__ == '__main__':
     # print('Listing blocked users')
     # with me:
     #     me.run(main())
-    print('You can\'t.')
+    print("You can't.")

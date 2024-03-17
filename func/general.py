@@ -3,7 +3,7 @@ from mods.title import title  # noqa
 from mods.mbti import get_mbti
 from pyrogram.types import Message
 from bot.tools import unparse_markdown
-from bot.auth import bl_users, ensure_auth
+from share.auth import bl_users, ensure_auth
 from bot.tools import get_file, get_user_name
 from pyrogram.enums.parse_mode import ParseMode
 from common.data import poll_help, group_help, title_help

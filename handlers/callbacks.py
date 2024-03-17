@@ -1,5 +1,5 @@
 from pyrogram import Client
-from bot.auth import ensure_auth
+from share.auth import ensure_auth
 from func.general import cb_bl_view
 from pyrogram.types import CallbackQuery
 from mods.poll import poll_callback_handler

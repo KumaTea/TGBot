@@ -8,10 +8,6 @@ else:
 
 restart_mark = f'{pwd}/tmp/tgbot-restart-by.txt'
 
-url_regex = r'https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|' \
-            r'www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|' \
-            r'https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|' \
-            r'www\.[a-zA-Z0-9]+\.[^\s]{2,}'
 brackets_re = r'\([\s　]*\)|（[\s　]*）'
 title_re = r'《.+》'
 
@@ -92,12 +88,5 @@ poll_help = (
 
 cue_exact = ['kuma', '库玛']
 cue_prob = ['kmt', '蓝毛']
-
-USER_AGENT = (
-    'Mozilla/5.0 (Windows NT 10.0; Win64; x64) '
-    'AppleWebKit/537.36 (KHTML, like Gecko) '
-    'Chrome/122.0.0.0 '
-    'Safari/537.36'
-)
 
 REFUSE_STICKER = 'CAACAgIAAxkBAAIfbGXhYdn67j4-3hpsMSddd24BSltgAAKSOwACo-wIS-Sd1NbsOlHnHgQ'

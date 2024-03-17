@@ -3,13 +3,13 @@ import time
 import pprint
 from pyrogram import Client
 from typing import Optional
-from bot.auth import ensure_auth
 from func.tools import get_content
 from pyrogram.types import Message
-from common.local import known_group
-from common.tools import trimmer, trim_key
+from share.auth import ensure_auth
+from share.local import known_group
+from common.data import administrators
+from share.tools import trimmer, trim_key
 from pyrogram.enums.parse_mode import ParseMode
-from common.data import REFUSE_STICKER, administrators
 from bot.tools import unparse_markdown, get_chat_member_ids
 
 

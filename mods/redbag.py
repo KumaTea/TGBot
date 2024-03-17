@@ -6,10 +6,10 @@ from datetime import datetime
 from common.info import creator
 from bot.session import logging
 from bot.store import DictStore
+from share.local import LOCAL_URL
 from pyrogram.types import Message
-from common.local import LOCAL_URL
-from common.tools import get_url_str
-from bot.auth import ensure_auth, known_user_ids
+from share.tools import get_url_str
+from share.auth import ensure_auth, known_user_ids
 from bot.tools import get_user_name, get_chat_member_ids
 
 

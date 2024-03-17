@@ -2,11 +2,11 @@ import asyncio
 import logging
 from pyrogram import Client
 from common.info import self_id
-from bot.auth import ensure_auth
 from mods.mark import douban_mark
 from pyrogram.types import Message
+from share.auth import ensure_auth
 from bot.trust import enabled_groups
-from common.local import trusted_group
+from share.local import trusted_group
 from common.data import administrators
 from mods.poll import kw_reply, replace_brackets
 from bot.tools import code_in_message, mention_other_bot

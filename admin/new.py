@@ -3,7 +3,7 @@ from pyrogram import Client
 from typing import Optional
 from bot.tools import get_user_name
 from bot.trust import enabled_groups
-from common.local import trusted_group
+from share.local import trusted_group
 from pyrogram.types import User, Message
 
 
