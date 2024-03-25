@@ -86,12 +86,15 @@ async def cue_remind(client: Client, message: Message):
     if not any([exact_match, prob_match]):
         return None
 
-    if message.chat.username:
+    is_public = message.chat.username
+    if is_public:
         msg_link = f'https://t.me/{message.chat.username}/{message.id}'
     else:
         link_chat_id = str(message.chat.id)[4:]
         msg_link = f'https://t.me/c/{link_chat_id}/{message.id}'
 
     maybe = '好像' if prob_match else ''
-    text = f'{maybe}有人 cue 你被我听见了！\n{msg_link}'
-    await client.send_message(creator, text)
+    remind_text = f'{maybe}有人 cue 你被我听见了！\n{msg_link}'
+    if not is_public:
+        remind_text += f'\n\n{text}'
+    await client.send_message(creator, remind_text)

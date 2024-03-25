@@ -3,8 +3,8 @@ from pyrogram import Client
 from typing import Optional
 from bot.tools import get_user_name
 from bot.trust import enabled_groups
-from share.local import trusted_group
 from pyrogram.types import User, Message
+from share.local import trusted_group, bl_users
 
 
 async def welcome(user: User, message: Message) -> Message:
@@ -12,11 +12,26 @@ async def welcome(user: User, message: Message) -> Message:
     return await message.reply_text(text, quote=False)
 
 
+SPAM_KW = [
+    '免费',
+    '翻墙',
+    'vpn',
+    '直连',
+    'tg',
+    '电报',
+]
+
+
 def is_spam_user(user: User) -> bool:
-    name = get_user_name(user)
-    if len(name.replace(' ', '')) > 16:
+    if user.id in bl_users:
         return True
-    return False
+    name = get_user_name(user)
+    # if len(name.replace(' ', '')) > 16:
+    #     return True
+    # return False
+
+    spam_points = sum([1 for kw in SPAM_KW if kw in name.lower()])
+    return spam_points > 1
 
 
 async def ban_spam_user(user: User, message: Message) -> Message:
