@@ -30,7 +30,8 @@ def is_spam_user(user: User) -> bool:
     #     return True
     # return False
 
-    spam_points = sum([1 for kw in SPAM_KW if kw in name.lower()])
+    spam_points = sum(1 for kw in SPAM_KW if kw in name.lower())
+    # spam_points = len(list(filter(lambda kw: kw in name.lower(), SPAM_KW)))
     return spam_points > 1
 
 

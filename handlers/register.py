@@ -1,4 +1,3 @@
-import logging
 from bot.session import kuma
 from pyrogram import filters
 from handlers.functions import *

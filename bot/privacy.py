@@ -5,8 +5,8 @@ from pyrogram.types import User
 from pyrogram.raw.types.user import User as RawUser
 from pyrogram.raw.functions.contacts import GetBlocked
 from pyrogram.raw.functions.account import GetPrivacy, SetPrivacy
-from pyrogram.raw.types import InputUser, InputPrivacyKeyProfilePhoto
 from pyrogram.raw.types import InputPrivacyValueAllowAll, InputPrivacyValueDisallowUsers
+from pyrogram.raw.types import InputUser, InputPrivacyKeyProfilePhoto, InputPrivacyKeyAbout  # require fork of pyrogram
 
 
 async def get_current_restricted(client: Client) -> List[RawUser]:
@@ -86,11 +86,27 @@ async def handler(client: Client, chat_id: int):
     print('Done')
 
 
+async def ensure_blocked_excluded_about(client: Client):
+    blocked = await get_blocked(client)
+
+    key = InputPrivacyKeyAbout()
+    rules = [
+        InputPrivacyValueDisallowUsers(
+            users=list(map(get_input_user, blocked))
+        ),
+        InputPrivacyValueAllowAll()
+    ]
+    await client.invoke(SetPrivacy(key=key, rules=rules))
+
+
 async def main(client: Client):
     print('Start')
+
     while chat_id := input('Chat ID:\n0 to skip, empty to exit\n>'):
         chat_id = int(chat_id)
         await handler(client, chat_id)
+
+    await ensure_blocked_excluded_about(client)
 
 
 if __name__ == '__main__':
