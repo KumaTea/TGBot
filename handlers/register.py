@@ -11,6 +11,7 @@ def register_handlers():
     # group commands
     kuma.add_handler(MessageHandler(repeat, filters.command(['rp', 'repeat', 'say']) & filters.group))
     kuma.add_handler(MessageHandler(title, filters.command(['title', 'entitle']) & filters.group))
+    kuma.add_handler(MessageHandler(untitle, filters.command(['untitle', 'detitle']) & filters.group))
     kuma.add_handler(MessageHandler(enable_group, filters.command(['enable_group']) & filters.group))
     kuma.add_handler(MessageHandler(disable_group, filters.command(['disable_group']) & filters.group))
     kuma.add_handler(MessageHandler(apply_add_to_candidates, filters.command(['enroll_poll']) & filters.group))
@@ -35,6 +36,8 @@ def register_handlers():
     kuma.add_handler(MessageHandler(unparse, filters.command(['unparse'])))
     kuma.add_handler(MessageHandler(get_chat_id, filters.command(['chat_id', 'chatid'])))
     kuma.add_handler(MessageHandler(eval_code, filters.command(['raw', 'exec'])))
+
+    # temporary or experimental
 
     # private messages
     kuma.add_handler(MessageHandler(private_msg, filters.private))

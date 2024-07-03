@@ -11,8 +11,8 @@ from pyrogram.errors import BadRequest
 from pyrogram.enums import ChatMemberStatus
 from pyrogram.enums.parse_mode import ParseMode
 from share.local import bl_users, trusted_group
-from pyrogram.types import Message, ChatPrivileges
 from pyrogram.enums.chat_members_filter import ChatMembersFilter
+from pyrogram.types import Message, ChatMember, ChatPrivileges, ChatPermissions
 
 
 list_commands = {'list', 'print', 'dump'}
@@ -63,17 +63,33 @@ async def gen_admins_summary(chat_id):
     return text
 
 
-async def _is_authorized(client: Client, message: Message) -> bool:
+async def both_authorized(client: Client, message: Message, auth_type: str = 'promote') -> bool:
     # Is this a trusted group?
     # Or is the requested user an admin?
 
     if message.chat.id in trusted_group:
         return True
-    operator = await client.get_chat_member(message.chat.id, message.from_user.id)
-    return (
-        operator.status == ChatMemberStatus.OWNER or
-        (operator.privileges and operator.privileges.can_promote_members)
+
+    chat_id = message.chat.id
+    # bot_status = await client.get_chat_member(chat_id, self_id)
+    # operator = await client.get_chat_member(message.chat.id, message.from_user.id)
+    bot_status, operator = await asyncio.gather(
+        client.get_chat_member(chat_id, self_id),
+        client.get_chat_member(chat_id, message.from_user.id)
     )
+
+    if auth_type == 'promote':
+        can_promote = bot_status.privileges and bot_status.privileges.can_promote_members
+        return can_promote and (
+            operator.status == ChatMemberStatus.OWNER or
+            (operator.privileges and operator.privileges.can_promote_members)
+        )
+    else:
+        can_demote = bot_status.privileges and bot_status.privileges.can_restrict_members
+        return can_demote and (
+            operator.status == ChatMemberStatus.OWNER or
+            (operator.privileges and operator.privileges.can_restrict_members)
+            )
 
 
 @ensure_auth
@@ -111,21 +127,24 @@ async def title(client: Client, message: Message) -> Optional[Message]:
         return await message.reply('拒绝。')
 
     # can I promote?
-    bot_status = await client.get_chat_member(chat_id, self_id)
-    can_promote = bot_status.privileges and bot_status.privileges.can_promote_members
+    # bot_status = await client.get_chat_member(chat_id, self_id)
+    # can_promote = bot_status.privileges and bot_status.privileges.can_promote_members
+    #
+    # if not can_promote:
+    #     return await message.reply('我还没有提拔群友的权限')
 
-    if not can_promote:
-        return await message.reply('我还没有提拔群友的权限')
-
-    if not await _is_authorized(client, message):
-        return await message.reply('你的权限不足，我无权操作')
+    if not await both_authorized(client, message, auth_type='promote'):
+        return await message.reply('我们中出了一个叛徒')
 
     target = await client.get_chat_member(chat_id, reply.from_user.id)
-    promoting = target.status is not ChatMemberStatus.ADMINISTRATOR
+    needs_promoting = target.status is not ChatMemberStatus.ADMINISTRATOR
+
+    result = None
 
     # set as admin first
-    if promoting:
+    if needs_promoting:
         trusted = chat_id in trusted_group
+        result = await message.reply('正在设置头衔……')
         try:
             await client.promote_chat_member(
                 chat_id, reply.from_user.id,
@@ -140,13 +159,19 @@ async def title(client: Client, message: Message) -> Optional[Message]:
         except BadRequest:
             return await message.reply('权限不足，设为管理失败')
 
+        await asyncio.sleep(1)
+
     # set title
     try:
         title_to_set = ' '.join(args)  # support spaces
         await client.set_administrator_title(chat_id, reply.from_user.id, title_to_set)
         name = get_user_name(reply.from_user)
-        has_set = '设为管理并设置了' if promoting else '设置了'
-        return await message.reply(f'已将 {name} {has_set}「{title_to_set}」头衔。')
+        has_set = '设为管理并设置了' if needs_promoting else '设置了'
+        inform_text = f'已将 {name} {has_set}「{title_to_set}」头衔。'
+        if result:
+            await result.edit(inform_text)
+        else:
+            return await message.reply(inform_text)
     except BadRequest:
         if chat_id > 0:
             error_msg = '本群还不是超级群 (supergroup)，请尝试设为公开或允许新成员查看历史记录'
@@ -157,3 +182,71 @@ async def title(client: Client, message: Message) -> Optional[Message]:
     #     return message.reply('已升级到超级群但群ID未变，请稍后重试')
     except Exception as e:
         return await message.reply(f'未知错误：\n{e}')
+
+
+@ensure_auth
+async def untitle(client: Client, message: Message) -> Optional[Message]:
+    """
+    Remove the title of a user as an admin in a chat.
+    This is done by restricting the user and un-restricting them.
+    """
+
+    chat_id = message.chat.id
+
+    reply = message.reply_to_message
+    if not reply:
+        return await message.reply('请回复一个用户以取消其头衔')
+
+    if reply.from_user.id == self_id:
+        return await message.reply('你小子.jpg')
+
+    if not await both_authorized(client, message, auth_type='demote'):
+        return await message.reply('我们中出了一个叛徒 😡')
+
+    target = await client.get_chat_member(chat_id, reply.from_user.id)
+    promoted = target.status is ChatMemberStatus.ADMINISTRATOR
+
+    if not promoted:
+        return await message.reply('人家本来就没头衔 😁')
+
+    result = await message.reply('正在取消头衔……')
+
+    # restricting
+    try:
+        await client.restrict_chat_member(
+            chat_id, reply.from_user.id,
+            ChatPermissions(
+                can_change_info=False,
+
+                can_send_messages=True, can_send_media_messages=True,
+                can_send_other_messages=True, can_send_polls=True,
+                can_add_web_page_previews=True,
+                can_invite_users=True, can_pin_messages=True,
+                can_manage_topics=True
+            )
+        )
+    except BadRequest:
+        return await message.reply('权限不足，取消失败')
+    except Exception as e:
+        return await message.reply(f'未知错误：\n{e}')
+
+    await asyncio.sleep(1)
+
+    # un-restricting
+    try:
+        await client.restrict_chat_member(
+            chat_id, reply.from_user.id,
+            ChatPermissions(
+                can_send_messages=True, can_send_media_messages=True,
+                can_send_other_messages=True, can_send_polls=True,
+                can_add_web_page_previews=True, can_change_info=True,
+                can_invite_users=True, can_pin_messages=True,
+                can_manage_topics=True
+            )
+        )
+    except BadRequest:
+        return await message.reply('权限不足，取消失败')
+    except Exception as e:
+        return await message.reply(f'未知错误：\n{e}')
+
+    return await result.edit('已取消头衔')

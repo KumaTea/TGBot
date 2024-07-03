@@ -4,7 +4,7 @@ from typing import Optional
 from bot.tools import get_user_name
 from bot.trust import enabled_groups
 from pyrogram.types import User, Message
-from share.local import trusted_group, bl_users
+from share.local import bl_users, trusted_group
 
 
 async def welcome(user: User, message: Message) -> Message:

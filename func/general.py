@@ -1,7 +1,7 @@
 from pyrogram import Client
-from mods.title import title  # noqa
 from mods.mbti import get_mbti
 from pyrogram.types import Message
+from mods.title import title, untitle  # noqa
 from bot.tools import unparse_markdown
 from share.auth import bl_users, ensure_auth
 from bot.tools import get_file, get_user_name

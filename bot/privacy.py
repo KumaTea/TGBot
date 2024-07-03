@@ -6,7 +6,7 @@ from pyrogram.raw.types.user import User as RawUser
 from pyrogram.raw.functions.contacts import GetBlocked
 from pyrogram.raw.functions.account import GetPrivacy, SetPrivacy
 from pyrogram.raw.types import InputPrivacyValueAllowAll, InputPrivacyValueDisallowUsers
-from pyrogram.raw.types import InputUser, InputPrivacyKeyProfilePhoto, InputPrivacyKeyAbout  # require fork of pyrogram
+from pyrogram.raw.types import InputUser, InputPrivacyKeyAbout, InputPrivacyKeyProfilePhoto  # require fork of pyrogram
 
 
 async def get_current_restricted(client: Client) -> List[RawUser]:
