@@ -1,12 +1,16 @@
 from pyrogram import Client
+from typing import Optional
 from bot.session import kuma
 from common.info import username
 from pyrogram.types import User, Message
+from pyrogram.raw.types import InputUser
 from pyrogram.parser.parser import Parser
+from pyrogram.raw.types.users import UserFull
 from pyrogram.raw.types import User as RawUser
 from pyrogram.enums import ChatMemberStatus, MessageEntityType
 from pyrogram.raw.functions.bots.set_bot_info import SetBotInfo
 from pyrogram.raw.functions.contacts.get_blocked import GetBlocked
+from pyrogram.raw.functions.users.get_full_user import GetFullUser
 
 
 def mention_other_bot(text: str):
@@ -120,3 +124,28 @@ def unparse_markdown(message: Message, client: Client = None) -> str:
 async def get_chat_member_ids(client: Client, chat_id: int):
     chat_members = client.get_chat_members(chat_id)
     return [i.user.id async for i in chat_members]
+
+
+def get_input_user_from_user(user: User) -> InputUser:
+    raw_user = user.raw
+    return InputUser(
+        user_id=raw_user.id,
+        access_hash=raw_user.access_hash
+    )
+
+
+async def get_input_user_from_id(client: Client, user_id: int) -> InputUser:
+    user = await client.resolve_peer(user_id)
+    return InputUser(
+        user_id=user.user_id,
+        access_hash=user.access_hash
+    )
+
+
+async def get_user_bio(client: Client, user: User) -> Optional[str]:
+    result: UserFull = await client.invoke(
+        GetFullUser(
+            id=get_input_user_from_user(user)
+        )
+    )
+    return result.full_user.about

@@ -1,10 +1,12 @@
 import asyncio
 from pyrogram import Client
 from typing import Optional
-from bot.tools import get_user_name
+from common.info import creator
 from bot.trust import enabled_groups
 from pyrogram.types import User, Message
 from share.local import bl_users, trusted_group
+from bot.tools import get_user_bio, get_user_name
+from pyrogram.errors.exceptions.bad_request_400 import UserNotParticipant
 
 
 async def welcome(user: User, message: Message) -> Message:
@@ -45,6 +47,48 @@ async def ban_spam_user(user: User, message: Message) -> Message:
     return ban_inform
 
 
+async def ban_no_photo_user(user: User, message: Message) -> Message:
+    text = f'疑赝丁真，鉴定{user.mention("新群员")}未设置或未开放头像，已踢出！'
+    del_msg, ban_user, ban_inform = await asyncio.gather(
+        message.delete(),
+        message.chat.ban_member(user.id),
+        message.reply_text(text, quote=False)
+    )
+    await asyncio.sleep(5)
+    await message.chat.unban_member(user.id)
+    return ban_inform
+
+
+async def user_in_chat(user: User, message: Message) -> bool:
+    try:
+        await message.chat.get_member(user.id)
+        return True
+    except UserNotParticipant:
+        return False
+
+
+async def send_new_member_info(client: Client, user: User, message: Message) -> Message:
+    is_human = '✅' if not user.is_bot else '❌'
+    has_photo = '✅' if user.photo else '❌'
+    has_bio = '✅' if await get_user_bio(client, user) else '❌'
+    has_username = '✅' if user.username else '❌'
+    not_premium = '✅' if not user.is_premium else '❌'
+    name = get_user_name(user)
+    text = f'欢迎新成员 {user.mention(name)}！\n\n'
+    text += f'有头像：{has_photo}\n'
+    text += f'有用户名：{has_username}\n'
+    text += f'有简介：{has_bio}\n'
+    text += f'非bot：{is_human}\n'
+    text += f'非大会员：{not_premium}'
+
+    inform_text = '看群'
+    welcome_msg, inform = await asyncio.gather(
+        message.reply_text(text, quote=False),
+        client.send_message(creator, inform_text)
+    )
+    return welcome_msg
+
+
 async def new_group_member(client: Client, message: Message) -> Optional[Message]:
     if message.chat.id not in enabled_groups.data | trusted_group:
         return None
@@ -57,11 +101,15 @@ async def new_group_member(client: Client, message: Message) -> Optional[Message
     for member in new_members:
         if member.id != auth_user.id:
             # invited
-            # return await welcome(member, message)
-            return None
+            return await send_new_member_info(client, member, message)
         else:
-            if is_spam_user(member):
+            if not member.photo:
+                return await ban_no_photo_user(member, message)
+            elif is_spam_user(member):
                 return await ban_spam_user(member, message)
             else:
                 # return await welcome(member, message)
-                return None
+                # wait for 3 minutes
+                await asyncio.sleep(180)
+                if await user_in_chat(member, message):
+                    return await send_new_member_info(client, member, message)
