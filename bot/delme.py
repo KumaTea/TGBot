@@ -1,3 +1,4 @@
+import asyncio
 from tqdm import trange
 from pyrogram import Client
 from bot.session import config
@@ -38,6 +39,38 @@ async def main(chat_id: int, user_id: int = creator, total: int = 0):
 
     pbar.close()
     print('Deleted successfully!')
+    return True
+
+
+async def forward_and_delete(fw_chat_id: int, del_chat_id: int):
+    history_count = await me.get_chat_history_count(del_chat_id)
+
+    # 50 messages at once
+    pbar = trange(history_count // 50 + 1)
+
+    for msg_batch_id in pbar:
+        pbar.set_description(f'Batch {msg_batch_id}')
+        message_ids = list(range(50 * msg_batch_id + 1, min(50 * msg_batch_id + 50 + 1, history_count + 1)))
+
+        try:
+            await me.forward_messages(fw_chat_id, del_chat_id, message_ids)
+            await asyncio.sleep(1)
+            # await me.delete_messages(del_chat_id, message_ids)
+            await asyncio.sleep(30)
+        except Exception as e:  # some message ids are missing
+            input(str(e))
+            pbar.write(f'At batch {msg_batch_id} some message ids are missing...')
+            for message_id in message_ids:
+                try:
+                    await me.forward_messages(fw_chat_id, del_chat_id, message_id)
+                    await asyncio.sleep(1)
+                    # await me.delete_messages(del_chat_id, message_id)
+                except Exception as ee:
+                    input(str(ee))
+                    pass
+
+    # pbar.close()
+    print('Forwarded and deleted successfully!')
     return True
 
 

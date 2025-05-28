@@ -2,6 +2,7 @@ from typing import List
 from pyrogram import Client
 from bot.session import config
 from pyrogram.types import User
+from bot.tools import get_input_user_from_user
 from pyrogram.raw.types.user import User as RawUser
 from pyrogram.raw.functions.contacts import GetBlocked
 from pyrogram.raw.functions.account import GetPrivacy, SetPrivacy
@@ -89,10 +90,21 @@ async def handler(client: Client, chat_id: int):
 async def ensure_blocked_excluded_about(client: Client):
     blocked = await get_blocked(client)
 
+    current_restricted = await client.invoke(GetPrivacy(key=InputPrivacyKeyAbout()))
+    current_restricted_users = current_restricted.users
+
     key = InputPrivacyKeyAbout()
+    users = list(map(get_input_user, blocked))
+    users.extend(list(map(get_input_user_from_user, current_restricted_users)))
+
+    # deduplicate
+    # unable to use set()
+    seen = set()
+    users = [x for x in users if x.user_id not in seen and not seen.add(x.user_id)]
+
     rules = [
         InputPrivacyValueDisallowUsers(
-            users=list(map(get_input_user, blocked))
+            users=users
         ),
         InputPrivacyValueAllowAll()
     ]
@@ -113,9 +125,12 @@ if __name__ == '__main__':
     me = Client(
         'me',
         api_id=config['kuma']['api_id'],
-        api_hash=config['kuma']['api_hash']
+        api_hash=config['kuma']['api_hash'],
+        workdir='.'
     )
 
     me.start()
-    me.run(main(me))
+    # import asyncio
+    # asyncio.run(main(me))
+    # await main(me)
     me.stop()

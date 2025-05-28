@@ -1,2 +1,3 @@
-pyrogram
+# pyrogram
+kurigram
 uvloop; sys_platform != 'win32'

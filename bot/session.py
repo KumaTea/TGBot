@@ -15,4 +15,5 @@ kuma = Client(
     api_id=config['kuma']['api_id'],
     api_hash=config['kuma']['api_hash'],
     bot_token=config['kuma']['bot_token'],
+    workdir='.'
 )

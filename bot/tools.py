@@ -127,10 +127,11 @@ async def get_chat_member_ids(client: Client, chat_id: int):
 
 
 def get_input_user_from_user(user: User) -> InputUser:
-    raw_user = user.raw
+    if hasattr(user, 'raw'):
+        user = user.raw
     return InputUser(
-        user_id=raw_user.id,
-        access_hash=raw_user.access_hash
+        user_id=user.id,
+        access_hash=user.access_hash
     )
 
 

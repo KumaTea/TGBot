@@ -10,7 +10,7 @@ from pyrogram.errors.exceptions.flood_420 import FloodWait
 
 
 def report_restart():
-    # yes, sync
+    # yes, not async
     if os.path.isfile(restart_mark):
         timestamp = time.time()
         restarted_time = os.path.getmtime(restart_mark)
