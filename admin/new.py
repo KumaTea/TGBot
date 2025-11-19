@@ -48,11 +48,12 @@ async def ban_spam_user(user: User, message: Message) -> Message:
 
 
 async def ban_no_photo_user(user: User, message: Message) -> Message:
-    text = f'疑赝丁真，鉴定{user.mention("新群员")}未设置或未开放头像，已踢出！'
-    del_msg, ban_user, ban_inform = await asyncio.gather(
+    text = f'{user.mention("新群员")}未设置或未开放头像，违反群规，将被踢出！'
+    ban_inform = await message.reply_text(text, quote=False)
+    await asyncio.sleep(5)
+    del_msg, ban_user = await asyncio.gather(
         message.delete(),
         message.chat.ban_member(user.id),
-        message.reply_text(text, quote=False)
     )
     await asyncio.sleep(5)
     await message.chat.unban_member(user.id)

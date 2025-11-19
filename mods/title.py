@@ -8,11 +8,18 @@ from common.data import title_help
 from share.auth import ensure_auth
 from bot.tools import get_user_name
 from pyrogram.errors import BadRequest
+from bot.session import is_old_pyrogram
 from pyrogram.enums import ChatMemberStatus
 from pyrogram.enums.parse_mode import ParseMode
 from share.local import bl_users, trusted_group
 from pyrogram.enums.chat_members_filter import ChatMembersFilter
-from pyrogram.types import Message, ChatMember, ChatPrivileges, ChatPermissions
+
+if is_old_pyrogram:
+    from pyrogram.types import Message, ChatPrivileges, ChatPermissions  # noqa
+else:
+    from pyrogram.types import Message
+    from pyrogram.types.user_and_chats import ChatPermissions
+    from pyrogram.types.user_and_chats.chat_administrator_rights import ChatPrivileges
 
 
 list_commands = {'list', 'print', 'dump'}

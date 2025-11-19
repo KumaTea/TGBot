@@ -1,4 +1,5 @@
 import logging
+import pyrogram
 import configparser
 from pyrogram import Client
 
@@ -17,3 +18,6 @@ kuma = Client(
     bot_token=config['kuma']['bot_token'],
     workdir='.'
 )
+
+pyrogram_version = tuple(map(int, pyrogram.__version__.split('.')))
+is_old_pyrogram = pyrogram_version <= (2, 0, 106)
