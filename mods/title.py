@@ -4,20 +4,21 @@ from pyrogram import Client
 from bot.session import kuma
 from datetime import datetime
 from common.info import self_id
+from pyrogram.types import Message
 from common.data import title_help
 from share.auth import ensure_auth
 from bot.tools import get_user_name
+from share.common import no_preview
 from pyrogram.errors import BadRequest
-from bot.session import is_old_pyrogram
+from share.common import is_old_pyrogram
 from pyrogram.enums import ChatMemberStatus
 from pyrogram.enums.parse_mode import ParseMode
 from share.local import bl_users, trusted_group
 from pyrogram.enums.chat_members_filter import ChatMembersFilter
 
 if is_old_pyrogram:
-    from pyrogram.types import Message, ChatPrivileges, ChatPermissions  # noqa
+    from pyrogram.types import ChatPrivileges, ChatPermissions  # noqa
 else:
-    from pyrogram.types import Message
     from pyrogram.types.user_and_chats import ChatPermissions
     from pyrogram.types.user_and_chats.chat_administrator_rights import ChatPrivileges
 
@@ -115,14 +116,14 @@ async def title(client: Client, message: Message) -> Optional[Message]:
     args = text.split()[1:]
 
     if not args:  # no args
-        return await message.reply(title_help, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+        return await message.reply(title_help, **no_preview)
 
     # with args
     reply = message.reply_to_message
     if not reply:
         # no reply but with args
         if args[0].lower() not in list_commands:
-            return await message.reply(title_help, parse_mode=ParseMode.MARKDOWN, disable_web_page_preview=True)
+            return await message.reply(title_help, **no_preview)
         return await message.reply(
             await gen_admins_summary(chat_id), parse_mode=ParseMode.MARKDOWN, quote=False
         )
@@ -222,15 +223,7 @@ async def untitle(client: Client, message: Message) -> Optional[Message]:
     try:
         await client.restrict_chat_member(
             chat_id, reply.from_user.id,
-            ChatPermissions(
-                can_change_info=False,
-
-                can_send_messages=True, can_send_media_messages=True,
-                can_send_other_messages=True, can_send_polls=True,
-                can_add_web_page_previews=True,
-                can_invite_users=True, can_pin_messages=True,
-                can_manage_topics=True
-            )
+            ChatPermissions(can_change_info=False)
         )
     except BadRequest:
         return await message.reply('权限不足，取消失败')
@@ -243,13 +236,7 @@ async def untitle(client: Client, message: Message) -> Optional[Message]:
     try:
         await client.restrict_chat_member(
             chat_id, reply.from_user.id,
-            ChatPermissions(
-                can_send_messages=True, can_send_media_messages=True,
-                can_send_other_messages=True, can_send_polls=True,
-                can_add_web_page_previews=True, can_change_info=True,
-                can_invite_users=True, can_pin_messages=True,
-                can_manage_topics=True
-            )
+            ChatPermissions(can_change_info=True)
         )
     except BadRequest:
         return await message.reply('权限不足，取消失败')

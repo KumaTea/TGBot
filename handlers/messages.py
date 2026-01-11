@@ -8,6 +8,7 @@ from share.auth import ensure_auth
 from bot.trust import enabled_groups
 from share.local import trusted_group
 from common.data import administrators
+from share.common import is_old_pyrogram
 from mods.poll import kw_reply, replace_brackets
 from bot.tools import code_in_message, mention_other_bot
 from func.private import private_unknown, private_get_file_id
@@ -21,9 +22,15 @@ except ImportError:
     async def local_message(m):
         return None
 
+if not is_old_pyrogram:
+    from pyrogram.enums.message_origin_type import MessageOriginType
+
 
 def is_channel_post(message: Message):
-    return message.sender_chat and message.forward_from_chat and message.sender_chat.id == message.forward_from_chat.id
+    if is_old_pyrogram:
+        return message.sender_chat and message.forward_from_chat and message.sender_chat.id == message.forward_from_chat.id
+    else:
+        return message.forward_origin and message.forward_origin.type == MessageOriginType.CHANNEL
 
 
 def need_to_process(message: Message):

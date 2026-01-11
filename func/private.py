@@ -4,6 +4,7 @@ import logging
 from pyrogram import Client
 from pyrogram.types import Message
 from share.auth import ensure_auth
+from share.common import no_preview
 from bot.tools import get_file, get_user_name
 from common.info import channel, creator, version
 from common.data import restart_mark, nonsense_replies
@@ -35,7 +36,7 @@ async def private_start(client: Client, message: Message):
                 with open(f'{pwd}/jjdr.tmp.txt', 'a', encoding='utf-8') as f:
                     f.write(f'{user.id}  # f: {user.first_name}\n')
                 return await message.reply(f'你已登记自己为 g/f2d。{text}')
-    return await message.reply(greet_message, disable_web_page_preview=True)
+    return await message.reply(greet_message, **no_preview)
 
 
 @ensure_auth

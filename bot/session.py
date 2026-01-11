@@ -16,7 +16,12 @@ kuma = Client(
     api_id=config['kuma']['api_id'],
     api_hash=config['kuma']['api_hash'],
     bot_token=config['kuma']['bot_token'],
-    workdir='.'
+    workdir='.',
+    # proxy={
+    #     "scheme": "socks5",
+    #     "hostname": "10.3.0.99",
+    #     "port": 7891,
+    # }
 )
 
 pyrogram_version = tuple(map(int, pyrogram.__version__.split('.')))
